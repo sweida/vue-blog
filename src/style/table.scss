@@ -1,0 +1,54 @@
+/*表格样式*/
+.main .el-table{
+  th{
+    background: #d4d8e1;
+    padding:8px 0;
+    color:#4e5b6c;
+    text-align: center;
+  }
+  th:first-child div{
+    border-left:0;
+  }
+  td{
+    padding:6px 0;
+    color:#333;
+    text-align: center;
+  }
+  .el-table--striped .el-table__body tr.el-table__row--striped td {
+      background: #fbfbfc;
+  }
+  .el-table--enable-row-hover .el-table__body tr:hover>td{
+    background-color: #f2f5fb;
+  }
+  .el-table--enable-row-hover .el-table__body .current-row:hover>td{
+    background-color: #f1f1f1;
+  }
+}
+.el-table--fit{
+  border-left:1px solid #ebeef5;
+  border-right:1px solid #ebeef5;
+}
+/*加减按钮*/
+.main .el-table{
+  .el-input-number{
+    width: 80px;
+    height: 24px;
+    line-height: 24px;
+  }
+  .el-input-number__decrease, .el-input-number__increase {
+    width: 24px;
+  }
+  .el-input-number .el-input__inner {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  .el-input__inner{
+    height: 24px;
+    border-radius:0;
+    line-height: 24px;
+  }
+  .el-input-number__decrease, .el-input-number__increase {
+    height: 22px;
+    line-height: 22px;
+  }
+}
