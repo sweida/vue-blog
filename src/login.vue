@@ -32,8 +32,9 @@
       };
     },
     methods: {
-      loginSubmit:function() {
-        this.$router.push({ path: '/home' });
+      loginSubmit() {
+        console.log(11)
+        // this.$router.push({ path: '/home' });
       },
 
     }

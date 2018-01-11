@@ -1,60 +1,15 @@
 <template>
   <div >
     <div class="warp">
-      <div class="header">员工<i class="el-icon-info"></i></div>
+      <div class="header_title">职位权限<i class="el-icon-info"></i></div>
       <div class="main-content">
-        <div class="main-head">
-          <div>
-            <label for="">会所名称</label>
-            <span>王狮传奇南山总店</span>
-          </div>
-          <div>
-            <label for="">房间名</label>
-            <el-input v-model="input" placeholder="请输入房间名" size="small"></el-input>
-          </div>
-          <div>
-            <label for="">床位数</label>
-            <el-select v-model="bed" size="small">
-              <el-option
-                v-for="item in 10"
-                :key="item.value"
-                :label="item.index"
-                :value="item.index">
-              </el-option>
-            </el-select>
-          </div>
-          <el-button type="primary" size="small">新　增</el-button>
-        </div>
-        <div class="room_table">
-          <el-table
-            :data="tableData"
-            stripe
-            style="width: 100%"
-            max-height="600"
-            tooltip-effect="dark"
-            >
-            <el-table-column
-              prop="name"
-              label="会所">
-            </el-table-column>
-            <el-table-column
-              prop="room"
-              label="房名">
-            </el-table-column>
-            <el-table-column
-              prop="bed"
-              label="床位数"
-              >
-            </el-table-column>
-            <el-table-column
-              label="操作">
-              <template slot-scope="scope">
-                <i class="el-icon-delete"></i>
-                <!-- <el-button size="mini" type="warning" @click="edit(scope.$index)">修改</el-button> -->
-              </template>
-            </el-table-column>
-          </el-table>
-        </div>
+        <el-tabs v-model="activeName">
+          <el-tab-pane label="职位新增" name="first" >职位新增</el-tab-pane>
+          <el-tab-pane label="职位权限变更" name="second">职位权限变更</el-tab-pane>
+        </el-tabs>
+      </div>
+      <div class="footer">
+        <el-button type="primary" size="small">保　存</el-button>
       </div>
     </div>
 
@@ -68,6 +23,7 @@ export default {
   name: 'app',
   data(){
     return{
+      activeName: 'first',
       bed:1,
       input:'',
       banner:'static/img/phone.png',
@@ -96,29 +52,19 @@ export default {
   }
 }
 </script>
+<style>
+.el-tabs__item{
+  line-height: 60px;
+  font-size: 16px;
+}
+</style>
 
 <style scoped lang="scss">
-.warp{
-    background: #fff;
-    min-height: 100%;
-    position: relative;
-}
-.header{
-  padding: 0 20px;
-  background: #f7f7f7;
-  font-weight: bold;
-  display: flex;
-  box-sizing: border-box;
-  height: 50px;
-  align-items: center;
-  justify-content: space-between;
-  i{
-    color: #3bb3ff;
-    font-size: 20px;
-  }
+
+.el-tab-pane{
+  line-height: 50px;
 }
 .main-content{
-  padding:0 30px;
   .main-head{
     color:#5e6d82;
     height: 80px;
@@ -140,41 +86,8 @@ export default {
   .el-select{
     width: 100px;
   }
-  .phone_bg{
-    width: 400px;
-    height: 600px;
-    background: url(/static/img/phone_bg.png) no-repeat center top;
-    text-align: center;
-    img{
-      margin-top: 60px;
-      height: 425px;
-      width: 230px;
-    }
-  }
-  .text_li{
-    padding-right: 50px;
-    border-right: 1px solid #ddd;
-    li{
-      color: #3cb4ff;
-      font-size: 18px;
-      border-left: 3px solid #3cb4ff;
-      padding-left: 10px;
-      margin: 30px 0;
-      line-height: 18px;
-    }
-    .text_main{
-      padding-left: 15px;
-      color: #666;
-    }
-    input{
-      color: #666;
-      border: 0;
-      border-bottom: 1px solid #ddd;
-      outline: none;
-      line-height: 30px;
-      margin: 5px 0 10px;
-    }
-  }
+
+
   .company_table{
     margin: 40px;
     width: 700px;
@@ -192,9 +105,5 @@ export default {
   align-items: center;
   justify-content: flex-end;
 }
-.el-icon-delete{
-  cursor: pointer;
-  padding:5px 0;
-  font-size: 20px;
-}
+
 </style>

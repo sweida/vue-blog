@@ -26,8 +26,8 @@
           </div>
           <!-- 通知提示 -->
           <div class="tip" v-if="tip">
-          <div class="tip-top"></div>
-              这是通知提示
+          	<div class="tip-top"></div>
+            这是通知提示
           </div>
 
           <el-menu
@@ -60,6 +60,7 @@
 export default {
   data () {
     return {
+			tip:'',
 			admin: {
 				id:'admin',
 				name:'王狮传奇',

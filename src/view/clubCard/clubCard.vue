@@ -1,31 +1,53 @@
 <template>
   <div >
     <div class="warp">
-      <div class="header">员工<i class="el-icon-info"></i></div>
+      <div class="header_title">会员卡<i class="el-icon-info"></i></div>
       <div class="main-content">
-        <div class="main-head">
-          <div>
-            <label for="">会所名称</label>
-            <span>王狮传奇南山总店</span>
+        <div class="left_box">
+          <h4>会员卡信息</h4>
+          <div class="club_box">
+            <div class="input_box">
+              <li>
+                <label for="">会员卡级别</label>
+                <el-input size="small" placeholder="请输出会员名称"></el-input>
+              </li>
+              <li>
+                <label for="">起点金额</label>
+                <el-input size="small"></el-input>
+              </li>
+              <li>
+                <label for="">有效期（天）</label>
+                <el-input size="small"></el-input>
+              </li>
+              <li>
+                <label for="">项目折扣</label>
+                <el-input size="small"></el-input>
+              </li>
+              <li>
+                <label for="">产品折扣</label>
+                <el-input size="small"></el-input>
+              </li>
+              <li>
+                <label for="">套餐折扣</label>
+                <el-input size="small"></el-input>
+              </li>
+            </div>
+            <div class="addpresent">
+              <p @click="addpresent">添加赠送+</p>
+              <div>
+                <el-tag
+                  v-for="tag in tags"
+                  :key="tag.name"
+                  closable
+                  :disable-transitions="false"
+                  @close="handleClose(tag)"
+                  >
+                  {{tag.name}}
+                </el-tag>
+              </div>
+            </div>
           </div>
-          <div>
-            <label for="">房间名</label>
-            <el-input v-model="input" placeholder="请输入房间名" size="small"></el-input>
-          </div>
-          <div>
-            <label for="">床位数</label>
-            <el-select v-model="bed" size="small">
-              <el-option
-                v-for="item in 10"
-                :key="item.value"
-                :label="item.index"
-                :value="item.index">
-              </el-option>
-            </el-select>
-          </div>
-          <el-button type="primary" size="small">新　增</el-button>
-        </div>
-        <div class="room_table">
+          <el-button type="primary" size="small" @click="sureAdd">确认新增</el-button>
           <el-table
             :data="tableData"
             stripe
@@ -35,41 +57,70 @@
             >
             <el-table-column
               prop="name"
-              label="会所">
+              label="会员卡级别">
             </el-table-column>
             <el-table-column
               prop="room"
-              label="房名">
+              label="起点金额">
             </el-table-column>
             <el-table-column
               prop="bed"
-              label="床位数"
+              label="项目折扣"
               >
             </el-table-column>
             <el-table-column
-              label="操作">
+              prop="bed"
+              label="产品折扣"
+              >
+            </el-table-column>
+            <el-table-column
+              prop="bed"
+              label="套餐折扣"
+              >
+            </el-table-column>
+            <el-table-column
+              label="修改">
+              <template slot-scope="scope">
+                <i class="el-icon-edit"></i>
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="删除">
               <template slot-scope="scope">
                 <i class="el-icon-delete"></i>
-                <!-- <el-button size="mini" type="warning" @click="edit(scope.$index)">修改</el-button> -->
               </template>
             </el-table-column>
           </el-table>
         </div>
+        <div class="explain">
+          <h4>活动说明</h4>
+          <textarea name="" id="" cols="30" rows="10" class="scroll" v-model="textarea"></textarea>
+          <el-button type="primary" size="small" @click="subText">提　交</el-button>
+        </div>
+
       </div>
     </div>
+
+    <el-dialog title="添加赠送" :visible.sync="dialogVisible" width="1000px">
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false" size="small">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false" size="small">确 定</el-button>
+      </span>
+    </el-dialog>
 
   </div>
 </template>
 
 <script>
-
-
 export default {
   name: 'app',
   data(){
     return{
       bed:1,
       input:'',
+      dialogVisible:false,
+      textarea:'这是说明',
       banner:'static/img/phone.png',
       tableData: [{
         date: '2016-05-02',
@@ -77,120 +128,117 @@ export default {
         phone:'13798661922',
         address: '上海市普陀区金沙江路 1518 弄'
       }, {
-        date: '2016-05  -04',
-        name: '王狮传奇南山总店',
-        phone:'13798661922',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王狮传奇南山总店',
-        phone:'13798661922',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
         date: '2016-05-03',
         name: '王狮传奇南山总店',
         phone:'13798661922',
         address: '上海市普陀区金沙江路 1516 弄'
-      }]
+      }],
+      tags: [
+        { name: '标签一',},
+        { name: '标签二',},
+        { name: '标签三',},
+        { name: '标签四',},
+        { name: '标签五',}
+      ]
+    }
+  },
+  methods:{
+    subText(){
+      this.$message.success('活动说明保存成功')
+    },
+    handleClose(tag) {
+      this.tags.splice(this.tags.indexOf(tag), 1);
+    },
+    addpresent(){
+      this.dialogVisible = true
+    },
+    sureAdd(){
+      this.$message.success('会员卡添加成功')
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
-.warp{
-    background: #fff;
-    min-height: 100%;
-    position: relative;
-}
-.header{
-  padding: 0 20px;
-  background: #f7f7f7;
-  font-weight: bold;
-  display: flex;
-  box-sizing: border-box;
-  height: 50px;
-  align-items: center;
-  justify-content: space-between;
-  i{
-    color: #3bb3ff;
-    font-size: 20px;
-  }
-}
 .main-content{
-  padding:0 30px;
-  .main-head{
-    color:#5e6d82;
-    height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 800px;
-    span{
-      padding-left: 10px;
-      color:#99a9c0;
+  display: flex;
+  justify-content: space-between;
+}
+.left_box{
+  width: 960px;
+  .club_box{
+    width: 100%;
+    border: 1px solid #C0CCDA;
+    .input_box{
+      padding-top: 30px;
+      display: flex;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #EBEBEB;
+      li{
+        display: flex;
+        align-items: center;
+        width: 300px;
+        padding-bottom:30px;
+        label{
+          width: 100px;
+          padding-right: 10px;
+          text-align: right;
+        }
+        .el-input{
+          width: 140px;
+        }
+      }
+    }
+    .addpresent{
+      display: flex;
+      align-items: center;
+      margin:7px 0;
+      p{
+        color: #3BB3FF;
+        width: 120px;
+        text-align: center;
+        border-right: 1px solid #ddd;
+        line-height: 32px;
+        margin: 5px 0;
+        cursor: pointer;
+      }
+      .el-tag{
+        margin: 5px 0 5px 20px;
+      }
     }
   }
-  .room_table{
-    width: 800px;
-  }
-  .el-input{
-    width: 150px;
-  }
-  .el-select{
-    width: 100px;
-  }
-  .phone_bg{
-    width: 400px;
-    height: 600px;
-    background: url(/static/img/phone_bg.png) no-repeat center top;
-    text-align: center;
-    img{
-      margin-top: 60px;
-      height: 425px;
-      width: 230px;
-    }
-  }
-  .text_li{
-    padding-right: 50px;
-    border-right: 1px solid #ddd;
-    li{
-      color: #3cb4ff;
-      font-size: 18px;
-      border-left: 3px solid #3cb4ff;
-      padding-left: 10px;
-      margin: 30px 0;
-      line-height: 18px;
-    }
-    .text_main{
-      padding-left: 15px;
-      color: #666;
-    }
-    input{
-      color: #666;
-      border: 0;
-      border-bottom: 1px solid #ddd;
-      outline: none;
-      line-height: 30px;
-      margin: 5px 0 10px;
-    }
-  }
-  .company_table{
-    margin: 40px;
-    width: 700px;
+  .el-button{
+    margin: 20px 0 30px;
+    float: right;
   }
 }
-.footer{
-  position: absolute;
-  height: 55px;
-  padding:30px;
+.explain{
+  width: 420px;
+  color:#475669;
+  padding: 0;
+  border-left: 1px solid #ddd;
+  padding-left: 40px;
   box-sizing: border-box;
-  border-top: 1px solid #f2f2f2;
-  width: 100%;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
+  textarea{
+    padding:10px;
+    line-height: 26px;
+    font-size: 14px;
+    resize: none;
+    border: 0;
+    background: #f7f7f7;
+    color: #3a4354;
+    width: 100%;
+    height: 200px;
+    outline: none;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+  }
+  .el-button{
+    float: right;
+  }
+}
+.el-table{
+  margin-bottom: 30px;
 }
 .el-icon-delete{
   cursor: pointer;

@@ -1,5 +1,5 @@
 <template>
-  <div class="aside">
+  <div class="aside scroll">
     <router-link :to="item.url" tag="li" v-for="(item,index) in nav" :key="index">
       <i class="animate05 i"></i>
       <i class="el-icon-document"></i><span>{{item.name}}</span>

@@ -1,7 +1,7 @@
 <template>
   <div >
     <div class="warp">
-      <div class="header">企业和会所<i class="el-icon-info"></i></div>
+      <div class="header_title">企业和会所<i class="el-icon-info"></i></div>
       <div class="main-content">
         <div class="phone_bg">
           <img :src="banner" alt="">
@@ -50,7 +50,7 @@
         </div>
       </div>
       <div class="footer">
-        <el-button type="primary" size="small">确　认</el-button>
+        <el-button type="primary" size="small">保　存</el-button>
       </div>
     </div>
 
@@ -77,25 +77,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.warp{
-    background: #fff;
-    min-height: 100%;
-    position: relative;
-}
-.header{
-  padding: 0 20px;
-  background: #f7f7f7;
-  font-weight: bold;
-  display: flex;
-  box-sizing: border-box;
-  height: 50px;
-  align-items: center;
-  justify-content: space-between;
-  i{
-    color: #3bb3ff;
-    font-size: 20px;
-  }
-}
+
 .main-content{
   display: flex;
   justify-content: space-around;
@@ -104,7 +86,7 @@ export default {
 
   height: 750px;
   .phone_bg{
-    width: 400px;
+    width: 380px;
     height: 600px;
     background: url(/static/img/phone_bg.png) no-repeat center top;
     text-align: center;

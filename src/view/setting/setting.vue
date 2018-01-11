@@ -1,60 +1,87 @@
 <template>
   <div >
     <div class="warp">
-      <div class="header">员工<i class="el-icon-info"></i></div>
+      <div class="header_title">设置<i class="el-icon-info"></i></div>
       <div class="main-content">
-        <div class="main-head">
-          <div>
-            <label for="">会所名称</label>
-            <span>王狮传奇南山总店</span>
+
+        <div class="rechargeli">
+          <div class="top"></div>
+          <p class="title">营业设定</p>
+          <div class="user-img">
+            <img :src="img" alt="">
           </div>
-          <div>
-            <label for="">房间名</label>
-            <el-input v-model="input" placeholder="请输入房间名" size="small"></el-input>
-          </div>
-          <div>
-            <label for="">床位数</label>
-            <el-select v-model="bed" size="small">
-              <el-option
-                v-for="item in 10"
-                :key="item.value"
-                :label="item.index"
-                :value="item.index">
-              </el-option>
-            </el-select>
-          </div>
-          <el-button type="primary" size="small">新　增</el-button>
+          <el-form ref="form" v-model="setting" label-width="130px" >
+            <el-form-item label="营业开始时间">
+              <el-time-select size="small" v-model="setting.startTime" :picker-options="{start:'08:00', step: '00:30', end:'24:00' }" placeholder="选择时间"> </el-time-select>
+            </el-form-item>
+            <el-form-item label="营业结束时间">
+              <el-time-select size="small" v-model="setting.endTime" :picker-options="{start:'08:00', step: '00:30', end:'24:00', minTime: setting.startTime }" placeholder="选择时间"> </el-time-select>
+            </el-form-item>
+            <el-form-item label="预定默认保留时间">
+              <el-select v-model="setting.retainTime" size="small">
+                <el-option
+                  v-for="item in 12"
+                  :key="item.value"
+                  :label="item*10+'分钟'"
+                  :value="item*10">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="客户预约开关">
+              <el-switch
+                v-model="setting.appointment">
+              </el-switch>
+            </el-form-item>
+          </el-form>
         </div>
-        <div class="room_table">
-          <el-table
-            :data="tableData"
-            stripe
-            style="width: 100%"
-            max-height="600"
-            tooltip-effect="dark"
-            >
-            <el-table-column
-              prop="name"
-              label="会所">
-            </el-table-column>
-            <el-table-column
-              prop="room"
-              label="房名">
-            </el-table-column>
-            <el-table-column
-              prop="bed"
-              label="床位数"
-              >
-            </el-table-column>
-            <el-table-column
-              label="操作">
-              <template slot-scope="scope">
-                <i class="el-icon-delete"></i>
-                <!-- <el-button size="mini" type="warning" @click="edit(scope.$index)">修改</el-button> -->
-              </template>
-            </el-table-column>
-          </el-table>
+        <div class="rechargeli rechargeli2">
+          <div class="top"></div>
+          <p class="title">其它</p>
+          <div class="user-img">
+            <img :src="img" alt="">
+          </div>
+          <el-form ref="form" v-model="setting" label-width="130px">
+            <el-form-item label="打印规格" label-width="80px">
+              <el-radio-group v-model="setting.print">
+                <el-radio :label="1">热敏打印</el-radio>
+                <el-radio :label="2">A4打印</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="客户号码显示开关">
+              <el-switch
+                v-model="setting.phone">
+              </el-switch>
+            </el-form-item>
+            <el-form-item label="耗卡价格显示开关">
+              <el-switch
+                v-model="setting.phone">
+              </el-switch>
+            </el-form-item>
+            <el-form-item label="跨行业开关">
+              <el-switch
+                v-model="setting.phone">
+              </el-switch>
+            </el-form-item>
+          </el-form>
         </div>
+        <div class="rechargeli rechargeli3">
+          <div class="top"></div>
+          <p class="title">微信</p>
+          <div class="user-img">
+            <img :src="img" alt="">
+          </div>
+          <el-form ref="form" v-model="setting" label-width="120px">
+            <el-form-item label="微信公众号ID">
+             <el-input v-model="setting.name" size="mini" ></el-input>
+            </el-form-item>
+            <el-form-item label="微信公众号秘钥">
+             <el-input v-model="setting.phone" size="mini" ></el-input>
+            </el-form-item>
+          </el-form>
+        </div>
+      </div>
+      <div class="footer">
+        <el-button type="primary" size="small">保　存</el-button>
       </div>
     </div>
 
@@ -70,34 +97,43 @@ export default {
     return{
       bed:1,
       input:'',
-      banner:'static/img/phone.png',
-      tableData: [{
-        date: '2016-05-02',
-        name: '王狮传奇南山总店',
-        phone:'13798661922',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05  -04',
-        name: '王狮传奇南山总店',
-        phone:'13798661922',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王狮传奇南山总店',
-        phone:'13798661922',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王狮传奇南山总店',
-        phone:'13798661922',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }]
+      img:'static/img/phone.png',
+      setting:{
+        startTime:'',
+        endTime:'',
+        retainTime:'30分钟',
+        appointment:''
+      },
+      // setting:{
+      //   name:'',
+      //   post: '',
+      //   organ: 'nanshan',
+      //   phone:'',
+      //   direct:1,
+      //   moblie:1,
+      // }
     }
   }
 }
 </script>
 
+<style>
+.rechargeli .el-input--suffix .el-input__inner {
+  padding-right: 10px;
+}
+.rechargeli2 .el-radio+.el-radio {
+  margin-left: 12px;
+}
+.rechargeli2 .el-radio__label {
+  padding-left: 6px;
+}
+.rechargeli2 .el-form-item__label{
+  text-align: left;
+}
+</style>
+
 <style scoped lang="scss">
+
 .warp{
     background: #fff;
     min-height: 100%;
@@ -118,7 +154,10 @@ export default {
   }
 }
 .main-content{
-  padding:0 30px;
+  display: flex;
+  min-height: 760px;
+  align-items: center;
+  padding-bottom: 50px;
   .main-head{
     color:#5e6d82;
     height: 80px;
@@ -135,7 +174,7 @@ export default {
     width: 800px;
   }
   .el-input{
-    width: 150px;
+    width: 100px;
   }
   .el-select{
     width: 100px;
@@ -180,6 +219,9 @@ export default {
     width: 700px;
   }
 }
+.user-img{
+  margin:15px 0 60px;
+}
 .footer{
   position: absolute;
   height: 55px;
@@ -196,5 +238,8 @@ export default {
   cursor: pointer;
   padding:5px 0;
   font-size: 20px;
+}
+.el-switch{
+  margin-left: 60px;
 }
 </style>

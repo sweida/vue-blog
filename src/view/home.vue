@@ -12,7 +12,8 @@
 
 import headnav from '@/view/headnav'
 import leftnav from '@/view/leftnav'
-import '../style/common.css'
+import '../style/common.scss'
+import '../style/user.scss'
 // import '../style/table.scss'
 export default {
   name: 'app',

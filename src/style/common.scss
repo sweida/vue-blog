@@ -2,13 +2,6 @@ body {
   margin:0;
   font-family: "PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
 }
-
-.f-r{
-  float: right
-}
-.f-l{
-  float: left
-}
 .animate03{
 	-webkit-transition-duration:0.3s;
 	-moz-transition-duration:0.3s;
@@ -38,9 +31,35 @@ body {
   height: 100%;
   box-sizing: border-box;
   padding-right: 40px;
-
 }
-
+.warp{
+    background: #fff;
+    min-height: 100%;
+    position: relative;
+}
+.header_title{
+  padding: 0 20px;
+  background: #f7f7f7;
+  font-weight: bold;
+  display: flex;
+  box-sizing: border-box;
+  height: 50px;
+  align-items: center;
+  justify-content: space-between;
+  i{
+    color: #3bb3ff;
+    font-size: 20px;
+  }
+}
+.main-content{
+  width: 100%;
+  min-height: 100%;
+  padding:0 40px;
+  box-sizing: border-box;
+  h4{
+    padding: 40px 0;
+  }
+}
 i,em{
   font-style: normal;
 }

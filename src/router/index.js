@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import login from '@/view/login'
 // import home from '@/view/home'
+// const login = resolve => require(['@/view/login'], resolve)
 const home = resolve => require(['@/view/home'], resolve)
 const content = resolve => require(['@/view/content'], resolve)
 const room = resolve => require(['@/view/room/room'], resolve)

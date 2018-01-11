@@ -18,8 +18,8 @@
               <el-option
                 v-for="item in 10"
                 :key="item.value"
-                :label="item.index"
-                :value="item.index">
+                :label="item"
+                :value="item">
               </el-option>
             </el-select>
           </div>
@@ -118,7 +118,6 @@ export default {
   }
 }
 .main-content{
-  padding:0 30px;
   .main-head{
     color:#5e6d82;
     height: 80px;
