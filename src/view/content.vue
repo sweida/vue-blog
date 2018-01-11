@@ -1,8 +1,7 @@
 <template>
   <div >
-    <div class="warp">
       <div class="header_title">企业和会所<i class="el-icon-info"></i></div>
-      <div class="main-content">
+      <div class="main-content scroll">
         <div class="phone_bg">
           <img :src="banner" alt="">
         </div>
@@ -16,7 +15,7 @@
             <input type="text">
           </div>
 
-          <li>企业文化修改（平板端）</li>
+          <li @click="ipadBtn">企业文化修改（平板端）</li>
         </div>
         <div class="company_table">
           <el-table
@@ -33,27 +32,47 @@
             <el-table-column
               prop="phone"
               label="电话">
+              <template slot-scope="scope">
+                {{scope.row.phone}}
+              </template>
+              <template slot-scope="scope" >
+                <span v-if="edit">{{scope.row.phone}}</span>
+                <el-input size="small" v-model="scope.row.phone" v-else></el-input>
+              </template>
             </el-table-column>
             <el-table-column
               prop="address"
               label="地址"
               width="250px">
+              <template slot-scope="scope" >
+                <span v-if="edit">{{scope.row.address}}</span>
+                <el-input size="small" v-model="scope.row.address" v-else></el-input>
+              </template>
             </el-table-column>
             <el-table-column
               label="操作">
               <template slot-scope="scope">
-                <i class="el-icon-edit"></i>
-                <!-- <el-button size="mini" type="warning" @click="edit(scope.$index)">修改</el-button> -->
+                <i class="el-icon-edit" @click="editBtn" v-if="edit"></i>
+                <template v-else>
+                  <el-button size="small" type="primary" @click="sureEdit">确认</el-button>
+                  <el-button size="small" @click="edit=true">取消</el-button>
+                </template>
               </template>
             </el-table-column>
           </el-table>
         </div>
       </div>
       <div class="footer">
-        <el-button type="primary" size="small">保　存</el-button>
+        <el-button type="primary" size="medium">保　存</el-button>
       </div>
-    </div>
 
+      <el-dialog title="新增员工" :visible.sync="dialogVisible" width="1000px">
+
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false" size="small">取 消</el-button>
+          <el-button type="primary" @click="dialogVisible = false" size="small">确 定</el-button>
+        </span>
+      </el-dialog>
   </div>
 </template>
 
@@ -64,6 +83,8 @@ export default {
   name: 'app',
   data(){
     return{
+      edit:true,
+      dialogVisible:false,
       banner:'static/img/phone.png',
       tableData: [{
         date: '2016-05-02',
@@ -71,6 +92,17 @@ export default {
         phone:'13798661922',
         address: '深圳市南山区南头街道玉泉路麒麟花园A区12栋二楼202、203、204商铺'
       }]
+    }
+  },
+  methods:{
+    editBtn(){
+      this.edit = false
+    },
+    sureEdit(){
+      this.edit = true
+    },
+    ipadBtn(){
+      this.dialogVisible = true
     }
   }
 }
@@ -82,9 +114,7 @@ export default {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  // padding: 0 40px;
-
-  height: 750px;
+  padding:50px 0;
   .phone_bg{
     width: 380px;
     height: 600px;
@@ -125,18 +155,7 @@ export default {
     width: 700px;
   }
 }
-.footer{
-  position: absolute;
-  height: 55px;
-  padding:30px;
-  box-sizing: border-box;
-  border-top: 1px solid #f2f2f2;
-  width: 100%;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
+
 .el-icon-edit{
   cursor: pointer;
   padding:5px 0;

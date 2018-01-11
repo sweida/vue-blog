@@ -3,7 +3,7 @@
     <headnav class="headnav"></headnav>
     <content class="content">
       <leftnav></leftnav>
-      <router-view class="main scroll"/>
+      <router-view class="main "/>
     </content>
   </div>
 </template>

@@ -1,7 +1,7 @@
 <template>
   <div >
-    <div class="warp">
-      <div class="header">员工<i class="el-icon-info"></i></div>
+
+      <div class="header_title">套餐<i class="el-icon-info"></i></div>
       <div class="main-content">
         <div class="main-head">
           <div>
@@ -56,7 +56,6 @@
           </el-table>
         </div>
       </div>
-    </div>
 
   </div>
 </template>

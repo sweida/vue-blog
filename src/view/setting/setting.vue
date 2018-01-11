@@ -1,8 +1,7 @@
 <template>
   <div >
-    <div class="warp">
       <div class="header_title">设置<i class="el-icon-info"></i></div>
-      <div class="main-content">
+      <div class="main-content scroll">
 
         <div class="rechargeli">
           <div class="top"></div>
@@ -83,7 +82,6 @@
       <div class="footer">
         <el-button type="primary" size="small">保　存</el-button>
       </div>
-    </div>
 
   </div>
 </template>
@@ -133,31 +131,10 @@ export default {
 </style>
 
 <style scoped lang="scss">
-
-.warp{
-    background: #fff;
-    min-height: 100%;
-    position: relative;
-}
-.header{
-  padding: 0 20px;
-  background: #f7f7f7;
-  font-weight: bold;
-  display: flex;
-  box-sizing: border-box;
-  height: 50px;
-  align-items: center;
-  justify-content: space-between;
-  i{
-    color: #3bb3ff;
-    font-size: 20px;
-  }
-}
 .main-content{
   display: flex;
-  min-height: 760px;
   align-items: center;
-  padding-bottom: 50px;
+  padding: 50px 0;
   .main-head{
     color:#5e6d82;
     height: 80px;
@@ -170,74 +147,15 @@ export default {
       color:#99a9c0;
     }
   }
-  .room_table{
-    width: 800px;
-  }
   .el-input{
     width: 100px;
   }
   .el-select{
     width: 100px;
   }
-  .phone_bg{
-    width: 400px;
-    height: 600px;
-    background: url(/static/img/phone_bg.png) no-repeat center top;
-    text-align: center;
-    img{
-      margin-top: 60px;
-      height: 425px;
-      width: 230px;
-    }
-  }
-  .text_li{
-    padding-right: 50px;
-    border-right: 1px solid #ddd;
-    li{
-      color: #3cb4ff;
-      font-size: 18px;
-      border-left: 3px solid #3cb4ff;
-      padding-left: 10px;
-      margin: 30px 0;
-      line-height: 18px;
-    }
-    .text_main{
-      padding-left: 15px;
-      color: #666;
-    }
-    input{
-      color: #666;
-      border: 0;
-      border-bottom: 1px solid #ddd;
-      outline: none;
-      line-height: 30px;
-      margin: 5px 0 10px;
-    }
-  }
-  .company_table{
-    margin: 40px;
-    width: 700px;
-  }
 }
 .user-img{
   margin:15px 0 60px;
-}
-.footer{
-  position: absolute;
-  height: 55px;
-  padding:30px;
-  box-sizing: border-box;
-  border-top: 1px solid #f2f2f2;
-  width: 100%;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
-.el-icon-delete{
-  cursor: pointer;
-  padding:5px 0;
-  font-size: 20px;
 }
 .el-switch{
   margin-left: 60px;

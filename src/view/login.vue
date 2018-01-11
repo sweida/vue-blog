@@ -33,13 +33,7 @@
     },
     methods: {
       loginSubmit:function() {
-
-        login(this.param).then(res=>{
-            console.log(res)
-            //这里写一下跳转到首页
-            this.$router.push({ path: '/home' });
-        })
-
+        this.$router.push({ path: '/home' });
       },
 
     }

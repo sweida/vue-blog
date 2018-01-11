@@ -20,7 +20,7 @@ body {
     bottom: 0;
     overflow: hidden;
     width: 100%;
-    padding:20px 0 20px 40px;
+    padding:20px 40px;
     box-sizing: border-box;
     background: #edeef1;
     display: flex;
@@ -30,36 +30,51 @@ body {
   width: calc(100% - 320px);
   height: 100%;
   box-sizing: border-box;
-  padding-right: 40px;
-}
-.warp{
-    background: #fff;
-    min-height: 100%;
-    position: relative;
-}
-.header_title{
-  padding: 0 20px;
-  background: #f7f7f7;
-  font-weight: bold;
-  display: flex;
-  box-sizing: border-box;
-  height: 50px;
-  align-items: center;
-  justify-content: space-between;
-  i{
-    color: #3bb3ff;
+  background: #fff;
+  .header_title{
+    padding: 0 20px;
+    background: #f7f7f7;
+    font-weight: bold;
+    display: flex;
+    box-sizing: border-box;
+    height: 50px;
+    align-items: center;
+    justify-content: space-between;
+    i{
+      color: #3bb3ff;
+      font-size: 20px;
+    }
+  }
+  .main-content{
+    width: 100%;
+    height: calc(100% - 110px);
+    padding:0 40px;
+    box-sizing: border-box;
+    h4{
+      padding: 40px 0;
+    }
+  }
+  .footer{
+    position: absolute;
+    height: 55px;
+    padding:30px;
+    box-sizing: border-box;
+    border-top: 1px solid #f2f2f2;
+    width: 100%;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    background: #Fff;
+  }
+  .el-icon-edit, .el-icon-delete{
+    cursor: pointer;
+    padding:5px 0;
     font-size: 20px;
+    color:#979797;
   }
 }
-.main-content{
-  width: 100%;
-  min-height: 100%;
-  padding:0 40px;
-  box-sizing: border-box;
-  h4{
-    padding: 40px 0;
-  }
-}
+
 i,em{
   font-style: normal;
 }

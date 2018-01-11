@@ -1,8 +1,8 @@
 <template>
   <div >
-    <div class="warp">
+
       <div class="header_title">员工管理<i class="el-icon-info"></i></div>
-      <div class="main-content">
+      <div class="main-content scroll">
         <div class="main-head">
           <div>
             <input type="text" class="search" v-model="search">
@@ -40,19 +40,19 @@
               label="修改"
               >
               <template slot-scope="scope">
-                <i class="el-icon-edit"></i>
+                <i class="el-icon-edit" @click="edit"></i>
               </template>
             </el-table-column>
             <el-table-column
               label="操作">
               <template slot-scope="scope">
-                <i class="el-icon-delete"></i>
+                <i class="el-icon-delete" @click="deleteBtn(scope.$index)"></i>
               </template>
             </el-table-column>
           </el-table>
         </div>
       </div>
-    </div>
+
 
     <el-dialog title="新增员工" :visible.sync="dialogVisible" width="1000px">
       <div class="rechargeli">
@@ -143,6 +143,18 @@ export default {
   methods:{
     added(){
       this.dialogVisible = true
+    },
+    edit(){
+      this.dialogVisible = true
+    },
+    deleteBtn(index){
+      this.$confirm('是否删除该员工?', '提示', {
+        type: 'warning'
+      }).then(() => {
+        this.tableData.splice(index,1)
+        this.$message.success('删除成功!')
+      }).catch(() => {
+      });
     }
   }
 }
@@ -151,7 +163,6 @@ export default {
 <style scoped lang="scss">
 
 .main-content{
-  padding:0 40px;
   .main-head{
     color:#5e6d82;
     height: 80px;
@@ -188,67 +199,6 @@ export default {
       font-size: 20px;
     }
   }
-  .el-input{
-    width: 150px;
-  }
-  .el-select{
-    width: 100px;
-  }
-  .phone_bg{
-    width: 400px;
-    height: 600px;
-    background: url(/static/img/phone_bg.png) no-repeat center top;
-    text-align: center;
-    img{
-      margin-top: 60px;
-      height: 425px;
-      width: 230px;
-    }
-  }
-  .text_li{
-    padding-right: 50px;
-    border-right: 1px solid #ddd;
-    li{
-      color: #3cb4ff;
-      font-size: 18px;
-      border-left: 3px solid #3cb4ff;
-      padding-left: 10px;
-      margin: 30px 0;
-      line-height: 18px;
-    }
-    .text_main{
-      padding-left: 15px;
-      color: #666;
-    }
-    input{
-      color: #666;
-      border: 0;
-      border-bottom: 1px solid #ddd;
-      outline: none;
-      line-height: 30px;
-      margin: 5px 0 10px;
-    }
-  }
-  .company_table{
-    margin: 40px;
-    width: 700px;
-  }
 }
-.footer{
-  position: absolute;
-  height: 55px;
-  padding:30px;
-  box-sizing: border-box;
-  border-top: 1px solid #f2f2f2;
-  width: 100%;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
-.el-icon-delete{
-  cursor: pointer;
-  padding:5px 0;
-  font-size: 20px;
-}
+
 </style>

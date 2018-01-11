@@ -1,35 +1,34 @@
 <template>
   <div >
-    <div class="warp">
       <div class="header_title">会员卡<i class="el-icon-info"></i></div>
-      <div class="main-content">
+      <div class="main-content scroll">
         <div class="left_box">
           <h4>会员卡信息</h4>
           <div class="club_box">
             <div class="input_box">
               <li>
                 <label for="">会员卡级别</label>
-                <el-input size="small" placeholder="请输出会员名称"></el-input>
+                <el-input size="small" placeholder="请输出会员名称" v-model="edit.level"></el-input>
               </li>
               <li>
                 <label for="">起点金额</label>
-                <el-input size="small"></el-input>
+                <el-input size="small" v-model="edit.money"></el-input>
               </li>
               <li>
                 <label for="">有效期（天）</label>
-                <el-input size="small"></el-input>
+                <el-input size="small" v-model="edit.time"></el-input>
               </li>
               <li>
                 <label for="">项目折扣</label>
-                <el-input size="small"></el-input>
+                <el-input size="small" v-model="edit.project"></el-input>
               </li>
               <li>
                 <label for="">产品折扣</label>
-                <el-input size="small"></el-input>
+                <el-input size="small" v-model="edit.product"></el-input>
               </li>
               <li>
                 <label for="">套餐折扣</label>
-                <el-input size="small"></el-input>
+                <el-input size="small" v-model="edit.setmeal"></el-input>
               </li>
             </div>
             <div class="addpresent">
@@ -47,7 +46,11 @@
               </div>
             </div>
           </div>
-          <el-button type="primary" size="small" @click="sureAdd">确认新增</el-button>
+          <el-button type="primary" size="small" @click="sureAdd" v-if="change">确认新增</el-button>
+          <template v-else>
+            <el-button  size="small" @click="sureAdd">取　消</el-button>
+            <el-button type="primary" size="small" @click="sureAdd">保　存</el-button>
+          </template>
           <el-table
             :data="tableData"
             stripe
@@ -56,38 +59,38 @@
             tooltip-effect="dark"
             >
             <el-table-column
-              prop="name"
+              prop="level"
               label="会员卡级别">
             </el-table-column>
             <el-table-column
-              prop="room"
+              prop="money"
               label="起点金额">
             </el-table-column>
             <el-table-column
-              prop="bed"
+              prop="project"
               label="项目折扣"
               >
             </el-table-column>
             <el-table-column
-              prop="bed"
+              prop="product"
               label="产品折扣"
               >
             </el-table-column>
             <el-table-column
-              prop="bed"
+              prop="setmeal"
               label="套餐折扣"
               >
             </el-table-column>
             <el-table-column
               label="修改">
               <template slot-scope="scope">
-                <i class="el-icon-edit"></i>
+                <i class="el-icon-edit" @click="editBtn(scope.$index)"></i>
               </template>
             </el-table-column>
             <el-table-column
               label="删除">
               <template slot-scope="scope">
-                <i class="el-icon-delete"></i>
+                <i class="el-icon-delete" @click="deleteBtn(scope.$index)"></i>
               </template>
             </el-table-column>
           </el-table>
@@ -99,7 +102,6 @@
         </div>
 
       </div>
-    </div>
 
     <el-dialog title="添加赠送" :visible.sync="dialogVisible" width="1000px">
 
@@ -122,16 +124,39 @@ export default {
       dialogVisible:false,
       textarea:'这是说明',
       banner:'static/img/phone.png',
+      change:true,
+      edit:{
+        level: '',
+        money: '',
+        time:'',
+        project: '',
+        product: '',
+        setmeal: ''
+      },
       tableData: [{
-        date: '2016-05-02',
-        name: '王狮传奇南山总店',
-        phone:'13798661922',
-        address: '上海市普陀区金沙江路 1518 弄'
+        level: '经理人一级',
+        money: '20000',
+        project: 0.9,
+        product: 0.9,
+        setmeal: 0.9
       }, {
-        date: '2016-05-03',
-        name: '王狮传奇南山总店',
-        phone:'13798661922',
-        address: '上海市普陀区金沙江路 1516 弄'
+        level: '经理人二级',
+        money: '50000',
+        project: 0.8,
+        product: 0.8,
+        setmeal: 0.8
+      }, {
+        level: '经理人三级',
+        money: '100000',
+        project: 0.7,
+        product: 0.7,
+        setmeal: 0.7
+      }, {
+        level: '经理人四级',
+        money: '200000',
+        project: 0.6,
+        product: 0.6,
+        setmeal: 0.6
       }],
       tags: [
         { name: '标签一',},
@@ -154,6 +179,19 @@ export default {
     },
     sureAdd(){
       this.$message.success('会员卡添加成功')
+    },
+    deleteBtn(index){
+      this.$confirm('是否删除该员工?', '提示', {
+        type: 'warning'
+      }).then(() => {
+        this.tableData.splice(index,1)
+        this.$message.success('删除成功!')
+      }).catch(() => {
+      });
+    },
+    editBtn(index){
+      this.change = false
+      this.edit = this.tableData[index]
     }
   }
 }
@@ -163,6 +201,7 @@ export default {
 .main-content{
   display: flex;
   justify-content: space-between;
+  height: calc(100% - 50px);
 }
 .left_box{
   width: 960px;
@@ -238,11 +277,6 @@ export default {
   }
 }
 .el-table{
-  margin-bottom: 30px;
-}
-.el-icon-delete{
-  cursor: pointer;
-  padding:5px 0;
-  font-size: 20px;
+  margin-bottom: 50px;
 }
 </style>

@@ -1,6 +1,5 @@
 <template>
   <div >
-    <div class="warp">
       <div class="header_title">云电话<i class="el-icon-info"></i></div>
       <div class="main-content">
         <div class="main-head">
@@ -56,7 +55,6 @@
           </el-table>
         </div>
       </div>
-    </div>
 
   </div>
 </template>
