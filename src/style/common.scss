@@ -42,7 +42,10 @@ body {
     height: 50px;
     align-items: center;
     justify-content: space-between;
-    i{
+    a{
+      color:#000;
+    }
+    .el-icon-info{
       color: #3bb3ff;
       font-size: 20px;
     }
@@ -114,7 +117,16 @@ i,em{
 }
 /*滚动条里面可以拖动的那部分（位置5） 主要部分*/
 .scroll::-webkit-scrollbar-thumb{
-  /*background:-webkit-gradient(linear, 0 0, 0 bottom, from(#85d5fe), to(#207bee));*/
+  // background:-webkit-gradient(linear, 0 0, 0 bottom, from(#85d5fe), to(#207bee));
+  border-radius:10px;
+  background: #c5ced7;
+}
+// 选择框滚动条
+.el-cascader-menu::-webkit-scrollbar{
+  width:7px;
+  height:7px;
+}
+.el-cascader-menu::-webkit-scrollbar-thumb{
   border-radius:10px;
   background: #c5ced7;
 }

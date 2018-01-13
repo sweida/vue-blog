@@ -48,8 +48,8 @@
           </div>
           <el-button type="primary" size="small" @click="sureAdd" v-if="change">确认新增</el-button>
           <template v-else>
-            <el-button  size="small" @click="cancel">取　消</el-button>
             <el-button type="primary" size="small" @click="sureAdd" >保　存</el-button>
+            <el-button  size="small" @click="cancel">取　消</el-button>
           </template>
           <el-table
             :data="tableData"
@@ -103,13 +103,79 @@
 
       </div>
 
-    <el-dialog title="添加赠送" :visible.sync="dialogVisible" width="1000px">
+    <el-dialog :visible.sync="burdening" title="编辑配料" width="1050px" class="burbox">
+      <div class="burdening">
+        <div class="tabs">
+          <p>所有配料</p>
+        </div>
+        <div class="burli1">
+          <el-table
+            :data="materials_arr"
+            stripe
+            style="width:100%"
+            max-height='450'
+            tooltip-effect="dark"
+            >
 
+            <el-table-column
+              prop="material_name"
+              label="配料名称"
+              >
+            </el-table-column>
+            <el-table-column
+              prop="unit"
+              label="单位">
+            </el-table-column>
+            <el-table-column
+            label="选择">
+              <template slot-scope="scope" >
+                <el-button type="primary" @click="SelMaterials(scope.row)" size="small">添加</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+        <!-- 默认配料 -->
+        <div class="burli2">
+          <el-table
+            :data="materials_data"
+            stripe
+            style="width: 400px;margin-bottom:20px;"
+            max-height='200'
+            tooltip-effect="dark"
+          >
+            <el-table-column
+              prop="material_name"
+              label="已添加配料名称"
+              >
+            </el-table-column>
+            <el-table-column
+              prop="unit"
+              label="单位"
+              >
+            </el-table-column>
+            <el-table-column
+              prop="material_amount"
+              label="数量">
+              <template slot-scope="scope" >
+                <el-input-number v-model="scope.row.material_amount"  :min="1"></el-input-number>
+              </template>
+            </el-table-column>
+            <el-table-column
+            label="操作">
+              <template slot-scope="scope" >
+                <el-button type="danger" @click="delSelect(scope.$index)" size="small"><i class="el-icon-delete"></i></el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false" size="small">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false" size="small">确 定</el-button>
+        <el-button @click="burdening = false" size="small">取 消</el-button>
+        <el-button type="primary" @click="sureBurden" size="small">保存配料</el-button>
       </span>
     </el-dialog>
+
+
 
   </div>
 </template>
@@ -121,7 +187,7 @@ export default {
     return{
       bed:1,
       input:'',
-      dialogVisible:false,
+      burdening:false,
       textarea:'这是说明',
       banner:'static/img/phone.png',
       change:true,
@@ -167,40 +233,47 @@ export default {
       ]
     }
   },
-  methods:{
-    subText(){
+  methods: {
+    subText() {
       this.$message.success('活动说明保存成功')
     },
     handleClose(tag) {
-      this.tags.splice(this.tags.indexOf(tag), 1);
+      this.tags.splice(this.tags.indexOf(tag), 1)
     },
-    addpresent(){
-      this.dialogVisible = true
+    addpresent() {
+      this.burdening = true
     },
-    sureAdd(){
+    sureBurden() {
+    },
+    sureAdd() {
       this.$message.success('会员卡添加成功')
     },
-    deleteBtn(index){
-      this.$confirm('是否删除该员工?', '提示', {
+    deleteBtn(index) {
+      this.$confirm('是否删除该会员卡等级?', '提示', {
         type: 'warning'
       }).then(() => {
-        this.tableData.splice(index,1)
+        this.tableData.splice(index, 1)
         this.$message.success('删除成功!')
       }).catch(() => {
-      });
+      })
     },
-    editBtn(index){
+    editBtn(index) {
       this.change = false
       this.edit = this.tableData[index]
     },
-    cancel(){
+    cancel() {
       this.change = true
-      this.edit=''
+      this.edit = ''
     }
   }
 }
 </script>
 
+<style>
+.burbox .el-dialog__body {
+    padding: 0;
+}
+</style>
 <style scoped lang="scss">
 .main-content{
   display: flex;
@@ -208,7 +281,7 @@ export default {
   height: calc(100% - 50px);
 }
 .left_box{
-  width: 960px;
+  flex: 1;
   padding-right: 40px;
   border-right: 1px solid #ddd;
   .club_box{
@@ -258,8 +331,7 @@ export default {
   }
 }
 .explain{
-  width: 420px;
-  min-width: 120px;
+  width: 400px;
   color:#475669;
   padding: 0;
   padding-left: 40px;
@@ -285,4 +357,32 @@ export default {
 .el-table{
   margin-bottom: 50px;
 }
+
+// 添加配料弹框
+.burdening{
+  display: flex;
+  height: 550px;
+  .tabs{
+    width: 120px;
+    border-right: 2px solid #f3f8fe;
+    p{
+      margin-top: 40px;
+      background: #f7f7f7;
+      line-height: 36px;
+      text-indent: 20px;
+      color:#20a1ff;
+    }
+  }
+  .burli1{
+    width: 400px;
+    border-right: 2px solid #f3f8fe;
+    padding: 40px 20px 0 20px;
+  }
+  .burli2{
+    width: 400px;
+    margin-bottom: 20px;
+    padding: 40px 20px 0 20px;
+  }
+}
+
 </style>
