@@ -1,58 +1,56 @@
 <template>
   <div >
-
-      <div class="header_title">员工管理<i class="el-icon-info"></i></div>
-      <div class="main-content scroll">
-        <div class="main-head">
-          <div>
-            <input type="text" class="search" v-model="search">
-            <i class="el-icon-search"></i>
-          </div>
-          <el-button type="primary" size="small" @click="added">新　增</el-button>
+    <div class="header_title">员工管理<i class="el-icon-info"></i></div>
+    <div class="main-content scroll">
+      <div class="main-head">
+        <div>
+          <input type="text" class="search" v-model="search" v-on:keyup.enter="searchBtn">
+          <i class="el-icon-search" @click="searchBtn"></i>
         </div>
-        <div class="main_table">
-          <el-table
-            :data="tableData"
-            stripe
-            style="width: 100%"
-            max-height="600"
-            tooltip-effect="dark"
-            >
-            <el-table-column
-              prop="name"
-              label="员工">
-            </el-table-column>
-            <el-table-column
-              prop="post"
-              label="职位">
-            </el-table-column>
-            <el-table-column
-              prop="phone"
-              label="手机号"
-              >
-            </el-table-column>
-            <el-table-column
-              prop="club"
-              label="会所"
-              >
-            </el-table-column>
-            <el-table-column
-              label="修改"
-              >
-              <template slot-scope="scope">
-                <i class="el-icon-edit" @click="edit"></i>
-              </template>
-            </el-table-column>
-            <el-table-column
-              label="操作">
-              <template slot-scope="scope">
-                <i class="el-icon-delete" @click="deleteBtn(scope.$index)"></i>
-              </template>
-            </el-table-column>
-          </el-table>
-        </div>
+        <el-button type="primary" size="small" @click="added">新　增</el-button>
       </div>
-
+      <div class="main_table">
+        <el-table
+          :data="tableData"
+          stripe
+          style="width: 100%"
+          max-height="600"
+          tooltip-effect="dark"
+          >
+          <el-table-column
+            prop="name"
+            label="员工">
+          </el-table-column>
+          <el-table-column
+            prop="post"
+            label="职位">
+          </el-table-column>
+          <el-table-column
+            prop="phone"
+            label="手机号"
+            >
+          </el-table-column>
+          <el-table-column
+            prop="organ"
+            label="会所"
+            >
+          </el-table-column>
+          <el-table-column
+            label="修改"
+            >
+            <template slot-scope="scope">
+              <i class="el-icon-edit" @click="edit(scope.$index)"></i>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作">
+            <template slot-scope="scope">
+              <i class="el-icon-delete" @click="deleteBtn(scope.$index)"></i>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </div>
 
     <el-dialog title="新增员工" :visible.sync="dialogVisible" width="1000px">
       <div class="rechargeli">
@@ -75,7 +73,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="会所">
-            <el-select v-model="newstaff.organ" placeholder="请选择会所" size="mini">
+            <el-select v-model="newstaff.organ_id" placeholder="请选择会所" size="mini">
               <el-option label="王狮传奇南山总店" value="nanshan"></el-option>
             </el-select>
           </el-form-item>
@@ -103,7 +101,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'app',
   data(){
@@ -112,28 +109,28 @@ export default {
       dialogVisible:false,
       img:'static/img/phone.png',
       tableData: [{
-        name:'小可爱',
+        name:'小可爱1',
         post: '销售',
-        club: '王狮传奇南山总店',
+        organ: '王狮传奇南山总店',
+        organ_id:'nanshan',
         phone:'13798661922',
-        address: '上海市普陀区金沙江路 1518 弄'
       }, {
-        name:'小可爱',
+        name:'小可爱2',
         post: '销售',
-        club: '王狮传奇南山总店',
+        organ: '王狮传奇南山总店',
+        organ_id:'nanshan',
         phone:'13798661922',
-        address: '上海市普陀区金沙江路 1518 弄'
       }, {
-        name:'小可爱',
+        name:'小可爱3',
         post: '销售',
-        club: '王狮传奇南山总店',
+        organ: '王狮传奇南山总店',
+        organ_id:'nanshan',
         phone:'13798661922',
-        address: '上海市普陀区金沙江路 1518 弄'
       }],
       newstaff:{
         name:'',
         post: '',
-        organ: 'nanshan',
+        organ_id: 'nanshan',
         phone:'',
         direct:1,
         moblie:1,
@@ -143,9 +140,18 @@ export default {
   methods:{
     added(){
       this.dialogVisible = true
+      this.newstaff={
+        name: '',
+        post: '',
+        organ_id: 'nanshan',
+        phone: '',
+        direct: 1,
+        moblie: 1,
+      }
     },
-    edit(){
+    edit(index){
       this.dialogVisible = true
+      this.newstaff = this.tableData[index]
     },
     deleteBtn(index){
       this.$confirm('是否删除该员工?', '提示', {
@@ -155,7 +161,11 @@ export default {
         this.$message.success('删除成功!')
       }).catch(() => {
       });
-    }
+    },
+    //搜素客户
+    searchBtn() {
+      console.log('搜索')
+    },
   }
 }
 </script>

@@ -17,7 +17,7 @@ import '../style/user.scss'
 // import '../style/table.scss'
 export default {
   name: 'app',
-  components:{
+  components: {
     headnav,
     leftnav
   },
@@ -25,10 +25,8 @@ export default {
     return {
     }
   },
-  methods:{
-
-  },
-
+  methods: {
+  }
 }
 </script>
 

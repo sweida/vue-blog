@@ -29,6 +29,8 @@ body {
   position: relative;
   width: calc(100% - 320px);
   height: 100%;
+  display: flex;
+  flex-direction: column;
   box-sizing: border-box;
   background: #fff;
   .header_title{
@@ -47,7 +49,7 @@ body {
   }
   .main-content{
     width: 100%;
-    height: calc(100% - 110px);
+    flex: 1;
     padding:0 40px;
     box-sizing: border-box;
     h4{
@@ -55,13 +57,11 @@ body {
     }
   }
   .footer{
-    position: absolute;
     height: 55px;
     padding:30px;
     box-sizing: border-box;
     border-top: 1px solid #f2f2f2;
     width: 100%;
-    bottom: 0;
     display: flex;
     align-items: center;
     justify-content: flex-end;

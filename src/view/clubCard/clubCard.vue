@@ -48,8 +48,8 @@
           </div>
           <el-button type="primary" size="small" @click="sureAdd" v-if="change">确认新增</el-button>
           <template v-else>
-            <el-button  size="small" @click="sureAdd">取　消</el-button>
-            <el-button type="primary" size="small" @click="sureAdd">保　存</el-button>
+            <el-button  size="small" @click="cancel">取　消</el-button>
+            <el-button type="primary" size="small" @click="sureAdd" >保　存</el-button>
           </template>
           <el-table
             :data="tableData"
@@ -192,6 +192,10 @@ export default {
     editBtn(index){
       this.change = false
       this.edit = this.tableData[index]
+    },
+    cancel(){
+      this.change = true
+      this.edit=''
     }
   }
 }
@@ -205,6 +209,8 @@ export default {
 }
 .left_box{
   width: 960px;
+  padding-right: 40px;
+  border-right: 1px solid #ddd;
   .club_box{
     width: 100%;
     border: 1px solid #C0CCDA;
@@ -247,15 +253,15 @@ export default {
     }
   }
   .el-button{
-    margin: 20px 0 30px;
+    margin: 20px 0 30px 20px;
     float: right;
   }
 }
 .explain{
   width: 420px;
+  min-width: 120px;
   color:#475669;
   padding: 0;
-  border-left: 1px solid #ddd;
   padding-left: 40px;
   box-sizing: border-box;
   textarea{

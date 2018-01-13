@@ -13,19 +13,19 @@
     },
     data() {
       return {
-        navindex:0,
-        nav:[
-          {name: '企业和会所',url : '/home'},
-          {name: '房间',url: '/room'},
-          {name:'职位权限',url:'/scope'},
-          {name:'员工管理',url:'/staff'},
-          {name:'代金券',url:'/voucher'},
-          {name:'会员卡',url:'/clubCard'},
-          {name:'项目',url:'/project'},
-          {name:'赠送方案',url:'/present'},
-          {name:'套餐',url:'/setMeal'},
-          {name:'云电话',url:'/phone'},
-          {name:'设置',url:'/setting'}
+        navindex: 0,
+        nav: [
+          {name: '企业和会所', url: '/home'},
+          {name: '房间', url: '/room'},
+          {name: '职位权限', url: '/scope'},
+          {name: '员工管理', url: '/staff'},
+          {name: '代金券', url: '/voucher'},
+          {name: '会员卡', url: '/clubCard'},
+          {name: '项目', url: '/project'},
+          {name: '赠送方案', url: '/present'},
+          {name: '套餐', url: '/setMeal'},
+          {name: '云电话', url: '/phone'},
+          {name: '设置', url: '/setting'}
         ]
       }
     },
@@ -44,6 +44,7 @@
   box-shadow: 2px 2px 10px #b5b4b4;
   padding-top: 40px;
   box-sizing: border-box;
+  overflow: auto;
   li{
     line-height: 55px;
     height: 55px;
