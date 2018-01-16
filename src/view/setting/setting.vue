@@ -7,7 +7,7 @@
           <div class="top"></div>
           <p class="title">营业设定</p>
           <div class="user-img">
-            <img :src="img" alt="">
+            <img src="static/img/icon1.png" alt="">
           </div>
           <el-form ref="form" v-model="setting" label-width="130px" >
             <el-form-item label="营业开始时间">
@@ -37,7 +37,7 @@
           <div class="top"></div>
           <p class="title">其它</p>
           <div class="user-img">
-            <img :src="img" alt="">
+            <img src="static/img/icon2.png" alt="">
           </div>
           <el-form ref="form" v-model="setting" label-width="130px">
             <el-form-item label="打印规格" label-width="80px">
@@ -67,7 +67,7 @@
           <div class="top"></div>
           <p class="title">微信</p>
           <div class="user-img">
-            <img :src="img" alt="">
+            <img src="static/img/icon3.png" alt="">
           </div>
           <el-form ref="form" v-model="setting" label-width="120px">
             <el-form-item label="微信公众号ID">
