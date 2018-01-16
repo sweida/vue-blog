@@ -42,7 +42,7 @@
   height: 100%;
   position: relative;
   box-shadow: 2px 2px 10px #b5b4b4;
-  padding-top: 40px;
+  padding: 40px 0;
   box-sizing: border-box;
   overflow: auto;
   li{

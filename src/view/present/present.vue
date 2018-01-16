@@ -55,10 +55,29 @@
               <el-table-column
                 prop="name"
                 label="名称"
+                width="300px"
+                >
+                <template slot-scope="scope" >
+                  <span v-if="editBtn">{{scope.row.name}} <i class="el-icon-edit" @click="editTitle(scope.$index)"></i></span>
+                  <template v-else>
+                    <el-input v-model="scope.row.name" size="mini" class="text_edit"></el-input>
+                    <el-button type="primary" size="mini">确定</el-button>
+                    <el-button size="mini" @click="editClose">取消</el-button>
+                  </template>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="startDate"
+                label="生效日期"
                 width="150px">
               </el-table-column>
               <el-table-column
-                label="修改"
+                prop="endDate"
+                label="使用截止日期"
+                width="150px">
+              </el-table-column>
+              <el-table-column
+                label="修改详情"
                 >
                 <template slot-scope="scope">
                   <i class="el-icon-edit" @click="edit(scope.$index)"></i>
@@ -126,6 +145,7 @@ export default {
       bed: 1,
       input: '',
       voucherDialog: false,
+      editBtn: true,
       banner: 'static/img/phone.png',
       form: {
         type: 1,
@@ -134,25 +154,21 @@ export default {
         desc: ''
       },
       tableData: [{
-        date: '2016-05-02',
-        name: '王狮传奇南山总店',
-        phone: '13798661922',
-        address: '上海市普陀区金沙江路 1518 弄'
+        name: '美白面部护理套',
+        startDate: '2016-05-02',
+        endDate: '2018-05-02'
       }, {
-        date: '2016-05  -04',
-        name: '王狮传奇南山总店',
-        phone: '13798661922',
-        address: '上海市普陀区金沙江路 1517 弄'
+        name: '果冻肌之三重',
+        startDate: '2016-05-02',
+        endDate: '2018-05-02'
       }, {
-        date: '2016-05-01',
-        name: '王狮传奇南山总店',
-        phone: '13798661922',
-        address: '上海市普陀区金沙江路 1519 弄'
+        name: '紧致换肤',
+        startDate: '2016-05-02',
+        endDate: '2018-05-02'
       }, {
-        date: '2016-05-03',
-        name: '王狮传奇南山总店',
-        phone: '13798661922',
-        address: '上海市普陀区金沙江路 1516 弄'
+        name: '相宜本草柔肤水百合',
+        startDate: '2016-05-02',
+        endDate: '2018-05-02'
       }]
     }
   },
@@ -169,6 +185,12 @@ export default {
     //搜素客户
     searchBtn() {
       console.log('搜索')
+    },
+    editTitle() {
+      this.editBtn = false
+    },
+    editClose() {
+      this.editBtn = true
     }
   }
 }
@@ -188,7 +210,7 @@ export default {
   }
   .right_main{
     padding: 0 30px;
-    width: 700px;
+    width: 900px;
     .main-head{
       color:#5e6d82;
       height: 80px;
@@ -217,6 +239,9 @@ export default {
       }
     }
   }
+}
+.text_edit{
+  width: 140px;
 }
 .form_box{
   display: flex;
