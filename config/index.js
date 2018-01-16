@@ -27,6 +27,15 @@ module.exports = {
     // If true, eslint errors and warnings will also be shown in the error overlay
     // in the browser.
     showEslintErrorsInOverlay: false,
+    proxyTable: {
+      '/apis': {
+        target: 'http://192.168.1.202:8080',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/apis': '/'
+        }
+      }
+    },
 
     /**
      * Source Maps

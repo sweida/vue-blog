@@ -20,20 +20,25 @@
 </template>
 
 <script>
+  import {toLogin} from "@/api/login";
   export default {
     data() {
       return {
         show:true,
         checked: true,
         param:{
-          mobile_phone_num:'18124655386',
-          staff_pass:'12345678'
+          username:'admin',
+          password:'123456'
         }
       };
     },
     methods: {
       loginSubmit:function() {
-        this.$router.push({ path: '/home' });
+        toLogin(this.param).then((res)=>{
+          if(res.data.authenticated){
+            this.$router.push({ path: '/home' });
+          }
+        });
       },
 
     }
