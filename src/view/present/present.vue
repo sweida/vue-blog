@@ -95,41 +95,75 @@
 
       </div>
 
-      <el-dialog title="新增代金券" :visible.sync="voucherDialog" width="1000px">
-        <div class="form_box">
-          <h4>选择</h4>
-          <el-form ref="form" :model="form" label-width="120px" label-position='left'>
-            <el-form-item label="类型">
-              <el-radio-group v-model="form.type">
-                <el-radio :label="1">代金券</el-radio>
-                <el-radio :label="2">现金券</el-radio>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="是否专项">
-              <el-radio-group v-model="form.exclusive">
-                <el-radio :label="1">通用</el-radio>
-                <el-radio :label="2">专项</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-form>
-        </div>
-        <div class="form_box">
-          <h4>设置</h4>
-          <el-form ref="form" :model="form" label-width="120px" label-position='left'>
-            <el-form-item label="额度（元）">
-              <el-input size="medium" v-model="form.desc"></el-input>
-            </el-form-item>
-            <el-form-item label="数量（张）">
-              <el-input size="medium" v-model="form.desc"></el-input>
-            </el-form-item>
-            <el-form-item label="有效期（天）">
-              <el-input size="medium" v-model="form.desc"></el-input>
-            </el-form-item>
-          </el-form>
+      <el-dialog :visible.sync="presentDialog" title="编辑配料" width="1050px" class="burbox">
+        <div class="tableDialog">
+          <div class="tabs">
+            <p>所有配料</p>
+          </div>
+          <div class="burli1">
+            <el-table
+              :data="materials_arr"
+              stripe
+              style="width:100%"
+              max-height='450'
+              tooltip-effect="dark"
+              >
+
+              <el-table-column
+                prop="material_name"
+                label="配料名称"
+                >
+              </el-table-column>
+              <el-table-column
+                prop="unit"
+                label="单位">
+              </el-table-column>
+              <el-table-column
+              label="选择">
+                <template slot-scope="scope" >
+                  <el-button type="primary" @click="SelMaterials(scope.row)" size="small">添加</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+          <!-- 默认配料 -->
+          <div class="burli2">
+            <el-table
+              :data="materials_data"
+              stripe
+              style="width: 400px;margin-bottom:20px;"
+              max-height='200'
+              tooltip-effect="dark"
+            >
+              <el-table-column
+                prop="material_name"
+                label="已添加配料名称"
+                >
+              </el-table-column>
+              <el-table-column
+                prop="unit"
+                label="单位"
+                >
+              </el-table-column>
+              <el-table-column
+                prop="material_amount"
+                label="数量">
+                <template slot-scope="scope" >
+                  <el-input-number v-model="scope.row.material_amount"  :min="1"></el-input-number>
+                </template>
+              </el-table-column>
+              <el-table-column
+              label="操作">
+                <template slot-scope="scope" >
+                  <el-button type="danger" @click="delSelect(scope.$index)" size="small"><i class="el-icon-delete"></i></el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
         </div>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="voucherDialog = false" size="small">取 消</el-button>
-          <el-button type="primary" @click="voucherDialog = false" size="small">确 定</el-button>
+          <el-button @click="burdening = false" size="small">取 消</el-button>
+          <el-button type="primary" @click="sureBurden" size="small">保存配料</el-button>
         </span>
       </el-dialog>
 
@@ -144,7 +178,7 @@ export default {
       search: '',
       bed: 1,
       input: '',
-      voucherDialog: false,
+      presentDialog: false,
       editBtn: true,
       banner: 'static/img/phone.png',
       form: {
@@ -180,7 +214,7 @@ export default {
       console.log(key, keyPath)
     },
     added() {
-      this.$router.push('project/add_project')
+      this.presentDialog = true
     },
     //搜素客户
     searchBtn() {

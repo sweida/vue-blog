@@ -21,8 +21,8 @@
           {name: '员工管理', url: '/staff'},
           {name: '代金券', url: '/voucher'},
           {name: '会员卡', url: '/clubCard'},
-          {name: '项目', url: '/project'},
           {name: '赠送方案', url: '/present'},
+          {name: '项目', url: '/project'},
           {name: '套餐', url: '/setMeal'},
           {name: '云电话', url: '/phone'},
           {name: '设置', url: '/setting'}

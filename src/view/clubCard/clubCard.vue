@@ -104,7 +104,7 @@
       </div>
 
     <el-dialog :visible.sync="burdening" title="编辑配料" width="1050px" class="burbox">
-      <div class="burdening">
+      <div class="tableDialog">
         <div class="tabs">
           <p>所有配料</p>
         </div>
@@ -270,9 +270,7 @@ export default {
 </script>
 
 <style>
-.burbox .el-dialog__body {
-    padding: 0;
-}
+
 </style>
 <style scoped lang="scss">
 .main-content{
@@ -356,33 +354,6 @@ export default {
 }
 .el-table{
   margin-bottom: 50px;
-}
-
-// 添加配料弹框
-.burdening{
-  display: flex;
-  height: 550px;
-  .tabs{
-    width: 120px;
-    border-right: 2px solid #f3f8fe;
-    p{
-      margin-top: 40px;
-      background: #f7f7f7;
-      line-height: 36px;
-      text-indent: 20px;
-      color:#20a1ff;
-    }
-  }
-  .burli1{
-    width: 400px;
-    border-right: 2px solid #f3f8fe;
-    padding: 40px 20px 0 20px;
-  }
-  .burli2{
-    width: 400px;
-    margin-bottom: 20px;
-    padding: 40px 20px 0 20px;
-  }
 }
 
 </style>

@@ -10,10 +10,11 @@ const scope = resolve => require(['@/view/scope/scope'], resolve)
 const staff = resolve => require(['@/view/staff/staff'], resolve)
 const voucher = resolve => require(['@/view/voucher/voucher'], resolve)
 const clubCard = resolve => require(['@/view/clubCard/clubCard'], resolve)
-const project = resolve => require(['@/view/project/project'], resolve)
-const add_project = resolve => require(['@/view/project/add_project'], resolve)
 const present = resolve => require(['@/view/present/present'], resolve)
+const project = resolve => require(['@/view/project/project'], resolve)
+const addProject = resolve => require(['@/view/project/addProject'], resolve)
 const setMeal = resolve => require(['@/view/setMeal/setMeal'], resolve)
+const addSetmeal = resolve => require(['@/view/setMeal/addSetmeal'], resolve)
 const phone = resolve => require(['@/view/phone/phone'], resolve)
 const setting = resolve => require(['@/view/setting/setting'], resolve)
 
@@ -43,10 +44,11 @@ export default new Router({
         { path: '/staff', component: staff, name: '员工管理' },
         { path: '/voucher', component: voucher, name: '代金券' },
         { path: '/clubCard', component: clubCard, name: '会员卡' },
-        { path: '/project', component: project, name: '项目' },
-        { path: '/project/add_project', component: add_project, name: '添加项目' },
         { path: '/present', component: present, name: '赠送方案' },
+        { path: '/project', component: project, name: '项目' },
+        { path: '/project/addProject', component: addProject, name: '添加项目' },
         { path: '/setMeal', component: setMeal, name: '套餐' },
+        { path: '/setMeal/addSetmeal', component: addSetmeal, name: '添加套餐' },
         { path: '/phone', component: phone, name: '云电话' },
         { path: '/setting', component: setting, name: '设置' }
       ]

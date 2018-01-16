@@ -164,7 +164,7 @@ export default {
       console.log(key, keyPath)
     },
     added() {
-      this.$router.push('project/add_project')
+      this.$router.push('project/addProject')
     },
     //搜素客户
     searchBtn() {

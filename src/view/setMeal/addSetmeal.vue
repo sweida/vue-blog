@@ -1,6 +1,6 @@
 <template>
   <div >
-      <div class="header_title"><span><router-link to="/project">项目</router-link> <i class="el-icon-arrow-right"></i> 添加项目</span><i class="el-icon-info"></i></div>
+      <div class="header_title"><span><router-link to="/setMeal">套餐</router-link> <i class="el-icon-arrow-right"></i> 添加套餐</span><i class="el-icon-info"></i></div>
       <div class="main-content scroll">
         <div class="form_box form_top">
           <h5>基础信息</h5>
@@ -38,121 +38,7 @@
           </div>
 
         </div>
-        <div class="form_box">
-          <h5>适合肤质</h5>
-          <div class="li_box">
-            <el-checkbox-group
-              v-model="checkedCities1"
-              :min="1"
-              :max="2">
-              <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
-            </el-checkbox-group>
-            <div class="edit_box" v-if="skin">
-              <el-input size="mini"></el-input>
-              <el-button type="primary" size="mini">新增</el-button>
-              <el-button size="mini" @click="skinClose">取消</el-button>
-            </div>
-          </div>
-          <div class="right_but">
-            <el-button type="primary" size="mini" @click="skinBtn">编辑肤质</el-button>
-            <i class="el-icon-info"></i>
-          </div>
-        </div>
 
-        <div class="form_box">
-          <h5>功效</h5>
-          <div class="li_box">
-            <el-tag
-              v-for="tag in tags"
-              :key="tag.name"
-              closable
-              :disable-transitions="false"
-              @close="CloseTags(tag)"
-              >
-              {{tag.name}}
-            </el-tag>
-            <div class="edit_box" v-if="effect">
-              <el-input size="mini"></el-input>
-              <el-button type="primary" size="mini">新增</el-button>
-              <el-button size="mini" @click="effectClose">取消</el-button>
-            </div>
-          </div>
-          <div class="right_but">
-            <el-button type="primary" size="mini" @click="effectBtn">编辑功效</el-button>
-            <i class="el-icon-info"></i>
-          </div>
-        </div>
-
-        <div class="form_box">
-          <h5>配料</h5>
-          <div class="li_box">
-            <el-tag
-              v-for="tag in tags"
-              :key="tag.name"
-              closable
-              :disable-transitions="false"
-              @close="CloseTags(tag)"
-              >
-              {{tag.name}}
-            </el-tag>
-          </div>
-          <div class="right_but">
-            <el-button type="primary" size="mini" @click="burdenBtn">添加配料</el-button>
-            <i class="el-icon-info"></i>
-          </div>
-        </div>
-
-        <div class="form_box">
-          <h5>添加赠送+</h5>
-          <div class="li_box">
-            <el-tag
-              v-for="tag in tags"
-              :key="tag.name"
-              closable
-              :disable-transitions="false"
-              @close="CloseTags(tag)"
-              >
-              {{tag.name}}
-            </el-tag>
-          </div>
-          <div class="right_but">
-            <el-button type="primary" size="mini" @click="presentBtn">添加赠送</el-button>
-            <i class="el-icon-info"></i>
-          </div>
-        </div>
-
-        <div class="form_box">
-          <h5>推送</h5>
-          <div class="li_box" v-if="tuisong">
-          </div>
-          <div v-else>
-            <div class="tuis_box">
-              <div class="head_box">
-                <span>NO.1</span>
-                <el-input size="mini"></el-input><span>天</span>
-                <el-input size="mini"></el-input><span>分钟</span>
-                <el-input size="mini"></el-input><span>小时</span>
-                <i class="el-icon-close"></i>
-              </div>
-              <textarea class="scroll"></textarea>
-            </div>
-            <div class="tuis_box">
-              <div class="head_box">
-                <span>NO.1</span>
-                <el-input size="mini"></el-input><span>天</span>
-                <el-input size="mini"></el-input><span>分钟</span>
-                <el-input size="mini"></el-input><span>小时</span>
-                <i class="el-icon-close"></i>
-              </div>
-              <textarea class="scroll"></textarea>
-            </div>
-          </div>
-
-          <div class="right_but">
-            <el-button type="primary" size="mini">添加推送</el-button>
-            <i class="el-icon-info"></i>
-          </div>
-        </div>
         <div class="form_box">
           <h5>其它信息</h5>
           <el-form ref="form" :model="form" label-width="170px" label-position='left'>
@@ -216,13 +102,123 @@
             </el-form-item>
           </el-form>
         </div>
+
+        <div class="form_box setmeal_main">
+          <h5>套餐明细</h5>
+          <div class="contents">
+            <el-dropdown>
+              <el-button type="primary" size="small">
+                添加组合
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item>项目</el-dropdown-item>
+                <el-dropdown-item>产品</el-dropdown-item>
+                <el-dropdown-item>代金券</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+            <div class="meal_box">
+              <div class="head_box">
+                <span>NO.1</span>
+                <span>类型<em>产品</em></span>
+                <span>组合名称<el-input size="mini" width="200px"></el-input></span>
+                <span>是否必选
+                  <el-radio-group v-model="form.type">
+                    <el-radio :label="1">否</el-radio>
+                    <el-radio :label="2">是</el-radio>
+                  </el-radio-group>
+                </span>
+                <span>次数<el-input size="mini" class="count"></el-input></span>
+                <i class="el-icon-close"></i>
+              </div>
+              <div class="set_table">
+                <el-table
+                  :data="tableData"
+                  stripe
+                  style="width: 100%"
+                  max-height="600"
+                  tooltip-effect="dark"
+                  >
+                  <el-table-column
+                    prop="name"
+                    label="会所">
+                  </el-table-column>
+                  <el-table-column
+                    prop="room"
+                    label="房名">
+                  </el-table-column>
+                  <el-table-column
+                    prop="bed"
+                    label="床位数"
+                    >
+                  </el-table-column>
+                  <el-table-column
+                    label="操作">
+                    <template slot-scope="scope">
+                      <i class="el-icon-delete" @click="deleteBtn(scope.$index)"></i>
+                    </template>
+                  </el-table-column>
+                </el-table>
+                <div class="addbtn" @click="addseatBtn">添加+</div>
+              </div>
+            </div>
+            <div class="meal_box">
+              <div class="head_box">
+                <span>NO.2</span>
+                <span>类型<em>项目</em></span>
+                <span>组合名称<el-input size="mini"></el-input></span>
+                <span>是否必选
+                  <el-radio-group v-model="form.type">
+                    <el-radio :label="1">否</el-radio>
+                    <el-radio :label="2">是</el-radio>
+                  </el-radio-group>
+                </span>
+                <span>次数<el-input size="mini" class="count"></el-input></span>
+                <span>每次最多可选次数<el-input size="mini" class="count"></el-input></span>
+                <i class="el-icon-close"></i>
+              </div>
+              <div class="set_table">
+                <el-table
+                  :data="tableData"
+                  stripe
+                  style="width: 100%"
+                  max-height="600"
+                  tooltip-effect="dark"
+                  >
+                  <el-table-column
+                    prop="name"
+                    label="会所">
+                  </el-table-column>
+                  <el-table-column
+                    prop="room"
+                    label="房名">
+                  </el-table-column>
+                  <el-table-column
+                    prop="bed"
+                    label="床位数"
+                    >
+                  </el-table-column>
+                  <el-table-column
+                    label="操作">
+                    <template slot-scope="scope">
+                      <i class="el-icon-delete" @click="deleteBtn(scope.$index)"></i>
+                    </template>
+                  </el-table-column>
+                </el-table>
+                <div class="addbtn">添加+</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+
       </div>
       <div class="footer">
         <el-button type="primary" size="medium">保　存</el-button>
       </div>
 
-      <el-dialog :visible.sync="burdenDialog" title="编辑配料" width="1050px" class="burbox">
-        <div class="burdening">
+      <el-dialog :visible.sync="seatDialog" title="编辑配料" width="1050px" class="burbox">
+        <div class="tableDialog">
           <div class="tabs">
             <p>所有配料</p>
           </div>
@@ -340,6 +336,7 @@ export default {
   name: 'app',
   data() {
     return {
+      mealType: '产品',
       imageUrl: '',
       tuisong: false,
       checkedCities1: ['上海', '北京'],
@@ -347,12 +344,8 @@ export default {
       search: '',
       bed: 1,
       input: '',
-      voucherDialog: false,
+      seatDialog: false,
       banner: 'static/img/phone.png',
-      skin: false,      // 肤质
-      effect: false,    // 功效
-      burdenDialog: false,
-      presentDialog: false,
       textarea: '',
       form: {
         type: 1,
@@ -435,16 +428,19 @@ export default {
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
     },
+    addseatBtn() {
+      this.seatDialog = true
+    },
     beforeAvatarUpload(file) {
-      const isJPG = file.type === 'image/jpeg';
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      const isJPG = file.type === 'image/jpeg'
+      const isLt2M = file.size / 1024 / 1024 < 2
       if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!');
+        this.$message.error('上传头像图片只能是 JPG 格式!')
       }
       if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!');
+        this.$message.error('上传头像图片大小不能超过 2MB!')
       }
-      return isJPG && isLt2M;
+      return isJPG && isLt2M
     }
   }
 }
@@ -602,43 +598,7 @@ export default {
     }
   }
 }
-.tuis_box{
-  width: 800px;
-  border:1px solid #C0CCDA;
-  margin-bottom: 20px;
-  .head_box{
-    border-bottom: 1px solid #C0CCDA;
-    padding: 0px 20px;
-    background: #F7F7F7;
-    line-height: 40px;
-    text-align: left;
-    color:#666;
-    span:first-child{
-      font-weight: bold;
-      color:#475669;
-    }
-    .el-input{
-      margin: 0 5px 0 30px;
-      width: 80px;
-    }
-    i{
-      font-size: 20px;
-      float: right;
-      padding-top: 12px;
-      cursor: pointer;
-    }
-  }
-  textarea{
-    width: 100%;
-    outline: none;
-    resize: none;
-    border: 0;
-    color: #333;
-    box-sizing: border-box;
-    line-height: 24px;
-    padding:5px 12px;
-  }
-}
+
 .radio-input{
   .other{
     float: right;
@@ -651,6 +611,69 @@ export default {
       width: 100px;
   }
 }
+.contents{
+  flex:1;
+}
+.setmeal_main{
+  border-top: 1px solid #ddd;
+  padding:20px 40px;
+  margin-left: -40px;
+  .meal_box{
 
+    border:1px solid #C0CCDA;
+    margin-top: 20px;
+    .head_box{
+      border-bottom: 1px solid #C0CCDA;
+      padding: 0px 20px;
+      background: #F7F7F7;
+      line-height: 50px;
+      text-align: left;
+      color:#666;
+      span:first-child{
+        font-weight: bold;
+        color:#475669;
+      }
+      span{
+        margin-right: 30px;
+      }
+      em{
+        margin-left: 10px;
+        border:1px solid #ddd;
+        border-radius: 4px;
+        background: #fff;
+        width: 80px;
+        line-height: 26px;
+        display: inline-block;
+        text-align: center;
+      }
+      .el-input{
+        margin: 0 30px 0 5px;
+        width: 150px;
+      }
+      .el-input.count{
+        width: 80px;
+      }
+      i{
+        font-size: 20px;
+        float: right;
+        padding-top: 15px;
+        cursor: pointer;
+      }
+    }
+    .addbtn{
+      margin-top: 8px;
+      font-size: 14px;
+      line-height: 40px;
+      background: #F2F9FF;
+      color: #20A0FF;
+      text-align: center;
+      cursor: pointer;
+    }
+    .set_table{
+      padding: 20px;
+      box-sizing: border-box;
+    }
+  }
+}
 
 </style>
