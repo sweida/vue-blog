@@ -60,6 +60,13 @@
               </template>
             </el-table-column>
           </el-table>
+          <el-pagination background
+          @current-change="currentPageChange"
+          :current-page.sync="currentPage"
+          :page-size="limit"
+          :total="total"
+          layout="prev, pager, next, total">
+          </el-pagination>
         </div>
       </div>
       <div class="footer">
@@ -77,33 +84,60 @@
 </template>
 
 <script>
-
-
+import { getInfoCompany, getShop } from '../api/login'
 export default {
   name: 'app',
-  data(){
-    return{
-      edit:true,
-      dialogVisible:false,
-      banner:'static/img/phone.png',
+  data() {
+    return {
+      edit: true,
+      dialogVisible: false,
+      banner: 'static/img/phone.png',
       tableData: [{
         date: '2016-05-02',
         name: '王狮传奇南山总店',
-        phone:'13798661922',
+        phone: '13798661922',
         address: '深圳市南山区南头街道玉泉路麒麟花园A区12栋二楼202、203、204商铺'
-      }]
+      }],
+      total: 0, // 数据总条数
+      currentPage: 1, // 当前页码
+      limit: 10 // 每页数据条数
     }
   },
-  methods:{
-    editBtn(){
+  methods: {
+    editBtn() {
       this.edit = false
     },
-    sureEdit(){
+    sureEdit() {
       this.edit = true
     },
-    ipadBtn(){
+    ipadBtn() {
       this.dialogVisible = true
+    },
+    // 页码改变事件处理程序
+    currentPageChange(current) {
+      this.currentPage = current
+      this.getList()
+    },
+    // 获取表格数据
+    getList (url) {
+      // 生成请求参数
+      var data = {
+        page: this.currentPage,
+        rows: this.limit
+      }
+      return getShop(data).then(res => {
+        console.log(res)
+        // if (res.status === 200) {
+        //   this.tableData = res.data.list
+        //   this.total = res.data.total
+        // } else {
+        //   this.$toastMsg('error', '网络好像出了点问题！')
+        // }
+      })
     }
+  },
+  created() {
+    getInfoCompany()
   }
 }
 </script>

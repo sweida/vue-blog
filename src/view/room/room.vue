@@ -52,58 +52,67 @@
               </template>
             </el-table-column>
           </el-table>
+          <el-pagination background
+          @current-change="currentPageChange"
+          :current-page.sync="currentPage"
+          :page-size="limit"
+          :total="total"
+          layout="prev, pager, next, total">
+          </el-pagination>
         </div>
       </div>
-
-
   </div>
 </template>
 
 <script>
-
-
+import { getRoom } from '../../api/login'
+import tableCommon from '../../utils/tableCommon'
 export default {
+  mixins: [tableCommon],
   name: 'app',
-  data(){
-    return{
-      room:'',
-      bed:1,
+  data() {
+    return {
+      room: '',
+      bed: 1,
       tableData: [{
         date: '2016-05-02',
         name: '王狮传奇南山总店',
-        phone:'13798661922',
+        phone: '13798661922',
         address: '上海市普陀区金沙江路 1518 弄'
       }, {
         date: '2016-05  -04',
         name: '王狮传奇南山总店',
-        phone:'13798661922',
+        phone: '13798661922',
         address: '上海市普陀区金沙江路 1517 弄'
       }, {
         date: '2016-05-01',
         name: '王狮传奇南山总店',
-        phone:'13798661922',
+        phone: '13798661922',
         address: '上海市普陀区金沙江路 1519 弄'
       }, {
         date: '2016-05-03',
         name: '王狮传奇南山总店',
-        phone:'13798661922',
+        phone: '13798661922',
         address: '上海市普陀区金沙江路 1516 弄'
       }]
     }
   },
-  methods:{
-    addBtn(){
+  methods: {
+    addBtn() {
       this.$message.success('新增成功')
     },
-    deleteBtn(index){
+    deleteBtn(index) {
       this.$confirm('是否删除该员工?', '提示', {
         type: 'warning'
       }).then(() => {
-        this.tableData.splice(index,1)
+        this.tableData.splice(index, 1)
         this.$message.success('删除成功!')
       }).catch(() => {
-      });
+      })
     }
+  },
+  created() {
+    this.getList(getRoom)
   }
 
 }
