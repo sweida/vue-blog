@@ -18,20 +18,20 @@
           tooltip-effect="dark"
           >
           <el-table-column
-            prop="name"
+            prop="userName"
             label="员工">
           </el-table-column>
           <el-table-column
-            prop="post"
+            prop="ccRole.rolename"
             label="职位">
           </el-table-column>
           <el-table-column
-            prop="phone"
+            prop="mobilePhoneNum"
             label="手机号"
             >
           </el-table-column>
           <el-table-column
-            prop="organ"
+            prop="ccOrganDetail.organName"
             label="会所"
             >
           </el-table-column>
@@ -49,6 +49,7 @@
             </template>
           </el-table-column>
         </el-table>
+        <page :pageModel="pageModel" @selectList="selectRoleList"></page>
       </div>
     </div>
 
@@ -101,32 +102,24 @@
 </template>
 
 <script>
+import { getJob, getSttaf } from '../../api/login'
+import page from '../../components/common/page'
 export default {
   name: 'app',
-  data(){
-    return{
-      search:'',
-      dialogVisible:false,
-      img:'static/img/phone.png',
-      tableData: [{
-        name:'小可爱1',
-        post: '销售',
-        organ: '王狮传奇南山总店',
-        organ_id:'nanshan',
-        phone:'13798661922',
-      }, {
-        name:'小可爱2',
-        post: '销售',
-        organ: '王狮传奇南山总店',
-        organ_id:'nanshan',
-        phone:'13798661922',
-      }, {
-        name:'小可爱3',
-        post: '销售',
-        organ: '王狮传奇南山总店',
-        organ_id:'nanshan',
-        phone:'13798661922',
-      }],
+  components: {
+    page
+  },
+  data() {
+    return {
+      search: '',
+      dialogVisible: false,
+      img: 'static/img/phone.png',
+      pageModel: {
+        page: 1,
+        rows: 10,
+        sumCount: 0
+      },
+      tableData: [],
       newstaff:{
         name:'',
         post: '',
@@ -137,35 +130,46 @@ export default {
       }
     }
   },
-  methods:{
-    added(){
+  methods: {
+    selectRoleList () {
+
+    },
+    added() {
       this.dialogVisible = true
-      this.newstaff={
+      this.newstaff = {
         name: '',
         post: '',
         organ_id: 'nanshan',
         phone: '',
         direct: 1,
-        moblie: 1,
+        moblie: 1
       }
     },
-    edit(index){
+    edit(index) {
       this.dialogVisible = true
       this.newstaff = this.tableData[index]
     },
-    deleteBtn(index){
+    deleteBtn(index) {
       this.$confirm('是否删除该员工?', '提示', {
         type: 'warning'
       }).then(() => {
-        this.tableData.splice(index,1)
+        this.tableData.splice(index, 1)
         this.$message.success('删除成功!')
       }).catch(() => {
-      });
+      })
     },
     //搜素客户
     searchBtn() {
       console.log('搜索')
-    },
+    }
+  },
+  created() {
+    getJob().then(res =>{
+      console.log(res)
+    })
+    getSttaf(this.pageModel, {}).then(res => {
+      this.tableData = res.data.data.rows
+    })
   }
 }
 </script>

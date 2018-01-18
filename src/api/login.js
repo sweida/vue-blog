@@ -7,13 +7,29 @@ export function getInfoCompany() {
     method: 'GET'
   })
 }
-export function getShop(data) {
+// 修改企业信息
+export function changeCompanyInfo(data) {
   return fetch({
-    url: `apis/organ/page/${data.page}/${data.rows}`,
-    method: 'post',
+    url: 'apis/enterprise',
+    method: 'PUT',
     data
   })
 }
+// 店面
+export function getShop() {
+  return fetch({
+    url: 'apis/organ',
+    method: 'post'
+  })
+}
+export function changeShop(data) {
+  return fetch({
+    url: 'apis/organ',
+    method: 'PUT',
+    data
+  })
+}
+// 房间
 export function addRoom(data) {
   return fetch({
     url: 'apis/rooms',
@@ -21,9 +37,37 @@ export function addRoom(data) {
     data
   })
 }
-export function getRoom(data) {
+export function delRoom(data) {
   return fetch({
-    url: `apis/rooms/page/${data.page}/${data.rows}`,
+    url: `apis/rooms/${data}`,
+    method: 'DELETE',
+    data
+  })
+}
+export function getRoom(pageModel, data) {
+  return fetch({
+    url: `apis/rooms/page/${pageModel.page}/${pageModel.rows}`,
+    method: 'post',
+    data
+  })
+}
+// 员工
+export function getJob() {
+  return fetch({
+    url: 'apis/role/all',
+    method: 'GET'
+  })
+}
+export function getSttaf(pageModel, data) {
+  return fetch({
+    url: `apis/user/page/${pageModel.page}/${pageModel.rows}`,
+    method: 'post',
+    data
+  })
+}
+export function addSttaf(data) {
+  return fetch({
+    url: 'apis/user',
     method: 'post',
     data
   })

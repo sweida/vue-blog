@@ -10,10 +10,10 @@ const service = axios.create({
 
 // request拦截器
 service.interceptors.request.use(config => {
-  if (config.url.indexOf("authentication/form") != -1) {
+  if (config.url == "apis/authentication/form") {
     config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
   } else {
-    config.headers['Content-Type'] = 'application/json'
+    config.headers['Content-Type'] = 'application/json;charset=utf-8'
   }
   return config
 }, error => {
