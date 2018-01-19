@@ -14,7 +14,7 @@
             <p>企业名称</p>
             <input type="text">
           </div>
-
+          <el-button type="primary" size="mini" style="text-align:right">按时</el-button>
           <li @click="ipadBtn">企业文化修改（平板端）</li>
         </div>
         <div class="company_table">

@@ -52,12 +52,13 @@
               </template>
             </el-table-column>
           </el-table>
-          <el-pagination background
-          @current-change="currentPageChange"
-          :current-page.sync="currentPage"
-          :page-size="limit"
-          :total="total"
-          layout="prev, pager, next, total">
+          <el-pagination
+            background
+            @current-change="currentPageChange"
+            :current-page.sync="currentPage"
+            :page-size="limit"
+            :total="total"
+            layout="prev, pager, next, total">
           </el-pagination>
         </div>
       </div>
@@ -94,7 +95,10 @@ export default {
         name: '王狮传奇南山总店',
         phone: '13798661922',
         address: '上海市普陀区金沙江路 1516 弄'
-      }]
+      }],
+      total: 0, // 数据总条数
+      currentPage: 1, // 当前页码
+      limit: 10 // 每页数据条数
     }
   },
   methods: {

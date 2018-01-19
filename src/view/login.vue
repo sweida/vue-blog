@@ -27,7 +27,7 @@
         show:true,
         checked: true,
         param:{
-          username:'admin',
+          username:'admin1',
           password:'123456'
         }
       };
