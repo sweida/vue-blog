@@ -1,10 +1,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import accout from './modules/accout'
+import index from './modules/index'
+import getters from './getters'
 
 Vue.use(Vuex)
-const state = {
-    count:1
-}
 export default new Vuex.Store({
-    state
-});
+  modules: {
+    accout,
+    index
+  },
+  getters,
+  strict: process.env.NODE_ENV !== 'production'
+})

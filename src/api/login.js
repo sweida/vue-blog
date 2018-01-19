@@ -15,6 +15,13 @@ export function changeCompanyInfo(data) {
     data
   })
 }
+// 查询企业文化信息
+export function getCurtureCompany(data) {
+  return fetch({
+    url: `apis/enterprise/${data}`,
+    method: 'GET'
+  })
+}
 // 店面
 export function getShop() {
   return fetch({
@@ -72,10 +79,20 @@ export function addSttaf(data) {
     data
   })
 }
+export function delSttaf(userId) {
+  return fetch({
+    url: `apis/user/${userId}`,
+    method: 'DELETE'
+  })
+}
 export function toLogin(data) {
   return fetch({
     url: 'apis/authentication/form',
     method: 'post',
-    data: qs.stringify(data)
+    data: qs.stringify(data),
+    auth: {
+      username: 'article',
+      password: 'articleSecret'
+    }
   })
 }

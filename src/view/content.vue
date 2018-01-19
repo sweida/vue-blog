@@ -83,7 +83,7 @@
 
 <script>
 import { clone } from '../utils/common'
-import { getInfoCompany, changeCompanyInfo, getShop, changeShop } from '../api/login'
+import { getInfoCompany, changeCompanyInfo, getCurtureCompany, getShop, changeShop } from '../api/login'
 export default {
   name: 'app',
   data() {
@@ -97,9 +97,6 @@ export default {
     }
   },
   methods: {
-    handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url
-    },
     editBtn() {
       this.edit = false
     },
@@ -116,15 +113,7 @@ export default {
     ipadBtn() {
       this.dialogVisible = true
     },
-    // 获取表格数据
-    getList() {
-      getShop().then(res => {
-        this.tableData = res.data.data
-      })
-    },
-    handlePreview(file, fileList) {
-      console.log(file, fileList)
-    },
+    // 上传图片
     fileUploadSuccess(response) {
       this.banner = response.data
       this.$message.success('图像上传成功！')
@@ -143,18 +132,39 @@ export default {
       }
       return isJPG && isLt2M
     },
+    // 获取店面表格数据
+    getList() {
+      getShop().then(res => {
+        this.tableData = res.data.data
+      })
+    },
+    // 得到企业信息
+    getCompanyInfo() {
+      getInfoCompany().then(res => {
+        this.companyInfo = res.data.data
+      })
+    },
     // 修改企业信息
     saveCompanyInfo() {
       changeCompanyInfo(this.companyInfo).then(res => {
+        if (res.data.code == 200) {
+          this.$message.success('保存成功！')
+        } else {
+          this.$message.error('操作失败！')
+        }
+      })
+    },
+    // 得到企业文化信息
+    getCompanyCurture() {
+      getCurtureCompany('001').then(res => {
         console.log(res)
       })
     }
   },
   created() {
     this.getList()
-    getInfoCompany().then(res => {
-      this.companyInfo = res.data.data
-    })
+    this.getCompanyInfo()
+    this.getCompanyCurture()
   }
 }
 </script>

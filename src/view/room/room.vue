@@ -92,6 +92,7 @@ export default {
       addRoom(param).then(res => {
         if (res.data.code == 200) {
           this.tableData.unshift(param)
+          this.pageModel.sumCount++
           this.$message.success('新增成功!')
         }
       })

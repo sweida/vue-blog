@@ -1,5 +1,6 @@
 import axios from "axios"
 import router from "@/router"
+import store from "../store"
 import { Message } from "element-ui"
 
 // 创建axios实例
@@ -14,6 +15,8 @@ service.interceptors.request.use(config => {
     config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
   } else {
     config.headers['Content-Type'] = 'application/json;charset=utf-8'
+    let Authorization = store.getters.token.token_type + ' ' + store.getters.token.access_token
+    config.headers['Authorization'] = Authorization
   }
   return config
 }, error => {
@@ -25,7 +28,7 @@ service.interceptors.request.use(config => {
 // respone拦截器
 service.interceptors.response.use(
   res => {
-    if (res.data.status == 401) {
+    if (res.status == 401) {
       Message({
         message: res.data.msg,
         type: 'error',
@@ -36,14 +39,24 @@ service.interceptors.response.use(
         }
       })
       return res
-    } else {
+    } else if(res.status==500){
+      Message({
+        message: "服务器错误",
+        type: 'error',
+        duration: 2000,
+        onClose() {
+          // removeToken()
+          router.push('/')
+        }
+      })
+    }else{
       return res
     }
   },
   error => {
-    console.log('err' + error)// for debug
+    console.log('err:' + error.response.status)// for debug
     Message({
-      message: error,
+      message: error.response.data.message,
       type: 'error',
       duration: 5 * 1000
     })
