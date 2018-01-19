@@ -23,7 +23,7 @@
             <input type="text" v-model="companyInfo.enterpriseName">
           </div>
           <div class="saveInfo">
-            <el-button type="primary" size="medium" @click="saveCompanyInfo">保　存</el-button>
+            <el-button type="primary" size="small" @click="saveCompanyInfo" >保　存</el-button>
           </div>
           <li @click="ipadBtn">企业文化修改（平板端）</li>
         </div>
@@ -47,7 +47,7 @@
               </template>
               <template slot-scope="scope" >
                 <span v-if="edit">{{scope.row.organPhone}}</span>
-                <el-input size="small" v-model="scope.row.organPhone" v-else></el-input>
+                <el-input size="small" v-model="organinfo.organPhone" v-else></el-input>
               </template>
             </el-table-column>
             <el-table-column
@@ -56,13 +56,13 @@
               width="250px">
               <template slot-scope="scope" >
                 <span v-if="edit">{{scope.row.address}}</span>
-                <el-input size="small" v-model="scope.row.address" v-else></el-input>
+                <el-input size="small" v-model="organinfo.address" v-else></el-input>
               </template>
             </el-table-column>
             <el-table-column
               label="操作">
               <template slot-scope="scope">
-                <i class="el-icon-edit" @click="editBtn" v-if="edit"></i>
+                <i class="el-icon-edit" @click="editBtn(scope.$index)" v-if="edit"></i>
                 <template v-else>
                   <el-button size="small" type="primary" @click="sureEdit(scope.row)">确认</el-button>
                   <el-button size="small" @click="edit=true">取消</el-button>
@@ -93,14 +93,18 @@ export default {
       dialogVisible: false,
       banner: 'static/img/phone.png',
       tableData: [],
-      companyInfo: {}
+      companyInfo: {},
+      organinfo: {}
     }
   },
   methods: {
-    editBtn() {
+    editBtn(index) {
       this.edit = false
+      this.organinfo = clone(this.tableData[index])
     },
     sureEdit(item) {
+      item.organPhone = this.organinfo.organPhone
+      item.address = this.organinfo.address
       changeShop(item).then(res => {
         if (res.data.code == 200) {
           this.$message.success('修改分店信息成功！')
@@ -219,7 +223,7 @@ export default {
   }
   .company_table{
     margin: 40px;
-    width: 700px;
+    width: 750px;
   }
 }
 

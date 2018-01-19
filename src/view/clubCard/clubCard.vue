@@ -8,27 +8,27 @@
             <div class="input_box">
               <li>
                 <label for="">会员卡级别</label>
-                <el-input size="small" placeholder="请输出会员名称" v-model="edit.level"></el-input>
+                <el-input size="small" placeholder="请输出会员名称" v-model="vipinput.vipTypeName"></el-input>
               </li>
               <li>
                 <label for="">起点金额</label>
-                <el-input size="small" v-model="edit.money"></el-input>
+                <el-input size="small" v-model="vipinput.startingPointSum"></el-input>
               </li>
               <li>
-                <label for="">有效期（天）</label>
-                <el-input size="small" v-model="edit.time"></el-input>
+                <label for="">有效期（月）</label>
+                <el-input size="small" v-model="vipinput.vipValidityDate"></el-input>
               </li>
               <li>
                 <label for="">项目折扣</label>
-                <el-input size="small" v-model="edit.project"></el-input>
+                <el-input size="small" v-model="vipinput.discountProduct"></el-input>
               </li>
               <li>
                 <label for="">产品折扣</label>
-                <el-input size="small" v-model="edit.product"></el-input>
+                <el-input size="small" v-model="vipinput.discountProject"></el-input>
               </li>
               <li>
                 <label for="">套餐折扣</label>
-                <el-input size="small" v-model="edit.setmeal"></el-input>
+                <el-input size="small" v-model="vipinput.discountMeal"></el-input>
               </li>
             </div>
             <div class="addpresent">
@@ -46,54 +46,55 @@
               </div>
             </div>
           </div>
-          <el-button type="primary" size="small" @click="sureAdd" v-if="change">确认新增</el-button>
+          <el-button type="primary" size="small" @click="vipinputBtn" v-if="change">确认新增</el-button>
           <template v-else>
-            <el-button type="primary" size="small" @click="sureAdd" >保　存</el-button>
+            <el-button type="primary" size="small" @click="sureChange" >保　存</el-button>
             <el-button  size="small" @click="cancel">取　消</el-button>
           </template>
           <el-table
-            :data="tableData"
+            :data="vipcardList"
             stripe
             style="width: 100%"
-            max-height="600"
+            max-height="345"
             tooltip-effect="dark"
             >
             <el-table-column
-              prop="level"
+              prop="vipTypeName"
               label="会员卡级别">
             </el-table-column>
             <el-table-column
-              prop="money"
+              prop="startingPointSum"
               label="起点金额">
             </el-table-column>
             <el-table-column
-              prop="project"
+              prop="discountProject"
               label="项目折扣"
               >
             </el-table-column>
             <el-table-column
-              prop="product"
+              prop="discountProduct"
               label="产品折扣"
               >
             </el-table-column>
             <el-table-column
-              prop="setmeal"
+              prop="discountMeal"
               label="套餐折扣"
               >
             </el-table-column>
             <el-table-column
               label="修改">
               <template slot-scope="scope">
-                <i class="el-icon-edit" @click="editBtn(scope.$index)"></i>
+                <i class="el-icon-edit" @click="editvipBtn(scope.$index, scope.row)"></i>
               </template>
             </el-table-column>
             <el-table-column
               label="删除">
               <template slot-scope="scope">
-                <i class="el-icon-delete" @click="deleteBtn(scope.$index)"></i>
+                <i class="el-icon-delete" @click="deleteVip(scope.$index, scope.row)"></i>
               </template>
             </el-table-column>
           </el-table>
+          <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
         </div>
         <div class="explain">
           <h4>活动说明</h4>
@@ -167,6 +168,7 @@
               </template>
             </el-table-column>
           </el-table>
+
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -175,63 +177,57 @@
       </span>
     </el-dialog>
 
-
-
   </div>
 </template>
 
 <script>
+import { addvipCard, editvipCard, getvipCard, delvipCard } from '@/api/setting'
+import page from '@/components/common/page'
+import { clone } from '@/utils/common'
 export default {
   name: 'app',
-  data(){
-    return{
-      bed:1,
-      input:'',
-      burdening:false,
-      textarea:'这是说明',
-      banner:'static/img/phone.png',
-      change:true,
-      edit:{
-        level: '',
-        money: '',
-        time:'',
-        project: '',
-        product: '',
-        setmeal: ''
+  components: {
+    page
+  },
+  data() {
+    return {
+      bed: 1,
+      input: '',
+      burdening: false,
+      textarea: '这是说明',
+      banner: 'static/img/phone.png',
+      change: true,
+      materials_data: [],
+      materials_arr: [],
+      pageModel: {
+        page: 1,
+        rows: 10,
+        sumCount: 0
       },
-      tableData: [{
-        level: '经理人一级',
-        money: '20000',
-        project: 0.9,
-        product: 0.9,
-        setmeal: 0.9
-      }, {
-        level: '经理人二级',
-        money: '50000',
-        project: 0.8,
-        product: 0.8,
-        setmeal: 0.8
-      }, {
-        level: '经理人三级',
-        money: '100000',
-        project: 0.7,
-        product: 0.7,
-        setmeal: 0.7
-      }, {
-        level: '经理人四级',
-        money: '200000',
-        project: 0.6,
-        product: 0.6,
-        setmeal: 0.6
-      }],
+      vipinput: {},
+      vipCard: {
+        vipTypeName: '',
+        startingPointSum: '',
+        vipValidityDate: '',
+        discountProduct: '',
+        discountProject: '',
+        discountMeal: ''
+      },
+      vipTypeId: '',
+      vipcardList: [],
+      ccVipGiftList: [],
       tags: [
-        { name: '标签一',},
-        { name: '标签二',},
-        { name: '标签三',},
-        { name: '标签四',},
-        { name: '标签五',}
+        {name: '标签一'},
+        {name: '标签二'},
+        {name: '标签三'},
+        {name: '标签四'},
+        {name: '标签五'}
       ]
     }
+  },
+  created() {
+    this.vipinput = clone(this.vipCard)
+    this.getvipList()
   },
   methods: {
     subText() {
@@ -245,27 +241,119 @@ export default {
     },
     sureBurden() {
     },
-    sureAdd() {
-      this.$message.success('会员卡添加成功')
+    // 添加会员卡
+    vipinputBtn() {
+      if (this.vipinput.vipTypeName == '' || this.vipinput.startingPointSum == '') {
+        this.$message.error('会员卡信息不能为空')
+      } else {
+        let param = Object.assign({
+          enterpriseId: '001',
+          // hasGift: 1, // 是否有礼品赠送 0是 1否
+          // isDelete: 0,
+          ccVipGiftList: [
+            {
+              giftMoney: 222,
+              giftName: '白白',
+              giftNum: 2
+            },
+            {
+              giftMoney: 333,
+              giftName: '小白白',
+              giftNum: 3
+            }
+          ]
+        }, this.vipinput)
+        addvipCard(param).then(res => {
+          console.log('添加会员卡', param, this.vipCard, res)
+          if (res.data.code == 200) {
+            this.vipcardList.unshift(param)
+            this.getvipList()
+            this.$message.success('新增成功!')
+          } else {
+            this.$message.error('新增失败!')
+          }
+          this.vipinput = clone(this.vipCard)
+        })
+      }
     },
-    deleteBtn(index) {
+    // 删除会员卡等级
+    deleteVip(index, row) {
+      console.log(row)
       this.$confirm('是否删除该会员卡等级?', '提示', {
         type: 'warning'
       }).then(() => {
-        this.tableData.splice(index, 1)
-        this.$message.success('删除成功!')
+        delvipCard(row.vipTypeId).then(res => {
+          if (res.data.code == 200) {
+            console.log(res)
+            this.vipcardList.splice(index, 1)
+            this.$message.success('删除成功!')
+            this.getvipList()
+          } else {
+            this.$message.error('删除失败!')
+          }
+        })
       }).catch(() => {
       })
     },
-    editBtn(index) {
+    // 编辑会员卡 vipTypeId
+    editvipBtn(index, row) {
+      console.log(row)
       this.change = false
-      this.edit = this.tableData[index]
+      this.vipinput = clone(this.vipcardList[index])
+      this.vipTypeId = row.vipTypeId
+    },
+    // 保存修改
+    sureChange() {
+      if (this.vipinput.vipTypeName == '' || this.vipinput.startingPointSum == '') {
+        this.$message.error('会员卡信息不能为空')
+      } else {
+        let param = Object.assign({
+          enterpriseId: '001',
+          vipTypeId: this.vipTypeId,
+          ccVipGiftList: [
+            {
+              giftMoney: 222,
+              giftName: '白白',
+              giftNum: 2
+            },
+            {
+              giftMoney: 333,
+              giftName: '小白白',
+              giftNum: 3
+            }
+          ]
+        }, this.vipinput)
+        editvipCard(param).then(res => {
+          console.log('编辑会员卡', param, this.vipCard, res)
+          if (res.data.code == 200) {
+            this.vipcardList.unshift(param)
+            this.getvipList()
+            this.$message.success('修改成功!')
+            this.change = true
+            this.vipTypeId = ''
+          } else {
+            this.$message.error('修改失败!')
+          }
+          this.vipinput = clone(this.vipCard)
+        })
+      }
     },
     cancel() {
       this.change = true
-      this.edit = ''
+      this.vipinput = clone(this.vipCard)
+    },
+    getvipList() {
+      getvipCard(this.pageModel, {}).then(res => {
+        console.log('获取会员卡列表', res)
+        this.pageModel.sumCount = res.data.data.total
+        this.vipcardList = res.data.data.rows
+      })
+    },
+    selectRoleList() {
+      this.getvipList()
     }
   }
+
 }
 </script>
 
@@ -353,7 +441,7 @@ export default {
   }
 }
 .el-table{
-  margin-bottom: 50px;
+  margin-bottom: 25px;
 }
 
 </style>

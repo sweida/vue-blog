@@ -1,11 +1,11 @@
 <template>
   <div >
       <div class="header_title">房间</div>
-      <div class="main-content">
+      <div class="main-content scroll">
         <div class="main-head">
           <div>
             <label for="">会所名称</label>
-            <span>王狮传奇南山总店</span>
+            <span>{{organName}}</span>
           </div>
           <div>
             <label for="">房间名</label>
@@ -35,7 +35,7 @@
             <el-table-column
               label="会所">
               <template slot-scope="scope">
-                <span>王狮传奇南山总店</span>
+                <span>{{organName}}</span>
               </template>
             </el-table-column>
             <el-table-column
@@ -54,14 +54,14 @@
               </template>
             </el-table-column>
           </el-table>
-          <page :pageModel="pageModel" @selectList="selectRoleList"></page>
+          <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
         </div>
       </div>
   </div>
 </template>
 
 <script>
-import { getRoom, addRoom, delRoom } from '@/api/login'
+import { getRoom, addRoom, delRoom } from '@/api/setting'
 import tableCommon from '@/utils/tableCommon'
 import page from '@/components/common/page'
 export default {
@@ -71,6 +71,7 @@ export default {
   },
   data() {
     return {
+      organName: '王狮传奇南山总店',
       roomName: '',
       bedsAmount: '',
       pageModel: {
@@ -81,32 +82,46 @@ export default {
       tableData: []
     }
   },
+  computed: {
+
+  },
   methods: {
     addBtn() {
-      let param = {
-        enterprise_id: '001',
-        organId: '1',
-        roomName: this.roomName,
-        bedsAmount: this.bedsAmount
-      }
-      addRoom(param).then(res => {
-        if (res.data.code == 200) {
-          this.tableData.unshift(param)
-          this.pageModel.sumCount++
-          this.$message.success('新增成功!')
+      if (this.roomName == '' || this.bedsAmount == '') {
+        this.$message.error('房间名和床位数不能为空')
+      } else {
+        let param = {
+          enterprise_id: '001',
+          organId: '1',
+          roomName: this.roomName,
+          bedsAmount: this.bedsAmount
         }
-      })
-      //this.$message.success('新增成功')
+        addRoom(param).then(res => {
+          if (res.data.code == 200) {
+            this.tableData.unshift(param)
+            // this.pageModel.sumCount++
+            this.getRoomList()
+            this.$message.success('新增成功!')
+            this.roomName = ''
+            this.bedsAmount = ''
+          } else {
+            this.$message.error('新增失败!')
+          }
+        })
+      }
     },
     deleteBtn(index, row) {
-      this.$confirm('是否删除该员工?', '提示', {
+      console.log(row)
+      this.$confirm('是否删除该房间?', '提示', {
         type: 'warning'
       }).then(() => {
-        console.log(row)
         delRoom(row.roomId).then(res => {
           if (res.data.code == 200) {
             this.tableData.splice(index, 1)
             this.$message.success('删除成功!')
+            // this.getRoomList()
+          } else {
+            this.$message.error('删除失败!')
           }
         })
       }).catch(() => {
