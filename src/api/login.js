@@ -1,5 +1,12 @@
 import fetch from '@/utils/fetch'
 import qs from 'qs'
+// 菜单
+export function getMenu() {
+  return fetch({
+    url: 'apis/menu/coupon',
+    method: 'GET'
+  })
+}
 // 查询企业信息
 export function getInfoCompany() {
   return fetch({
@@ -58,6 +65,7 @@ export function getRoom(pageModel, data) {
     data
   })
 }
+
 // 员工
 export function getJob() {
   return fetch({
@@ -83,6 +91,13 @@ export function delSttaf(userId) {
   return fetch({
     url: `apis/user/${userId}`,
     method: 'DELETE'
+  })
+}
+export function editSttaf(data) {
+  return fetch({
+    url: 'apis/user',
+    method: 'PUT',
+    data
   })
 }
 export function toLogin(data) {

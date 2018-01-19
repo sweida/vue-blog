@@ -23,6 +23,7 @@
           style="width: 100%"
           max-height="600"
           tooltip-effect="dark"
+          v-loading="loading"
           >
           <el-table-column
             prop="userName"
@@ -46,7 +47,7 @@
             label="修改"
             >
             <template slot-scope="scope">
-              <i class="el-icon-edit" @click="edit(scope.$index)"></i>
+              <i class="el-icon-edit" @click="edit(scope.row)"></i>
             </template>
           </el-table-column>
           <el-table-column
@@ -66,40 +67,41 @@
         <div class="user-img">
           <img :src="img" alt="">
         </div>
-        <el-form ref="form" v-model="newstaff" label-width="90px" >
-          <el-form-item label="姓名">
+        <el-form :rules="rules" ref="ruleForm" :model="newstaff" label-width="90px" >
+          <el-form-item label="姓名" prop="userName">
            <el-input v-model="newstaff.userName" size="mini" ></el-input>
           </el-form-item>
-          <el-form-item label="手机号">
-           <el-input v-model="newstaff.mobile_phone_num" size="mini" ></el-input>
+          <el-form-item label="手机号" prop="mobilePhoneNum">
+           <el-input v-model="newstaff.mobilePhoneNum" size="mini" ></el-input>
           </el-form-item>
-          <el-form-item label="职位">
+          <el-form-item label="职位" prop="ccRole.id">
             <el-select v-model="newstaff.ccRole.id" placeholder="请选择职位" size="mini">
               <el-option :label="item.rolename" :value="item.id" v-for="item in jobList"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="会所">
-            <el-select v-model="organId" placeholder="请选择会所" size="mini">
+            <el-input  size="mini" placeholder="王狮传奇南山总店" :readonly="true"></el-input>
+            <!-- <el-select v-model="organId" placeholder="请选择会所" size="mini">
               <el-option label="王狮传奇南山总店" value="1"></el-option>
-            </el-select>
+            </el-select> -->
           </el-form-item>
-          <el-form-item label="直接添加">
+          <el-form-item label="直接添加" v-if="addShow">
             <el-radio-group v-model="newstaff.direct_add">
               <el-radio :label="1">是</el-radio>
-              <!-- <el-radio :label="1">否</el-radio> -->
             </el-radio-group>
           </el-form-item>
           <el-form-item label="登录移动端">
-            <el-radio-group v-model="newstaff.login_status">
-              <el-radio :label="0">允许</el-radio>
-              <el-radio :label="1">不允许</el-radio>
+            <el-radio-group v-model="newstaff.loginStatus">
+              <el-radio :label="'0'">允许</el-radio>
+              <el-radio :label="'1'">不允许</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false" size="small">取 消</el-button>
-        <el-button type="primary" @click="confirmAdd">确 定</el-button>
+        <el-button type="primary" @click="confirmAdd('ruleForm')" v-if="addShow">确 定</el-button>
+        <el-button type="primary" @click="confirmEdit" v-else>确 定</el-button>
       </span>
     </el-dialog>
 
@@ -107,7 +109,7 @@
 </template>
 
 <script>
-import { getJob, getSttaf, delSttaf, addSttaf } from '../../api/login'
+import { getJob, getSttaf, delSttaf, addSttaf, editSttaf } from '../../api/login'
 import page from '../../components/common/page'
 export default {
   name: 'app',
@@ -116,6 +118,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       inputContent: '',
       selectInput: '',
       search: '',
@@ -129,36 +132,63 @@ export default {
       jobList: [], // 员工职位
       tableData: [],
       organId: '',
+      addShow: true, //添加时直接添加show
       newstaff: {
         ccRole: {
           id: ''
         },
         userName: '',
-        mobile_phone_num: '',
+        mobilePhoneNum: '',
         direct_add: 1,
-        login_status: 1
+        loginStatus: '0'
+      },
+      rules: {
+        userName: [
+          { required: true, message: '请输入姓名', trigger: 'change' }
+        ],
+        mobilePhoneNum: [
+          { required: true, message: '请输入手机号', trigger: 'change' },
+          { pattern: /^1(3|4|5|7|8)\d{9}$/, message: '请输入正确的手机号', trigger: 'change' }
+        ],
+        'ccRole.id': [
+          { required: true, message: '请选择职位', trigger: 'change' }
+        ]
       }
     }
   },
   methods: {
     selectRoleList () {
-
+      this.getSttafList()
     },
     added() {
+      this.addShow = true
       this.dialogVisible = true
       this.newstaff = {
         ccRole: {
           id: ''
         },
         userName: '',
-        mobile_phone_num: '',
+        mobilePhoneNum: '',
         direct_add: 1,
-        login_status: 1
+        loginStatus: '0'
       }
     },
-    edit(index) {
+    // 员工编辑与确认
+    edit(row) {
+      this.addShow = false
       this.dialogVisible = true
-      this.newstaff = this.tableData[index]
+      this.newstaff = row
+    },
+    confirmEdit() {
+      editSttaf(this.newstaff).then(res => {
+        if (res.data.code == 200) {
+          this.getSttafList()
+          this.$message.success(res.data.msg)
+          this.dialogVisible = false
+        } else {
+          this.$message.error(res.data.msg)
+        }
+      })
     },
     // 删除员工
     deleteBtn(index, row) {
@@ -167,7 +197,7 @@ export default {
       }).then(() => {
         delSttaf(row.userId).then(res => {
           if (res.status == 200) {
-            this.tableData.splice(index, 1)
+            this.getSttafList()
             this.$message.success('删除成功!')
           }
         })
@@ -175,11 +205,21 @@ export default {
       })
     },
     // 新增员工
-    confirmAdd() {
-      let param = this.newstaff
-      param.userId = this.newstaff.mobile_phone_num
-      addSttaf(this.newstaff).then(res => {
-        console.log(res)
+    confirmAdd(formName) {
+      this.$refs.ruleForm.validate((valid) => {
+        if (valid) {
+          let param = this.newstaff
+          param.userId = this.newstaff.mobilePhoneNum
+          addSttaf(param).then(res => {
+            if (res.data.code == 200) {
+              this.getSttafList()
+              this.$message.success(res.data.msg)
+              this.dialogVisible = false
+            } else {
+              this.$message.error(res.data.msg)
+            }
+          })
+        }
       })
     },
     // 搜素客户
@@ -188,10 +228,11 @@ export default {
     },
     // 员工列表
     getSttafList() {
+      this.loading = true
       let param = {}
       param[this.selectInput] = this.inputContent
       getSttaf(this.pageModel, param).then(res => {
-        console.log(res.data.data.rows)
+        this.loading = false
         this.pageModel.sumCount = res.data.data.total
         this.tableData = res.data.data.rows
       })

@@ -4,14 +4,42 @@
       <div class="main-content">
         <div class="left_tree scroll">
           <el-menu
-            default-active="2"
             class="el-menu-vertical-demo"
             @open="handleOpen"
             @close="handleClose">
-            <el-submenu index="1">
+            <template v-for="(item, index) in menuList" :keys="index">
+              <el-menu-item :index="item.url" v-if="item.childMenu==null">
+                <template slot="title">
+                  <i class="el-icon-location"></i>
+                  <span>{{item.name}}</span>
+                </template>
+              </el-menu-item>
+              <el-submenu :index="item.url" v-else>
+                <template slot="title">
+                  <i class="el-icon-location"></i>
+                  <span>{{item.name}}</span>
+                </template>
+                <template v-for="(child, index1) in item.childMenu" :keys="index1">
+                  <el-menu-item :index="child.url" v-if="child.childMenu==null">
+                    <i class="el-icon-location"></i>
+                    <span>{{child.name}}</span>
+                  </el-menu-item>
+                  <el-submenu :index="child.url" v-else>
+                    <template slot="title">
+                      <i class="el-icon-location"></i>
+                      <span>{{child.name}}</span>
+                    </template>
+                    <template v-for="(child2, index2) in child.childMenu" :keys="index1">
+                      <el-menu-item :index="child2.url" >{{child2.name}}</el-menu-item>
+                    </template>
+                  </el-submenu>
+                </template>
+              </el-submenu>
+            </template>
+            <!-- <el-submenu index="1">
               <template slot="title">
                 <i class="el-icon-location"></i>
-                <span>导航一</span>
+                <span>导航二</span>
               </template>
               <el-menu-item-group>
                 <template slot="title">分组一</template>
@@ -26,14 +54,32 @@
                 <el-menu-item index="1-4-1">选项1</el-menu-item>
               </el-submenu>
             </el-submenu>
-            <el-menu-item index="2">
+            <el-submenu index="1">
+              <template slot="title">
+                <i class="el-icon-location"></i>
+                <span>导航三</span>
+              </template>
+              <el-menu-item-group>
+                <template slot="title">分组一</template>
+                <el-menu-item index="1-1">选项1</el-menu-item>
+                <el-menu-item index="1-2">选项2</el-menu-item>
+              </el-menu-item-group>
+              <el-menu-item-group title="分组2">
+                <el-menu-item index="1-3">选项3</el-menu-item>
+              </el-menu-item-group>
+              <el-submenu index="1-4">
+                <template slot="title">选项4</template>
+                <el-menu-item index="1-4-1">选项1</el-menu-item>
+              </el-submenu>
+            </el-submenu> -->
+            <!-- <el-menu-item index="2">
               <i class="el-icon-menu"></i>
               <span slot="title">导航二</span>
             </el-menu-item>
             <el-menu-item index="3">
               <i class="el-icon-setting"></i>
               <span slot="title">导航三</span>
-            </el-menu-item>
+            </el-menu-item> -->
           </el-menu>
         </div>
         <div class="right_main">
@@ -166,10 +212,12 @@
 </template>
 
 <script>
+import { getMenu } from '@/api/login'
 export default {
   name: 'app',
   data() {
     return {
+      menuList: [],
       search: '',
       bed: 1,
       input: '',
@@ -414,6 +462,12 @@ export default {
     searchBtn() {
       console.log('搜索')
     }
+  },
+  created() {
+    getMenu().then(res => {
+      this.menuList = res.data.data
+      console.log(this.menuList)
+    })
   }
 }
 </script>
@@ -423,7 +477,7 @@ export default {
   padding:0;
   display: flex;
   .left_tree{
-    width: 160px;
+    width: 200px;
     height: 100%;
     border-right: 4px solid #F3F8FF;
     .el-menu{
