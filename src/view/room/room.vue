@@ -9,11 +9,11 @@
           </div>
           <div>
             <label for="">房间名</label>
-            <el-input v-model="room" placeholder="请输入房间名" size="medium"></el-input>
+            <el-input v-model="roomName" placeholder="请输入房间名" size="medium"></el-input>
           </div>
           <div>
             <label for="">床位数</label>
-            <el-select v-model="bed" size="medium">
+            <el-select v-model="bedsAmount" size="medium">
               <el-option
                 v-for="item in 10"
                 :key="item.value"
@@ -33,90 +33,97 @@
             tooltip-effect="dark"
             >
             <el-table-column
-              prop="name"
               label="会所">
+              <template slot-scope="scope">
+                <span>王狮传奇南山总店</span>
+              </template>
             </el-table-column>
             <el-table-column
-              prop="room"
+              prop="roomName"
               label="房名">
             </el-table-column>
             <el-table-column
-              prop="bed"
+              prop="bedsAmount"
               label="床位数"
               >
             </el-table-column>
             <el-table-column
               label="操作">
               <template slot-scope="scope">
-                <i class="el-icon-delete" @click="deleteBtn(scope.$index)"></i>
+                <i class="el-icon-delete" @click="deleteBtn(scope.$index,scope.row)"></i>
               </template>
             </el-table-column>
           </el-table>
-          <el-pagination
-            background
-            @current-change="currentPageChange"
-            :current-page.sync="currentPage"
-            :page-size="limit"
-            :total="total"
-            layout="prev, pager, next, total">
-          </el-pagination>
+          <page :pageModel="pageModel" @selectList="selectRoleList"></page>
         </div>
       </div>
   </div>
 </template>
 
 <script>
-import { getRoom } from '../../api/login'
-import tableCommon from '../../utils/tableCommon'
+import { getRoom, addRoom, delRoom } from '@/api/login'
+import tableCommon from '@/utils/tableCommon'
+import page from '@/components/common/page'
 export default {
-  mixins: [tableCommon],
   name: 'app',
+  components: {
+    page
+  },
   data() {
     return {
-      room: '',
-      bed: 1,
-      tableData: [{
-        date: '2016-05-02',
-        name: '王狮传奇南山总店',
-        phone: '13798661922',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05  -04',
-        name: '王狮传奇南山总店',
-        phone: '13798661922',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王狮传奇南山总店',
-        phone: '13798661922',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王狮传奇南山总店',
-        phone: '13798661922',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }],
-      total: 0, // 数据总条数
-      currentPage: 1, // 当前页码
-      limit: 10 // 每页数据条数
+      roomName: '',
+      bedsAmount: '',
+      pageModel: {
+        page: 1,
+        rows: 10,
+        sumCount: 0
+      },
+      tableData: []
     }
   },
   methods: {
     addBtn() {
-      this.$message.success('新增成功')
+      let param = {
+        enterprise_id: '001',
+        organId: '1',
+        roomName: this.roomName,
+        bedsAmount: this.bedsAmount
+      }
+      addRoom(param).then(res => {
+        if (res.data.code == 200) {
+          this.tableData.unshift(param)
+          this.pageModel.sumCount++
+          this.$message.success('新增成功!')
+        }
+      })
+      //this.$message.success('新增成功')
     },
-    deleteBtn(index) {
+    deleteBtn(index, row) {
       this.$confirm('是否删除该员工?', '提示', {
         type: 'warning'
       }).then(() => {
-        this.tableData.splice(index, 1)
-        this.$message.success('删除成功!')
+        console.log(row)
+        delRoom(row.roomId).then(res => {
+          if (res.data.code == 200) {
+            this.tableData.splice(index, 1)
+            this.$message.success('删除成功!')
+          }
+        })
       }).catch(() => {
       })
+    },
+    getRoomList() {
+      getRoom(this.pageModel, {}).then(res => {
+        this.pageModel.sumCount = res.data.data.total
+        this.tableData = res.data.data.rows
+      })
+    },
+    selectRoleList() {
+      this.getRoomList()
     }
   },
   created() {
-    this.getList(getRoom)
+    this.getRoomList()
   }
 
 }

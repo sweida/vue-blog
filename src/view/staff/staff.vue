@@ -4,8 +4,15 @@
     <div class="main-content scroll">
       <div class="main-head">
         <div>
-          <input type="text" class="search" v-model="search" v-on:keyup.enter="searchBtn">
-          <i class="el-icon-search" @click="searchBtn"></i>
+          <el-input placeholder="请输入内容" v-model="inputContent" class="input-with-select">
+            <el-select v-model="selectInput" slot="prepend" placeholder="请选择">
+              <el-option label="姓名" value="userName"></el-option>
+              <el-option label="手机号" value="mobilePhoneNum"></el-option>
+            </el-select>
+            <el-button slot="append" icon="el-icon-search" @click="searchBtn"></el-button>
+          </el-input>
+          <!-- <input type="text" class="search" v-model="search" v-on:keyup.enter="searchBtn">
+          <i class="el-icon-search" ></i> -->
         </div>
         <el-button type="primary" size="small" @click="added">新　增</el-button>
       </div>
@@ -18,20 +25,20 @@
           tooltip-effect="dark"
           >
           <el-table-column
-            prop="name"
+            prop="userName"
             label="员工">
           </el-table-column>
           <el-table-column
-            prop="post"
+            prop="ccRole.rolename"
             label="职位">
           </el-table-column>
           <el-table-column
-            prop="phone"
+            prop="mobilePhoneNum"
             label="手机号"
             >
           </el-table-column>
           <el-table-column
-            prop="organ"
+            prop="ccOrganDetail.organName"
             label="会所"
             >
           </el-table-column>
@@ -45,10 +52,11 @@
           <el-table-column
             label="操作">
             <template slot-scope="scope">
-              <i class="el-icon-delete" @click="deleteBtn(scope.$index)"></i>
+              <i class="el-icon-delete" @click="deleteBtn(scope.$index,scope.row)"></i>
             </template>
           </el-table-column>
         </el-table>
+        <page :pageModel="pageModel" @selectList="selectRoleList"></page>
       </div>
     </div>
 
@@ -60,40 +68,38 @@
         </div>
         <el-form ref="form" v-model="newstaff" label-width="90px" >
           <el-form-item label="姓名">
-           <el-input v-model="newstaff.name" size="mini" ></el-input>
+           <el-input v-model="newstaff.userName" size="mini" ></el-input>
           </el-form-item>
           <el-form-item label="手机号">
-           <el-input v-model="newstaff.phone" size="mini" ></el-input>
+           <el-input v-model="newstaff.mobile_phone_num" size="mini" ></el-input>
           </el-form-item>
           <el-form-item label="职位">
-            <el-select v-model="newstaff.post" placeholder="请选择职位" size="mini">
-              <el-option label="销售" value="xiaoshou"></el-option>
-              <el-option label="前台" value="qiantai"></el-option>
-              <el-option label="护士" value="hushi"></el-option>
+            <el-select v-model="newstaff.ccRole.id" placeholder="请选择职位" size="mini">
+              <el-option :label="item.rolename" :value="item.id" v-for="item in jobList"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="会所">
-            <el-select v-model="newstaff.organ_id" placeholder="请选择会所" size="mini">
-              <el-option label="王狮传奇南山总店" value="nanshan"></el-option>
+            <el-select v-model="organId" placeholder="请选择会所" size="mini">
+              <el-option label="王狮传奇南山总店" value="1"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="直接添加">
-            <el-radio-group v-model="newstaff.direct">
+            <el-radio-group v-model="newstaff.direct_add">
               <el-radio :label="1">是</el-radio>
-              <el-radio :label="2">否</el-radio>
+              <!-- <el-radio :label="1">否</el-radio> -->
             </el-radio-group>
           </el-form-item>
           <el-form-item label="登录移动端">
-            <el-radio-group v-model="newstaff.moblie">
-              <el-radio :label="1">允许</el-radio>
-              <el-radio :label="2">不允许</el-radio>
+            <el-radio-group v-model="newstaff.login_status">
+              <el-radio :label="0">允许</el-radio>
+              <el-radio :label="1">不允许</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false" size="small">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false" size="small">确 定</el-button>
+        <el-button type="primary" @click="confirmAdd">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -101,77 +107,110 @@
 </template>
 
 <script>
+import { getJob, getSttaf, delSttaf, addSttaf } from '../../api/login'
+import page from '../../components/common/page'
 export default {
   name: 'app',
-  data(){
-    return{
-      search:'',
-      dialogVisible:false,
-      img:'static/img/phone.png',
-      tableData: [{
-        name:'小可爱1',
-        post: '销售',
-        organ: '王狮传奇南山总店',
-        organ_id:'nanshan',
-        phone:'13798661922',
-      }, {
-        name:'小可爱2',
-        post: '销售',
-        organ: '王狮传奇南山总店',
-        organ_id:'nanshan',
-        phone:'13798661922',
-      }, {
-        name:'小可爱3',
-        post: '销售',
-        organ: '王狮传奇南山总店',
-        organ_id:'nanshan',
-        phone:'13798661922',
-      }],
-      newstaff:{
-        name:'',
-        post: '',
-        organ_id: 'nanshan',
-        phone:'',
-        direct:1,
-        moblie:1,
+  components: {
+    page
+  },
+  data() {
+    return {
+      inputContent: '',
+      selectInput: '',
+      search: '',
+      dialogVisible: false,
+      img: 'static/img/phone.png',
+      pageModel: {
+        page: 1,
+        rows: 10,
+        sumCount: 0
+      },
+      jobList: [], // 员工职位
+      tableData: [],
+      organId: '',
+      newstaff: {
+        ccRole: {
+          id: ''
+        },
+        userName: '',
+        mobile_phone_num: '',
+        direct_add: 1,
+        login_status: 1
       }
     }
   },
-  methods:{
-    added(){
+  methods: {
+    selectRoleList () {
+
+    },
+    added() {
       this.dialogVisible = true
-      this.newstaff={
-        name: '',
-        post: '',
-        organ_id: 'nanshan',
-        phone: '',
-        direct: 1,
-        moblie: 1,
+      this.newstaff = {
+        ccRole: {
+          id: ''
+        },
+        userName: '',
+        mobile_phone_num: '',
+        direct_add: 1,
+        login_status: 1
       }
     },
-    edit(index){
+    edit(index) {
       this.dialogVisible = true
       this.newstaff = this.tableData[index]
     },
-    deleteBtn(index){
+    // 删除员工
+    deleteBtn(index, row) {
       this.$confirm('是否删除该员工?', '提示', {
         type: 'warning'
       }).then(() => {
-        this.tableData.splice(index,1)
-        this.$message.success('删除成功!')
+        delSttaf(row.userId).then(res => {
+          if (res.status == 200) {
+            this.tableData.splice(index, 1)
+            this.$message.success('删除成功!')
+          }
+        })
       }).catch(() => {
-      });
+      })
     },
-    //搜素客户
+    // 新增员工
+    confirmAdd() {
+      let param = this.newstaff
+      param.userId = this.newstaff.mobile_phone_num
+      addSttaf(this.newstaff).then(res => {
+        console.log(res)
+      })
+    },
+    // 搜素客户
     searchBtn() {
-      console.log('搜索')
+      this.getSttafList()
     },
+    // 员工列表
+    getSttafList() {
+      let param = {}
+      param[this.selectInput] = this.inputContent
+      getSttaf(this.pageModel, param).then(res => {
+        console.log(res.data.data.rows)
+        this.pageModel.sumCount = res.data.data.total
+        this.tableData = res.data.data.rows
+      })
+    }
+  },
+  created() {
+    getJob().then(res => {
+      this.jobList = res.data.data
+    })
+    this.getSttafList()
   }
 }
 </script>
-
+<style>
+.main-content .el-select .el-input {
+  width: 100px;
+}
+</style>
 <style scoped lang="scss">
-
 .main-content{
   .main-head{
     color:#5e6d82;

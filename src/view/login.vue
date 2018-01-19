@@ -20,32 +20,30 @@
 </template>
 
 <script>
-  import {toLogin} from "@/api/login";
+  import { toLogin } from '@/api/login'
   export default {
     data() {
       return {
-        show:true,
+        show: true,
         checked: true,
-        param:{
-          username:'admin1',
-          password:'123456'
+        param: {
+          username: '13000000000',
+          password: '123456'
         }
-      };
+      }
     },
     methods: {
-      loginSubmit:function() {
-        toLogin(this.param).then((res)=>{
-          if(res.data.authenticated){
-            this.$router.push({ path: '/home' });
+      loginSubmit: function() {
+        toLogin(this.param).then((res) => {
+          if (res.status == 200) {
+            this.$store.dispatch('changeToken', res.data)
+            this.$router.push({ path: '/home' })
           }
-        });
-      },
-
+        })
+      }
     }
   }
-
 </script>
-
 <style scoped lang="scss">
 .animate03{
   -webkit-transition-duration:0.3s;

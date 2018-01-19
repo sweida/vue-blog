@@ -82,6 +82,7 @@ export default {
   name: 'app',
   data(){
     return{
+      isIndeterminate: '',
       activeName: 'first',
       radio:'1',
       customers: customerli,
