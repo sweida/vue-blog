@@ -1,7 +1,7 @@
 <template>
   <div >
       <div class="header_title">项目<i class="el-icon-info"></i></div>
-      <div class="main-content">
+      <div class="main-content scroll">
         <div class="left_tree scroll">
           <el-menu
             default-active="2"
@@ -42,35 +42,43 @@
               <input type="text" class="search" v-model="search" v-on:keyup.enter="searchBtn">
               <i class="el-icon-search" @click="searchBtn"></i>
             </div>
-            <el-button type="primary"  size="small" @click="added">新　增</el-button>
+            <el-button type="primary"  size="small" @click="addBtn">新　增</el-button>
           </div>
           <div class="main_table">
             <el-table
-              :data="tableData"
+              :data="projectList"
               stripe
               style="width: 100%"
               max-height="600"
               tooltip-effect="dark"
               >
               <el-table-column
-                prop="name"
+                prop="projectName"
                 label="名称"
-                width="150px">
+                width="250px">
               </el-table-column>
               <el-table-column
-                label="修改"
-                >
+                prop="projectPrice"
+                label="价格"
+                width="150px">
                 <template slot-scope="scope">
-                  <i class="el-icon-edit" @click="edit(scope.$index)"></i>
+                  <span>￥{{scope.row.projectPrice}}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="修改">
+                <template slot-scope="scope">
+                  <i class="el-icon-edit" @click="editBtn(scope.$index, scope.row)"></i>
                 </template>
               </el-table-column>
               <el-table-column
                 label="删除">
                 <template slot-scope="scope">
-                  <i class="el-icon-delete" @click="deleteBtn(scope.$index)"></i>
+                  <i class="el-icon-delete" @click="deleteBtn(scope.$index, scope.row)"></i>
                 </template>
               </el-table-column>
             </el-table>
+            <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
           </div>
         </div>
 
@@ -118,6 +126,9 @@
 </template>
 
 <script>
+import { addproject, getproject, delProject } from '@/api/product'
+import page from '@/components/common/page'
+import { clone } from '@/utils/common'
 export default {
   name: 'app',
   data() {
@@ -126,35 +137,22 @@ export default {
       bed: 1,
       input: '',
       voucherDialog: false,
-      banner: 'static/img/phone.png',
+      projectList: [],
       form: {
         type: 1,
         exclusive: 1,
         region: '',
         desc: ''
       },
-      tableData: [{
-        date: '2016-05-02',
-        name: '王狮传奇南山总店',
-        phone: '13798661922',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05  -04',
-        name: '王狮传奇南山总店',
-        phone: '13798661922',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王狮传奇南山总店',
-        phone: '13798661922',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王狮传奇南山总店',
-        phone: '13798661922',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }]
+      pageModel: {
+        page: 1,
+        rows: 10,
+        sumCount: 0
+      }
     }
+  },
+  created() {
+    this.getprojectList()
   },
   methods: {
     handleOpen(key, keyPath) {
@@ -163,12 +161,46 @@ export default {
     handleClose(key, keyPath) {
       console.log(key, keyPath)
     },
-    added() {
-      this.$router.push('project/addProject')
-    },
     //搜素客户
     searchBtn() {
       console.log('搜索')
+    },
+    addBtn() {
+      this.$router.push('project/addProject')
+    },
+    // 删除项目
+    deleteBtn(index, row) {
+      console.log(row)
+      this.$confirm('是否删除该项目?', '提示', {
+        type: 'warning'
+      }).then(() => {
+        delProject(row.id).then(res => {
+          if (res.data.code == 200) {
+            console.log(res)
+            this.projectList.splice(index, 1)
+            this.$message.success(res.data.msg)
+            this.getprojectList()
+          } else {
+            this.$message.error('删除失败!')
+          }
+        })
+      }).catch(() => {
+      })
+    },
+    // 编辑项目
+    editBtn(index, row) {
+      console.log(row.id)
+      this.$router.push('project/edit/' + row.id)
+    },
+    getprojectList() {
+      getproject(this.pageModel, {}).then(res => {
+        console.log('获取项目列表', res)
+        this.pageModel.sumCount = res.data.data.total
+        this.projectList = res.data.data.rows
+      })
+    },
+    selectRoleList() {
+      this.getproject()
     }
   }
 }
@@ -238,6 +270,8 @@ export default {
   }
 
 }
-
+.main_table{
+  margin-bottom: 20px;
+}
 
 </style>

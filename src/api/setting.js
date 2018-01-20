@@ -128,3 +128,33 @@ export function editvipCard(data) {
     data
   })
 }
+// 添加活动说明
+export function actDesc(data) {
+  return fetch({
+    url: 'apis/actDesc',
+    method: 'post',
+    data
+  })
+}
+// 编辑活动说明
+export function editactDesc(data) {
+  return fetch({
+    url: 'apis/actDesc',
+    method: 'PUT',
+    data
+  })
+}
+// id获取活动说明
+export function actDescInfo(id) {
+  return fetch({
+    url: `apis/actDesc/${id}`,
+    method: 'get'
+  })
+}
+// 类型获取活动说明
+export function actDescList(type) {
+  return fetch({
+    url: `apis/actDesc/type/${type}`,
+    method: 'get'
+  })
+}

@@ -1,113 +1,41 @@
 import fetch from '@/utils/fetch'
 import qs from 'qs'
-// 查询企业信息
-export function getInfoCompany() {
+
+// 添加项目
+export function addproject(data) {
   return fetch({
-    url: 'apis/enterprise',
+    url: 'apis/projectInfo',
+    method: 'post',
+    data
+  })
+}
+// 编辑项目
+export function projectDetail(projectId) {
+  return fetch({
+    url: `apis/projectInfo/${projectId}`,
     method: 'GET'
   })
 }
-// 修改企业信息
-export function changeCompanyInfo(data) {
+// 项目列表
+export function getproject(pageModel, data) {
   return fetch({
-    url: 'apis/enterprise',
-    method: 'PUT',
-    data
-  })
-}
-// 查询企业文化信息
-export function getCurtureCompany(data) {
-  return fetch({
-    url: `apis/enterprise/${data}`,
-    method: 'GET'
-  })
-}
-// 店面
-export function getShop() {
-  return fetch({
-    url: 'apis/organ',
-    method: 'post'
-  })
-}
-export function changeShop(data) {
-  return fetch({
-    url: 'apis/organ',
-    method: 'PUT',
-    data
-  })
-}
-// 房间
-export function addRoom(data) {
-  return fetch({
-    url: 'apis/rooms',
+    url: `apis/projectInfo/page/${pageModel.page}/${pageModel.rows}`,
     method: 'post',
     data
   })
 }
-export function delRoom(data) {
+// 删除项目
+export function delProject(projectId) {
   return fetch({
-    url: `apis/rooms/${data}`,
-    method: 'DELETE',
-    data
-  })
-}
-export function getRoom(pageModel, data) {
-  return fetch({
-    url: `apis/rooms/page/${pageModel.page}/${pageModel.rows}`,
-    method: 'post',
-    data
-  })
-}
-// 员工
-export function getJob() {
-  return fetch({
-    url: 'apis/role/all',
-    method: 'GET'
-  })
-}
-export function getSttaf(pageModel, data) {
-  return fetch({
-    url: `apis/user/page/${pageModel.page}/${pageModel.rows}`,
-    method: 'post',
-    data
-  })
-}
-export function addSttaf(data) {
-  return fetch({
-    url: 'apis/user',
-    method: 'post',
-    data
-  })
-}
-export function delSttaf(userId) {
-  return fetch({
-    url: `apis/user/${userId}`,
+    url: `apis/projectInfo/${projectId}`,
     method: 'DELETE'
   })
 }
-export function toLogin(data) {
+// 编辑项目
+export function editproject(data) {
   return fetch({
-    url: 'apis/authentication/form',
-    method: 'post',
-    data: qs.stringify(data),
-    auth: {
-      username: 'article',
-      password: 'articleSecret'
-    }
-  })
-}
-// 会员卡
-export function addvipCard(data) {
-  return fetch({
-    url: 'apis/vipStructure',
-    method: 'post',
-    data
-  })
-}
-export function getvipCard(pageModel, data) {
-  return fetch({
-    url: `apis/vipStructure/page/${pageModel.page}/${pageModel.rows}`,
-    method: 'post',
+    url: 'apis/projectInfo',
+    method: 'PUT',
     data
   })
 }

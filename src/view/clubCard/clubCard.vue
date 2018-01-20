@@ -8,7 +8,7 @@
             <div class="input_box">
               <li>
                 <label for="">会员卡级别</label>
-                <el-input size="small" placeholder="请输出会员名称" v-model="vipinput.vipTypeName"></el-input>
+                <el-input size="small" placeholder="请输入会员名称" v-model="vipinput.vipTypeName"></el-input>
               </li>
               <li>
                 <label for="">起点金额</label>
@@ -98,7 +98,7 @@
         </div>
         <div class="explain">
           <h4>活动说明</h4>
-          <textarea name="" id="" cols="30" rows="10" class="scroll" v-model="textarea"></textarea>
+          <textarea name="" id="" cols="30" rows="10" class="scroll" v-model="actDesc"></textarea>
           <el-button type="primary" size="small" @click="subText">提　交</el-button>
         </div>
 
@@ -181,7 +181,7 @@
 </template>
 
 <script>
-import { addvipCard, editvipCard, getvipCard, delvipCard } from '@/api/setting'
+import { addvipCard, editvipCard, getvipCard, delvipCard, actDescInfo, editactDesc } from '@/api/setting'
 import page from '@/components/common/page'
 import { clone } from '@/utils/common'
 export default {
@@ -194,7 +194,7 @@ export default {
       bed: 1,
       input: '',
       burdening: false,
-      textarea: '这是说明',
+      actDesc: '',
       banner: 'static/img/phone.png',
       change: true,
       materials_data: [],
@@ -228,10 +228,21 @@ export default {
   created() {
     this.vipinput = clone(this.vipCard)
     this.getvipList()
+    this.getactDescList()
   },
   methods: {
     subText() {
-      this.$message.success('活动说明保存成功')
+      let param = {
+        actDesc: this.actDesc,
+        actType: 1,
+        enterpriseId: '001',
+        keyId: 1
+      }
+      editactDesc(param).then(res => {
+        console.log('修改活动说明', res)
+        // this.actDesc = res.data.data.actDesc
+        // this.$message.success('活动说明保存成功')
+      })
     },
     handleClose(tag) {
       this.tags.splice(this.tags.indexOf(tag), 1)
@@ -240,6 +251,12 @@ export default {
       this.burdening = true
     },
     sureBurden() {
+    },
+    getactDescList() {
+      actDescInfo(1).then(res => {
+        console.log('获取活动说明', res)
+        this.actDesc = res.data.data.actDesc
+      })
     },
     // 添加会员卡
     vipinputBtn() {

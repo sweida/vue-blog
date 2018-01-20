@@ -31,6 +31,7 @@
             style="width: 100%"
             max-height="600"
             tooltip-effect="dark"
+            v-loading="loading"
             >
             <el-table-column
               label="会所">
@@ -71,6 +72,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       organName: '王狮传奇南山总店',
       roomName: '',
       bedsAmount: '',
@@ -99,7 +101,6 @@ export default {
         addRoom(param).then(res => {
           if (res.data.code == 200) {
             this.tableData.unshift(param)
-            // this.pageModel.sumCount++
             this.getRoomList()
             this.$message.success('新增成功!')
             this.roomName = ''
@@ -119,7 +120,7 @@ export default {
           if (res.data.code == 200) {
             this.tableData.splice(index, 1)
             this.$message.success('删除成功!')
-            // this.getRoomList()
+            this.getRoomList()
           } else {
             this.$message.error('删除失败!')
           }
@@ -128,7 +129,9 @@ export default {
       })
     },
     getRoomList() {
+      this.loading = true
       getRoom(this.pageModel, {}).then(res => {
+        this.loading = false
         this.pageModel.sumCount = res.data.data.total
         this.tableData = res.data.data.rows
       })

@@ -4,24 +4,25 @@
       <div class="main-content scroll">
         <div class="form_box form_top">
           <h5>基础信息</h5>
-          <el-form ref="form" v-model="form" label-width="120px" label-position='left'>
-            <!-- <el-form-item label="宝贝编号">
-              <span>23532423453453422346364W</span>
-            </el-form-item> -->
+          <el-form ref="projectDetail" v-model="projectDetail" label-width="120px" label-position='left'>
+            <el-form-item label="宝贝编号">
+              <span>{{projectDetail.projectId}}</span>
+              <!-- <el-input size="medium" v-model="projectDetail.projectId"></el-input> -->
+            </el-form-item>
             <el-form-item label="宝贝名称">
-              <el-input size="medium" v-model="form.projectName"></el-input>
+              <el-input size="medium" v-model="projectDetail.projectName"></el-input>
             </el-form-item>
             <el-form-item label="价格">
-              <el-input size="medium" v-model="form.projectPrice"></el-input>
+              <el-input size="medium" v-model="projectDetail.projectPrice"></el-input>
             </el-form-item>
             <el-form-item label="有效天数">
-              <el-input size="medium" v-model="form.availabilityDay"></el-input>
+              <el-input size="medium" v-model="projectDetail.availabilityDay"></el-input>
             </el-form-item>
             <el-form-item label="耗时(分钟)">
-              <el-input size="medium" v-model="form.consumeTime"></el-input>
+              <el-input size="medium" v-model="projectDetail.consumeTime"></el-input>
             </el-form-item>
             <el-form-item label="所属类目">
-              <el-input size="medium" v-model="form.parentId"></el-input>
+              <el-input size="medium" v-model="projectDetail.parentId"></el-input>
             </el-form-item>
           </el-form>
           <div class="uploader_box">
@@ -155,63 +156,63 @@
         </div>
         <div class="form_box">
           <h5>其它信息</h5>
-          <el-form ref="form" :model="form" label-width="170px" label-position='left'>
+          <el-form ref="projectDetail" v-model="projectDetail" label-width="170px" label-position='left'>
             <el-form-item label="折扣信息">
-              <el-radio-group v-model="form.isDiscount">
-                <el-radio :label="0">参与会员折扣</el-radio>
-                <el-radio :label="1">不参与会员折扣</el-radio>
+              <el-radio-group v-model="projectDetail.isDiscount">
+                <el-radio :label="'0'">参与会员折扣</el-radio>
+                <el-radio :label="'1'">不参与会员折扣</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="是否支持上面服务">
-              <el-radio-group v-model="form.isDoorService">
-                <el-radio :label="0">否</el-radio>
-                <el-radio :label="1">是</el-radio>
+              <el-radio-group v-model="projectDetail.isDoorService">
+                <el-radio :label="'0'">否</el-radio>
+                <el-radio :label="'1'">是</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="是否销售">
-              <el-radio-group v-model="form.isSale">
-                <el-radio :label="0">否</el-radio>
-                <el-radio :label="1">是</el-radio>
+              <el-radio-group v-model="projectDetail.isSale">
+                <el-radio :label="'0'">否</el-radio>
+                <el-radio :label="'1'">是</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="在ipad上显示">
-              <el-radio-group v-model="form.isIpadShow">
-                <el-radio :label="0">否</el-radio>
-                <el-radio :label="1">是</el-radio>
+              <el-radio-group v-model="projectDetail.isIpadShow">
+                <el-radio :label="'0'">否</el-radio>
+                <el-radio :label="'1'">是</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="作为ipad推荐项目">
-              <el-radio-group v-model="form.isIpadRecommendProject">
-                <el-radio :label="0">否</el-radio>
-                <el-radio :label="1">是</el-radio>
+              <el-radio-group v-model="projectDetail.isIpadRecommendProject">
+                <el-radio :label="'0'">否</el-radio>
+                <el-radio :label="'1'">是</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="消耗提成类型" class="radio-input">
-              <el-radio-group v-model="form.commissionType" >
-                <el-radio :label="0">消耗固定提成</el-radio>
-                <el-radio :label="1">消耗百分比提成</el-radio>
+              <el-radio-group v-model="projectDetail.commissionType" >
+                <el-radio :label="'0'">消耗固定提成</el-radio>
+                <el-radio :label="'1'">消耗百分比提成</el-radio>
               </el-radio-group>
-              <div class="other" v-if="form.expend==0">
+              <div class="other" v-if="projectDetail.commissionType==0">
                 <span>提成金额</span>
-                <el-input size="mini" v-model="form.commissionMoney"></el-input>
+                <el-input size="mini" v-model="projectDetail.commissionMoney"></el-input>
               </div>
               <div class="other" v-else>
                 <span>百分比例</span>
-                <el-input size="mini" v-model="form.commissionPercentage"></el-input>
+                <el-input size="mini" v-model="projectDetail.commissionPercentage"></el-input>
               </div>
             </el-form-item>
             <el-form-item label="销售提成类型" class="radio-input">
-              <el-radio-group v-model="form.commissionType" >
-                <el-radio :label="0">消耗固定提成</el-radio>
-                <el-radio :label="1">消耗百分比提成</el-radio>
+              <el-radio-group v-model="projectDetail.commissionType" >
+                <el-radio :label="'0'">消耗固定提成</el-radio>
+                <el-radio :label="'1'">消耗百分比提成</el-radio>
               </el-radio-group>
-              <div class="other" v-if="form.market==0">
+              <div class="other" v-if="projectDetail.commissionType==0">
                 <span>提成金额</span>
-                <el-input size="mini" v-model="form.commissionMoney"></el-input>
+                <el-input size="mini" v-model="projectDetail.commissionMoney"></el-input>
               </div>
               <div class="other" v-else>
                 <span>百分比例</span>
-                <el-input size="mini" v-model="form.commissionPercentage"></el-input>
+                <el-input size="mini" v-model="projectDetail.commissionPercentage"></el-input>
               </div>
             </el-form-item>
           </el-form>
@@ -235,7 +236,6 @@
               max-height='450'
               tooltip-effect="dark"
               >
-
               <el-table-column
                 prop="material_name"
                 label="配料名称"
@@ -297,16 +297,16 @@
       <el-dialog title="新增赠送" :visible.sync="presentDialog" width="1000px">
         <div class="form_box">
           <h5>选择</h5>
-          <el-form ref="form" :model="form" label-width="120px" label-position='left'>
+          <el-form ref="projectDetail" v-model="projectDetail" label-width="120px" label-position='left'>
             <el-form-item label="类型">
-              <el-radio-group v-model="form.type">
-                <el-radio :label="0">代金券</el-radio>
-                <el-radio :label="1">现金券</el-radio>
+              <el-radio-group v-model="projectDetail.type">
+                <el-radio :label="'0'">代金券</el-radio>
+                <el-radio :label="'1'">现金券</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="是否专项">
-              <el-radio-group v-model="form.exclusive">
-                <el-radio :label="1">通用</el-radio>
+              <el-radio-group v-model="projectDetail.exclusive">
+                <el-radio :label="'1'">通用</el-radio>
                 <el-radio :label="2">专项</el-radio>
               </el-radio-group>
             </el-form-item>
@@ -314,15 +314,15 @@
         </div>
         <div class="form_box">
           <h5>设置</h5>
-          <el-form ref="form" :model="form" label-width="120px" label-position='left'>
+          <el-form ref="projectDetail" v-model="projectDetail" label-width="120px" label-position='left'>
             <el-form-item label="额度（元）">
-              <el-input size="medium" v-model="form.desc"></el-input>
+              <el-input size="medium" v-model="projectDetail.desc"></el-input>
             </el-form-item>
             <el-form-item label="数量（张）">
-              <el-input size="medium" v-model="form.desc"></el-input>
+              <el-input size="medium" v-model="projectDetail.desc"></el-input>
             </el-form-item>
             <el-form-item label="有效期（天）">
-              <el-input size="medium" v-model="form.desc"></el-input>
+              <el-input size="medium" v-model="projectDetail.desc"></el-input>
             </el-form-item>
           </el-form>
         </div>
@@ -336,9 +336,9 @@
 </template>
 
 <script>
-import { addproject, getproject } from '@/api/product'
-import page from '@/components/common/page'
+import { projectDetail, editproject } from '@/api/product'
 import { clone } from '@/utils/common'
+import page from '@/components/common/page'
 const cityOptions = ['上海', '北京', '广州', '深圳', '上海', '北京', '广州', '深圳']
 export default {
   name: 'app',
@@ -352,29 +352,13 @@ export default {
       bed: 1,
       input: '',
       voucherDialog: false,
-      banner: 'static/img/phone.png',
+      imageUrl: 'static/img/phone.png',
+      projectDetail: '',  // 详情
       skin: false,      // 肤质
       effect: false,    // 功效
       burdenDialog: false,    // 配料
       presentDialog: false,
       textarea: '',
-      form: {
-        projectName: '',
-        projectPrice: '',
-        projectType: 0,
-        availabilityDay: '',    // 有效天数
-        consumeTime: '',    //  耗时
-        parentId: '',  //  父id
-        isDiscount: 0,
-        isDoorService: 0,
-        isIpadShow: 0,
-        isIpadRecommendProject: 0,
-        isMateriel: 0, //  是否有配料
-        isSale: 0,  // 是否销售
-        commissionType: 0,
-        commissionMoney: '',
-        commissionPercentage: ''
-      },
       materials_arr: '',
       materials_data: '',
       tags: [
@@ -391,6 +375,9 @@ export default {
       ]
     }
   },
+  created() {
+    this.getprojectDetail()
+  },
   methods: {
     handleOpen(key, keyPath) {
       console.log(key, keyPath)
@@ -401,69 +388,20 @@ export default {
     CloseTags(tag) {
       this.tags.splice(this.tags.indexOf(tag), 1)
     },
-    added() {
-      this.voucherDialog = true
+    // 获取项目详情
+    getprojectDetail() {
+      projectDetail(this.$route.params.id).then(res => {
+        console.log('项目详情', res)
+        this.projectDetail = res.data.data
+      })
     },
-    //搜素客户
-    searchBtn() {
-      console.log('搜索')
-    },
-    // 保存
+    // 保存修改
     saveBtn() {
-      let param = Object.assign({
-        enterpriseId: '001',
-        effect: '',   // 功效
-        fitSkin: '',  // 肤质
-        detail: '',
-        isGive: 0,
-        ccProjectMaterialList: [],
-        ccProjectPushList: [],
-        // ccProjectMaterialList: [
-        //   {
-        //     enterpriseId: '',
-        //     materialId: 0,
-        //     materialName: '',
-        //     materialNum: 0,
-        //     projectId: '',
-        //     unit: ''
-        //   }
-        // ],
-        // ccProjectPushList: [
-        //   {
-        //     hour: '',
-        //     id: 0,
-        //     minute: '',
-        //     numberDays: 0,
-        //     projectId: '',
-        //     pushContent: ''
-        //   }
-        // ],
-        ccProjectGiveList: [
-          {
-            enterpriseId: '001',
-            giveId: 1,
-            giveName: 'aaa',
-            giveNum: '10',
-            giveType: '1',
-            parentId: 0,
-            projectId: ''
-          },
-          {
-            enterpriseId: '001',
-            giveId: 10,
-            giveName: 'bbb',
-            giveNum: '20',
-            giveType: '2',
-            parentId: 0,
-            projectId: ''
-          }
-        ]
-      }, this.form)
-      addproject(param).then(res => {
-        console.log('添加项目', res)
+      editproject(this.projectDetail).then(res => {
+        console.log('保存修改', res)
         if (res.data.code == 200) {
           this.$router.push('/project')
-          this.$message.success('新增成功!')
+          this.$message.success('修改成功!')
         } else {
           this.$message.error('新增失败!')
         }
@@ -482,7 +420,6 @@ export default {
       this.effect = false
     },
     sureBurden() {
-
     },
     burdenBtn() {
       this.burdenDialog = true
