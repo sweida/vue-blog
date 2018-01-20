@@ -76,7 +76,9 @@
           </el-form-item>
           <el-form-item label="职位" prop="ccRole.id">
             <el-select v-model="newstaff.ccRole.id" placeholder="请选择职位" size="mini">
-              <el-option :label="item.rolename" :value="item.id" v-for="item in jobList"></el-option>
+              <template v-for="(item,index) in jobList">
+                <el-option :label="item.rolename" :value="item.id"></el-option>
+              </template>
             </el-select>
           </el-form-item>
           <el-form-item label="会所">
@@ -100,11 +102,10 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false" size="small">取 消</el-button>
-        <el-button type="primary" @click="confirmAdd('ruleForm')" v-if="addShow">确 定</el-button>
-        <el-button type="primary" @click="confirmEdit" v-else>确 定</el-button>
+        <el-button type="primary" @click="confirmAdd('ruleForm')" v-if="addShow" size="small">确 定</el-button>
+        <el-button type="primary" @click="confirmEdit" v-else size="small">确 定</el-button>
       </span>
     </el-dialog>
-
   </div>
 </template>
 

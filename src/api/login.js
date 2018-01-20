@@ -1,9 +1,31 @@
 import fetch from '@/utils/fetch'
 import qs from 'qs'
-// 菜单
+// 代金券
+export function getVoucher(pageModel, data) {
+  return fetch({
+    url: `apis/coupon/page/${pageModel.page}/${pageModel.rows}`,
+    method: 'post',
+    data
+  })
+}
+// 代金券菜单
 export function getMenu() {
   return fetch({
     url: 'apis/menu/coupon',
+    method: 'GET'
+  })
+}
+// 代金券增加时获取菜单
+export function getMenuAdd() {
+  return fetch({
+    url: 'apis/menu/coupon/item',
+    method: 'GET'
+  })
+}
+// 代金券增加时获取菜单Byid
+export function getMenuById(data) {
+  return fetch({
+    url: `apis/menu/projectItem/${data[0]}/${data[1]}`,
     method: 'GET'
   })
 }

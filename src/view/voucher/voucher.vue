@@ -8,7 +8,7 @@
             @open="handleOpen"
             @close="handleClose">
             <template v-for="(item, index) in menuList" :keys="index">
-              <el-menu-item :index="item.url" v-if="item.childMenu==null">
+              <el-menu-item :index="item.url" v-if="item.childMenu==null" @click="changeMenu(item)">
                 <template slot="title">
                   <i class="el-icon-location"></i>
                   <span>{{item.name}}</span>
@@ -20,17 +20,17 @@
                   <span>{{item.name}}</span>
                 </template>
                 <template v-for="(child, index1) in item.childMenu" :keys="index1">
-                  <el-menu-item :index="child.url" v-if="child.childMenu==null">
+                  <el-menu-item :index="item.url+child.url" v-if="child.childMenu==null" @click="changeMenu(child)">
                     <i class="el-icon-location"></i>
                     <span>{{child.name}}</span>
                   </el-menu-item>
-                  <el-submenu :index="child.url" v-else>
+                  <el-submenu :index="item.url+child.url" v-else>
                     <template slot="title">
                       <i class="el-icon-location"></i>
                       <span>{{child.name}}</span>
                     </template>
                     <template v-for="(child2, index2) in child.childMenu" :keys="index1">
-                      <el-menu-item :index="child2.url" >{{child2.name}}</el-menu-item>
+                      <el-menu-item :index="child.url+child2.url" @click="changeMenu(child2)">{{child2.name}}</el-menu-item>
                     </template>
                   </el-submenu>
                 </template>
@@ -108,12 +108,12 @@
                 label="类型">
               </el-table-column>
               <el-table-column
-                prop="phone"
+                prop="coupName"
                 label="名称"
                 >
               </el-table-column>
               <el-table-column
-                prop="organ"
+                prop="coupPrice"
                 label="价格"
                 >
               </el-table-column>
@@ -123,21 +123,15 @@
                 >
               </el-table-column>
               <el-table-column
-                prop="organ"
+                prop="coupValidfate"
                 label="有效期(天)"
                 >
               </el-table-column>
               <el-table-column
-                prop="organ"
+                prop="coupNum"
                 label="总数量"
                 >
               </el-table-column>
-              <el-table-column
-                prop="organ"
-                label="价格"
-                >
-              </el-table-column>
-
               <el-table-column
                 label="修改"
                 >
@@ -158,6 +152,7 @@
                 </template>
               </el-table-column>
             </el-table>
+            <page :pageModel="pageModel" @selectList="selectRoleList"></page>
           </div>
         </div>
 
@@ -182,7 +177,11 @@
             <el-form-item label="名称">
               <el-cascader
                 placeholder="可搜索名称"
+                @change="handleItemChange"
+                change-on-select
                 :options="options"
+                :props="defaultProps"
+                :clearable="true"
                 filterable>
               </el-cascader>
             </el-form-item>
@@ -212,11 +211,21 @@
 </template>
 
 <script>
-import { getMenu } from '@/api/login'
+import { getMenu, getVoucher, getMenuAdd, getMenuById } from '@/api/login'
+import page from '../../components/common/page'
 export default {
-  name: 'app',
+  name: 'voucher',
+  components: {
+    page
+  },
   data() {
     return {
+      pageModel: {
+        page: 1,
+        rows: 10,
+        sumCount: 0
+      },
+      voucherParam: {}, //代金券参数
       menuList: [],
       search: '',
       bed: 1,
@@ -229,223 +238,13 @@ export default {
         region: '',
         desc: ''
       },
-      tableData: [{
-        date: '2016-05-02',
-        name: '王狮传奇南山总店',
-        phone: '13798661922',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05  -04',
-        name: '王狮传奇南山总店',
-        phone: '13798661922',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王狮传奇南山总店',
-        phone: '13798661922',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王狮传奇南山总店',
-        phone: '13798661922',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }],
-      options: [{
-        value: 'zhinan',
-        label: '指南',
-        children: [{
-          value: 'shejiyuanze',
-          label: '设计原则',
-          children: [{
-            value: 'yizhi',
-            label: '一致'
-          }, {
-            value: 'fankui',
-            label: '反馈'
-          }, {
-            value: 'xiaolv',
-            label: '效率'
-          }, {
-            value: 'kekong',
-            label: '可控'
-          }]
-        }, {
-          value: 'daohang',
-          label: '导航',
-          children: [{
-            value: 'cexiangdaohang',
-            label: '侧向导航'
-          }, {
-            value: 'dingbudaohang',
-            label: '顶部导航'
-          }]
-        }]
-      }, {
-        value: 'zujian',
-        label: '组件',
-        children: [{
-          value: 'basic',
-          label: 'Basic',
-          children: [{
-            value: 'layout',
-            label: 'Layout 布局'
-          }, {
-            value: 'color',
-            label: 'Color 色彩'
-          }, {
-            value: 'typography',
-            label: 'Typography 字体'
-          }, {
-            value: 'icon',
-            label: 'Icon 图标'
-          }, {
-            value: 'button',
-            label: 'Button 按钮'
-          }]
-        }, {
-          value: 'form',
-          label: 'Form',
-          children: [{
-            value: 'radio',
-            label: 'Radio 单选框'
-          }, {
-            value: 'checkbox',
-            label: 'Checkbox 多选框'
-          }, {
-            value: 'input',
-            label: 'Input 输入框'
-          }, {
-            value: 'input-number',
-            label: 'InputNumber 计数器'
-          }, {
-            value: 'select',
-            label: 'Select 选择器'
-          }, {
-            value: 'cascader',
-            label: 'Cascader 级联选择器'
-          }, {
-            value: 'switch',
-            label: 'Switch 开关'
-          }, {
-            value: 'slider',
-            label: 'Slider 滑块'
-          }, {
-            value: 'time-picker',
-            label: 'TimePicker 时间选择器'
-          }, {
-            value: 'date-picker',
-            label: 'DatePicker 日期选择器'
-          }, {
-            value: 'datetime-picker',
-            label: 'DateTimePicker 日期时间选择器'
-          }, {
-            value: 'upload',
-            label: 'Upload 上传'
-          }, {
-            value: 'rate',
-            label: 'Rate 评分'
-          }, {
-            value: 'form',
-            label: 'Form 表单'
-          }]
-        }, {
-          value: 'data',
-          label: 'Data',
-          children: [{
-            value: 'table',
-            label: 'Table 表格'
-          }, {
-            value: 'tag',
-            label: 'Tag 标签'
-          }, {
-            value: 'progress',
-            label: 'Progress 进度条'
-          }, {
-            value: 'tree',
-            label: 'Tree 树形控件'
-          }, {
-            value: 'pagination',
-            label: 'Pagination 分页'
-          }, {
-            value: 'badge',
-            label: 'Badge 标记'
-          }]
-        }, {
-          value: 'notice',
-          label: 'Notice',
-          children: [{
-            value: 'alert',
-            label: 'Alert 警告'
-          }, {
-            value: 'loading',
-            label: 'Loading 加载'
-          }, {
-            value: 'message',
-            label: 'Message 消息提示'
-          }, {
-            value: 'message-box',
-            label: 'MessageBox 弹框'
-          }, {
-            value: 'notification',
-            label: 'Notification 通知'
-          }]
-        }, {
-          value: 'navigation',
-          label: 'Navigation',
-          children: [{
-            value: 'menu',
-            label: 'NavMenu 导航菜单'
-          }, {
-            value: 'tabs',
-            label: 'Tabs 标签页'
-          }, {
-            value: 'breadcrumb',
-            label: 'Breadcrumb 面包屑'
-          }, {
-            value: 'dropdown',
-            label: 'Dropdown 下拉菜单'
-          }, {
-            value: 'steps',
-            label: 'Steps 步骤条'
-          }]
-        }, {
-          value: 'others',
-          label: 'Others',
-          children: [{
-            value: 'dialog',
-            label: 'Dialog 对话框'
-          }, {
-            value: 'tooltip',
-            label: 'Tooltip 文字提示'
-          }, {
-            value: 'popover',
-            label: 'Popover 弹出框'
-          }, {
-            value: 'card',
-            label: 'Card 卡片'
-          }, {
-            value: 'carousel',
-            label: 'Carousel 走马灯'
-          }, {
-            value: 'collapse',
-            label: 'Collapse 折叠面板'
-          }]
-        }]
-      }, {
-        value: 'ziyuan',
-        label: '资源',
-        children: [{
-          value: 'axure',
-          label: 'Axure Components'
-        }, {
-          value: 'sketch',
-          label: 'Sketch Templates'
-        }, {
-          value: 'jiaohu',
-          label: '组件交互文档'
-        }]
-      }]
-
+      tableData: [],
+      options: [],
+      defaultProps: {
+        children: 'childMenu',
+        value: 'id',
+        label: 'name'
+      }
     }
   },
   methods: {
@@ -461,13 +260,77 @@ export default {
     //搜素客户
     searchBtn() {
       console.log('搜索')
+    },
+    selectRoleList () {
+      this.getSttafList()
+    },
+    // 得到左侧菜单栏
+    getMenuList() {
+      getMenu().then(res => {
+        if (res.data.code == 200) {
+          this.menuList = res.data.data
+        }
+      })
+    },
+    // 得到总代金券数据
+    getVoucherList() {
+      getVoucher(this.pageModel, this.voucherParam).then(res => {
+        if (res.data.code == 200) {
+          this.tableData = res.data.data.rows
+        }
+      })
+    },
+    // 改变菜单时得到代金券数据
+    changeMenu(item) {
+      this.voucherParam.parentId = item.id
+      this.getVoucherList()
+    },
+    // 增加时得到菜单
+    addMenu() {
+      getMenuAdd().then(res => {
+        if (res.data.code == 200) {
+          this.options = res.data.data
+          console.log(res.data.data)
+        }
+      })
+    },
+    // 添加时获取名称
+    handleItemChange(val) {
+      if (val.length >= 2) {
+        let parentIndex = this.options.findIndex(item => {
+          return item.id == val[0]
+        })
+        let childId = this.options[parentIndex].childMenu.findIndex(item => {
+          return item.id == val[1]
+        })
+        getMenuById([1, 6]).then(res => {
+          if (res.data.code == 200) {
+            this.$set(this.options[parentIndex].childMenu[childId], 'childMenu', [{'id': 1, 'name': 'mam'}])
+            console.log(res.data.data)
+          }
+        })
+      }
+    }
+
+  },
+  // 过滤器
+  filters: {
+    filterVoucher(value) {
+      if (!value) return ''
+      value = value.toString()
+      return value.charAt(0).toUpperCase() + value.slice(1)
     }
   },
   created() {
-    getMenu().then(res => {
-      this.menuList = res.data.data
-      console.log(this.menuList)
-    })
+    this.getMenuList()
+    this.getVoucherList()
+    this.addMenu()
+    // getMenuById([1, 6]).then(res => {
+    //   if (res.data.code == 200) {
+    //     // this.options = res.data.data
+    //     console.log(res.data.data)
+    //   }
+    // })
   }
 }
 </script>
