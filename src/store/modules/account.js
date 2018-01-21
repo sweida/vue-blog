@@ -1,8 +1,4 @@
-// import Lockr from 'lockr';
-// import { setTags } from "../../utils/accout";
-// import $ from "jquery";
-
-const accout = {
+const account = {
   state: {
     token: localStorage.token == null ? [] : JSON.parse(localStorage.token)
   },
@@ -21,4 +17,4 @@ const accout = {
   }
 }
 
-export default accout
+export default account
