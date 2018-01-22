@@ -212,6 +212,7 @@
 
 <script>
 import { getMenu, getVoucher, getMenuAdd, getMenuById } from '@/api/login'
+import { clone } from '@/api/login'
 import page from '../../components/common/page'
 export default {
   name: 'voucher',
@@ -305,8 +306,10 @@ export default {
         })
         getMenuById([1, 6]).then(res => {
           if (res.data.code == 200) {
+            // this.options[parentIndex].childMenu[childId].childMenu = [{'id': 1, 'name': 'mam'}]
             this.$set(this.options[parentIndex].childMenu[childId], 'childMenu', [{'id': 1, 'name': 'mam'}])
-            console.log(res.data.data)
+            // this.$set(this.options[parentIndex].childMenu, childId, this.options[parentIndex].childMenu[childId])
+            // this.$set(this.options, parentIndex, this.options[parentIndex])
           }
         })
       }
