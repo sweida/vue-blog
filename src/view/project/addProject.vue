@@ -1,27 +1,31 @@
 <template>
   <div >
-      <div class="header_title"><span><router-link to="/project">项目</router-link> <i class="el-icon-arrow-right"></i> 添加项目</span><i class="el-icon-info"></i></div>
+      <div class="header_title"><span><router-link to="/project">项目</router-link> <i class="el-icon-arrow-right"></i> 添加宝贝</span><i class="el-icon-info"></i></div>
       <div class="main-content scroll">
         <div class="form_box form_top">
           <h5>基础信息</h5>
           <el-form ref="form" v-model="form" label-width="120px" label-position='left'>
-            <!-- <el-form-item label="宝贝编号">
-              <span>23532423453453422346364W</span>
-            </el-form-item> -->
             <el-form-item label="宝贝名称">
               <el-input size="medium" v-model="form.projectName"></el-input>
             </el-form-item>
-            <el-form-item label="价格">
-              <el-input size="medium" v-model="form.projectPrice"></el-input>
-            </el-form-item>
-            <el-form-item label="有效天数">
-              <el-input size="medium" v-model="form.availabilityDay"></el-input>
-            </el-form-item>
-            <el-form-item label="耗时(分钟)">
-              <el-input size="medium" v-model="form.consumeTime"></el-input>
-            </el-form-item>
             <el-form-item label="所属类目">
               <el-input size="medium" v-model="form.parentId"></el-input>
+            </el-form-item>
+            <el-form-item label="价格">
+              <el-input size="medium" type="number" v-model="form.projectPrice" ></el-input>
+            </el-form-item>
+            <el-form-item label="有效天数">
+              <el-input size="medium" type="number" v-model="form.availabilityDay" ></el-input>
+            </el-form-item>
+            <el-form-item label="耗时(分钟)">
+              <el-select v-model="form.consumeTime" size="medium" placeholder="请选择">
+                <el-option
+                  v-for="item in 18"
+                  :key="item.value"
+                  :label="item*10"
+                  :value="item*10">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-form>
           <div class="uploader_box">
@@ -36,71 +40,88 @@
             </el-upload>
             <p>建议分辨率为400*400</p>
           </div>
-
         </div>
-        <!-- <div class="form_box">
+        <vue-editor v-model="content"></vue-editor>
+        <div class="form_box">
           <h5>适合肤质</h5>
           <div class="li_box">
             <el-checkbox-group
-              v-model="checkedCities1"
-              :min="1"
-              :max="2">
-              <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
+              v-model="checkSkin"
+              v-if="editSkin">
+              <el-checkbox v-for="skin in skinList" :label="skin" :key="skin">{{skin}}</el-checkbox>
             </el-checkbox-group>
-            <div class="edit_box" v-if="skin">
-              <el-input size="mini"></el-input>
-              <el-button type="primary" size="mini">新增</el-button>
-              <el-button size="mini" @click="skinClose">取消</el-button>
-            </div>
+            <template v-else>
+              <el-tag
+                v-for="skin in skinList"
+                :key="skin"
+                closable
+                :disable-transitions="false"
+                @close="CloseSkinTags(skin)"
+                >
+                {{skin}}
+              </el-tag>
+              <div class="edit_box" >
+                <el-input size="mini" v-model="skinInput"></el-input>
+                <el-button type="primary" size="mini" @click='addSkin'>新增</el-button>
+                <el-button size="mini" @click="skinClose">取消</el-button>
+              </div>
+            </template>
           </div>
           <div class="right_but">
             <el-button type="primary" size="mini" @click="skinBtn">编辑肤质</el-button>
             <i class="el-icon-info"></i>
           </div>
-        </div> -->
+        </div>
 
-        <!-- <div class="form_box">
+        <div class="form_box">
           <h5>功效</h5>
           <div class="li_box">
-            <el-tag
-              v-for="tag in tags"
-              :key="tag.name"
-              closable
-              :disable-transitions="false"
-              @close="CloseTags(tag)"
-              >
-              {{tag.name}}
-            </el-tag>
-            <div class="edit_box" v-if="effect">
-              <el-input size="mini"></el-input>
-              <el-button type="primary" size="mini">新增</el-button>
-              <el-button size="mini" @click="effectClose">取消</el-button>
-            </div>
+            <el-checkbox-group
+              v-model="checkEffect"
+              v-if="editEffect">
+              <el-checkbox v-for="effect in effectList" :label="effect" :key="effect">{{effect}}</el-checkbox>
+            </el-checkbox-group>
+            <template v-else>
+              <el-tag
+                v-for="effect in effectList"
+                :key="effect"
+                closable
+                :disable-transitions="false"
+                @close="CloseEffectTags(effect)"
+                >
+                {{effect}}
+              </el-tag>
+              <div class="edit_box" >
+                <el-input size="mini" v-model="effectInput"></el-input>
+                <el-button type="primary" size="mini" @click='addEffect'>新增</el-button>
+                <el-button size="mini" @click="effectClose">取消</el-button>
+              </div>
+            </template>
           </div>
           <div class="right_but">
             <el-button type="primary" size="mini" @click="effectBtn">编辑功效</el-button>
             <i class="el-icon-info"></i>
           </div>
-        </div> -->
+        </div>
 
-        <!-- <div class="form_box">
+        <div class="form_box">
           <h5>配料</h5>
           <div class="li_box">
             <el-tag
-              v-for="tag in tags"
-              :key="tag.name"
+              v-for="(Burden,index) in materials_data"
+              :key="Burden.materialName"
               closable
               :disable-transitions="false"
-              @close="CloseTags(tag)"
+              @close="CloseBurdenTags(index)"
               >
-              {{tag.name}}
+              {{Burden.materialName+Burden.materialNum+Burden.unit}}
             </el-tag>
           </div>
           <div class="right_but">
-            <el-button type="primary" size="mini" @click="burdenBtn">添加配料</el-button>
+            <el-button type="primary" size="mini" @click="burdenDialog = true">添加配料</el-button>
             <i class="el-icon-info"></i>
           </div>
-        </div> -->
+        </div>
 
         <!-- <div class="form_box">
           <h5>添加赠送+</h5>
@@ -186,12 +207,12 @@
                 <el-radio :label="1">是</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="消耗提成类型" class="radio-input">
+            <!-- <el-form-item label="消耗提成类型" class="radio-input">
               <el-radio-group v-model="form.commissionType" >
                 <el-radio :label="0">消耗固定提成</el-radio>
                 <el-radio :label="1">消耗百分比提成</el-radio>
               </el-radio-group>
-              <div class="other" v-if="form.expend==0">
+              <div class="other" v-if="form.commissionType==0">
                 <span>提成金额</span>
                 <el-input size="mini" v-model="form.commissionMoney"></el-input>
               </div>
@@ -199,13 +220,13 @@
                 <span>百分比例</span>
                 <el-input size="mini" v-model="form.commissionPercentage"></el-input>
               </div>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="销售提成类型" class="radio-input">
               <el-radio-group v-model="form.commissionType" >
                 <el-radio :label="0">消耗固定提成</el-radio>
                 <el-radio :label="1">消耗百分比提成</el-radio>
               </el-radio-group>
-              <div class="other" v-if="form.market==0">
+              <div class="other" v-if="form.commissionType==0">
                 <span>提成金额</span>
                 <el-input size="mini" v-model="form.commissionMoney"></el-input>
               </div>
@@ -226,6 +247,7 @@
         <div class="tableDialog">
           <div class="tabs">
             <p>所有配料</p>
+            <p>载入配方</p>
           </div>
           <div class="burli1">
             <el-table
@@ -234,10 +256,10 @@
               style="width:100%"
               max-height='450'
               tooltip-effect="dark"
+              @selection-change="addMaterials"
               >
-
               <el-table-column
-                prop="material_name"
+                prop="materialName"
                 label="配料名称"
                 >
               </el-table-column>
@@ -246,25 +268,23 @@
                 label="单位">
               </el-table-column>
               <el-table-column
-              label="选择">
-                <template slot-scope="scope" >
-                  <el-button type="primary" @click="SelMaterials(scope.row)" size="small">添加</el-button>
-                </template>
+              type="selection"
+              width="80">
               </el-table-column>
             </el-table>
+            <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
           </div>
           <!-- 默认配料 -->
           <div class="burli2">
             <el-table
               :data="materials_data"
               stripe
-              style="width: 400px;margin-bottom:20px;"
               max-height='200'
               tooltip-effect="dark"
             >
               <el-table-column
-                prop="material_name"
-                label="已添加配料名称"
+                prop="materialName"
+                label="已添加配料"
                 >
               </el-table-column>
               <el-table-column
@@ -273,24 +293,17 @@
                 >
               </el-table-column>
               <el-table-column
-                prop="material_amount"
+                prop="materialNum"
                 label="数量">
                 <template slot-scope="scope" >
-                  <el-input-number v-model="scope.row.material_amount"  :min="1"></el-input-number>
-                </template>
-              </el-table-column>
-              <el-table-column
-              label="操作">
-                <template slot-scope="scope" >
-                  <el-button type="danger" @click="delSelect(scope.$index)" size="small"><i class="el-icon-delete"></i></el-button>
+                  <el-input-number v-model="scope.row.materialNum" :min="1"></el-input-number>
                 </template>
               </el-table-column>
             </el-table>
           </div>
         </div>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="burdening = false" size="small">取 消</el-button>
-          <el-button type="primary" @click="sureBurden" size="small">保存配料</el-button>
+          <el-button type="primary" @click="burdenDialog = false" size="small">确 定</el-button>
         </span>
       </el-dialog>
 
@@ -336,60 +349,76 @@
 </template>
 
 <script>
-import { addproject, getproject } from '@/api/product'
+import { addproject, getproject, getTagli, addTag, delTag, getBurden } from '@/api/product'
 import page from '@/components/common/page'
 import { clone } from '@/utils/common'
-const cityOptions = ['上海', '北京', '广州', '深圳', '上海', '北京', '广州', '深圳']
+import { VueEditor } from 'vue2-editor'
 export default {
   name: 'app',
+  components: {
+     VueEditor
+  },
   data() {
     return {
-      imageUrl: '',
-      tuisong: false,
-      checkedCities1: ['上海', '北京'],
-      cities: cityOptions,
-      search: '',
-      bed: 1,
+      content: '',
+      skinList: ['干性', '混合性', '干燥', '中性', '过敏', '粗糙', '暗沉', '敏感', '暗哑'],
+      checkSkin: [],
+      skinInput: '',
+      editSkin: true, // 肤质
+      effectList: ['保湿', '去痘', '祛斑', '美白', '抗衰', '嫩肤补水', '纤体瘦身', '去脂修复', '淡痕', '清新淡雅'],
+      checkEffect: [],
+      effectInput: '',
+      editEffect: true, // 功效
+      addBurdlist: [    //配料列表
+        { id: '1111',
+          name: '阿萨德1'
+        },
+        { id: '1111',
+          name: '阿萨德2'
+        },
+        { id: '1111',
+          name: '阿萨德3'
+        }
+      ],
+
+      tuisong: false,   // 推送
       input: '',
       voucherDialog: false,
-      banner: 'static/img/phone.png',
-      skin: false,      // 肤质
-      effect: false,    // 功效
-      burdenDialog: false,    // 配料
+      imageUrl: 'static/img/phone.png',
       presentDialog: false,
       textarea: '',
       form: {
         projectName: '',
         projectPrice: '',
         projectType: 0,
-        availabilityDay: '',    // 有效天数
-        consumeTime: '',    //  耗时
-        parentId: '',  //  父id
+        availabilityDay: 2000,  // 有效天数
+        consumeTime: 30,      // 耗时
+        parentId: '',         // 父id
         isDiscount: 0,
         isDoorService: 0,
         isIpadShow: 0,
         isIpadRecommendProject: 0,
-        isMateriel: 0, //  是否有配料
-        isSale: 0,  // 是否销售
+        isMateriel: 0,        // 是否有配料
+        isSale: 1,            // 是否销售
         commissionType: 0,
         commissionMoney: '',
         commissionPercentage: ''
       },
-      materials_arr: '',
-      materials_data: '',
-      tags: [
-        {name: '标签一'},
-        {name: '标签二'},
-        {name: '标签三'},
-        {name: '标签四'},
-        {name: '标签五'},
-        {name: '标签一'},
-        {name: '标签二'},
-        {name: '标签三'},
-        {name: '标签四'},
-        {name: '标签五'}
-      ]
+      burdenDialog: false,    // 配料
+      materials_arr: [],
+      materials_data: [],
+      hasget: [],
+      pageModel: {
+        page: 1,
+        rows: 10,
+        sumCount: 0
+      }
     }
+  },
+  created() {
+    this.getTagskin()
+    this.getTageffect()
+    this.getBurdenlist()
   },
   methods: {
     handleOpen(key, keyPath) {
@@ -398,9 +427,7 @@ export default {
     handleClose(key, keyPath) {
       console.log(key, keyPath)
     },
-    CloseTags(tag) {
-      this.tags.splice(this.tags.indexOf(tag), 1)
-    },
+
     added() {
       this.voucherDialog = true
     },
@@ -412,22 +439,12 @@ export default {
     saveBtn() {
       let param = Object.assign({
         enterpriseId: '001',
-        effect: '',   // 功效
-        fitSkin: '',  // 肤质
+        fitSkin: this.checkSkin.join(','),  // 肤质
+        effect: this.checkEffect.join(','),   // 功效
         detail: '',
         isGive: 0,
-        ccProjectMaterialList: [],
+        ccProjectMaterialList: this.materials_data,
         ccProjectPushList: [],
-        // ccProjectMaterialList: [
-        //   {
-        //     enterpriseId: '',
-        //     materialId: 0,
-        //     materialName: '',
-        //     materialNum: 0,
-        //     projectId: '',
-        //     unit: ''
-        //   }
-        // ],
         // ccProjectPushList: [
         //   {
         //     hour: '',
@@ -459,31 +476,139 @@ export default {
           }
         ]
       }, this.form)
-      addproject(param).then(res => {
-        console.log('添加项目', res)
+      if (this.form.projectName == '' || this.form.projectPrice == '') {
+        this.$message.error('项目名称和价格不能为空')
+      } else {
+        addproject(param).then(res => {
+          console.log('添加项目', res)
+          if (res.data.code == 200) {
+            this.$router.push('/project')
+            this.$message.success('新增成功!')
+          } else {
+            this.$message.error('新增失败!')
+          }
+        })
+      }
+
+    },
+    // 获取肤质
+    getTagskin() {
+      getTagli(1).then(res => {
+        this.skinList = res.data.data
+        console.log('获取肤质', res)
+      })
+    },
+    // 添加肤质
+    addSkin() {
+      if (this.skinInput == '') {
+        this.$message.error('不能为空')
+      } else {
+        let param = {
+          enterpriseId: '001',
+          tagName: this.skinInput,
+          tagType: 1
+        }
+        addTag(param).then(res => {
+          if (res.data.code == 200) {
+            console.log('添加肤质', res)
+            this.skinInput = ''
+            this.getTagskin()
+          }
+        })
+      }
+    },
+    // 删除肤质
+    CloseSkinTags(skin) {
+      let param = {
+        enterpriseId: '001',
+        tagName: skin,
+        tagType: 1
+      }
+      delTag(param).then(res => {
+        console.log('删除肤质', res)
         if (res.data.code == 200) {
-          this.$router.push('/project')
-          this.$message.success('新增成功!')
+          this.skinList.splice(this.skinList.indexOf(skin), 1)
         } else {
-          this.$message.error('新增失败!')
+          this.$message.error('删除失败')
         }
       })
     },
+    // 获取功效
+    getTageffect() {
+      getTagli(2).then(res => {
+        this.effectList = res.data.data
+        console.log('获取功效', res)
+      })
+    },
+    // 添加功效
+    addEffect() {
+      if (this.effectInput == '') {
+        this.$message.error('不能为空')
+      } else {
+        let param = {
+          enterpriseId: '001',
+          tagName: this.effectInput,
+          tagType: 2
+        }
+        addTag(param).then(res => {
+          if (res.data.code == 200) {
+            console.log('添加功效', res)
+            this.effectInput = ''
+            this.getTageffect()
+          }
+        })
+      }
+    },
+    // 删除功效
+    CloseEffectTags(effect) {
+      let param = {
+        enterpriseId: '001',
+        tagName: effect,
+        tagType: 2
+      }
+      delTag(param).then(res => {
+        console.log('删除功效', res)
+        if (res.data.code == 200) {
+          this.effectList.splice(this.effectList.indexOf(effect), 1)
+        } else {
+          this.$message.error('删除失败')
+        }
+      })
+    },
+    // 肤质
     skinBtn() {
-      this.skin = true
+      this.editSkin = false
     },
     skinClose() {
-      this.skin = false
+      this.editSkin = true
     },
+    // 功效
     effectBtn() {
-      this.effect = true
+      this.editEffect = false
     },
     effectClose() {
-      this.effect = false
+      this.editEffect = true
+    },
+    // 获取配料列表
+    getBurdenlist() {
+      getBurden(this.pageModel, {}).then(res => {
+        console.log('获取配料列表', res)
+        this.materials_arr = res.data.data.rows
+      })
+    },
+    // 添加配料
+    addMaterials(val) {
+      this.materials_data = val
+      console.log(val)
+    },
+    // 删除配料tag
+    CloseBurdenTags(index) {
+      this.materials_data.splice(index, 1)
     },
     sureBurden() {
 
     },
+    // 配料弹框
     burdenBtn() {
       this.burdenDialog = true
     },
@@ -592,6 +717,9 @@ export default {
     .el-cascader {
       width: 230px;
     }
+    .el-select{
+      width: 260px;
+    }
   }
   .right_but{
     margin-left: 40px;
@@ -637,6 +765,7 @@ export default {
 .li_box{
   width: 800px;
   border:1px solid #C0CCDA;
+  min-height: 52px;
   .el-tag{
     margin: 10px 0px 10px 20px;
   }
@@ -709,6 +838,8 @@ export default {
       width: 100px;
   }
 }
-
+.burli2{
+  width: 400px
+}
 
 </style>

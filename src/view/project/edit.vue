@@ -7,10 +7,12 @@
           <el-form ref="projectDetail" v-model="projectDetail" label-width="120px" label-position='left'>
             <el-form-item label="宝贝编号">
               <span>{{projectDetail.projectId}}</span>
-              <!-- <el-input size="medium" v-model="projectDetail.projectId"></el-input> -->
             </el-form-item>
             <el-form-item label="宝贝名称">
               <el-input size="medium" v-model="projectDetail.projectName"></el-input>
+            </el-form-item>
+            <el-form-item label="所属类目">
+              <el-input size="medium" v-model="projectDetail.parentId"></el-input>
             </el-form-item>
             <el-form-item label="价格">
               <el-input size="medium" v-model="projectDetail.projectPrice"></el-input>
@@ -19,11 +21,16 @@
               <el-input size="medium" v-model="projectDetail.availabilityDay"></el-input>
             </el-form-item>
             <el-form-item label="耗时(分钟)">
-              <el-input size="medium" v-model="projectDetail.consumeTime"></el-input>
+              <el-select v-model="projectDetail.consumeTime" size="medium" placeholder="请选择">
+                <el-option
+                  v-for="item in 18"
+                  :key="item.value"
+                  :label="item*10"
+                  :value="item*10">
+                </el-option>
+              </el-select>
             </el-form-item>
-            <el-form-item label="所属类目">
-              <el-input size="medium" v-model="projectDetail.parentId"></el-input>
-            </el-form-item>
+
           </el-form>
           <div class="uploader_box">
             <el-upload
@@ -37,71 +44,88 @@
             </el-upload>
             <p>建议分辨率为400*400</p>
           </div>
-
         </div>
-        <!-- <div class="form_box">
+
+        <div class="form_box">
           <h5>适合肤质</h5>
           <div class="li_box">
             <el-checkbox-group
-              v-model="checkedCities1"
-              :min="1"
-              :max="2">
-              <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
+              v-model="checkSkin"
+              v-if="editSkin">
+              <el-checkbox v-for="skin in skinList" :label="skin" :key="skin">{{skin}}</el-checkbox>
             </el-checkbox-group>
-            <div class="edit_box" v-if="skin">
-              <el-input size="mini"></el-input>
-              <el-button type="primary" size="mini">新增</el-button>
-              <el-button size="mini" @click="skinClose">取消</el-button>
-            </div>
+            <template v-else>
+              <el-tag
+                v-for="skin in skinList"
+                :key="skin"
+                closable
+                :disable-transitions="false"
+                @close="CloseSkinTags(skin)"
+                >
+                {{skin}}
+              </el-tag>
+              <div class="edit_box" >
+                <el-input size="mini" v-model="skinInput"></el-input>
+                <el-button type="primary" size="mini" @click='addSkin'>新增</el-button>
+                <el-button size="mini" @click="skinClose">取消</el-button>
+              </div>
+            </template>
           </div>
           <div class="right_but">
             <el-button type="primary" size="mini" @click="skinBtn">编辑肤质</el-button>
             <i class="el-icon-info"></i>
           </div>
-        </div> -->
+        </div>
 
-        <!-- <div class="form_box">
+        <div class="form_box">
           <h5>功效</h5>
           <div class="li_box">
-            <el-tag
-              v-for="tag in tags"
-              :key="tag.name"
-              closable
-              :disable-transitions="false"
-              @close="CloseTags(tag)"
-              >
-              {{tag.name}}
-            </el-tag>
-            <div class="edit_box" v-if="effect">
-              <el-input size="mini"></el-input>
-              <el-button type="primary" size="mini">新增</el-button>
-              <el-button size="mini" @click="effectClose">取消</el-button>
-            </div>
+            <el-checkbox-group
+              v-model="checkEffect"
+              v-if="editEffect">
+              <el-checkbox v-for="effect in effectList" :label="effect" :key="effect">{{effect}}</el-checkbox>
+            </el-checkbox-group>
+            <template v-else>
+              <el-tag
+                v-for="effect in effectList"
+                :key="effect"
+                closable
+                :disable-transitions="false"
+                @close="CloseEffectTags(effect)"
+                >
+                {{effect}}
+              </el-tag>
+              <div class="edit_box" >
+                <el-input size="mini" v-model="effectInput"></el-input>
+                <el-button type="primary" size="mini" @click='addEffect'>新增</el-button>
+                <el-button size="mini" @click="effectClose">取消</el-button>
+              </div>
+            </template>
           </div>
           <div class="right_but">
             <el-button type="primary" size="mini" @click="effectBtn">编辑功效</el-button>
             <i class="el-icon-info"></i>
           </div>
-        </div> -->
+        </div>
 
-        <!-- <div class="form_box">
+        <div class="form_box">
           <h5>配料</h5>
           <div class="li_box">
             <el-tag
-              v-for="tag in tags"
-              :key="tag.name"
+              v-for="(Burden,index) in projectDetail.ccProjectMaterialList"
+              :key="Burden.materialName"
               closable
               :disable-transitions="false"
-              @close="CloseTags(tag)"
+              @close="CloseBurdenTags(index)"
               >
-              {{tag.name}}
+              {{Burden.materialName+Burden.materialNum+Burden.unit}}
             </el-tag>
           </div>
           <div class="right_but">
             <el-button type="primary" size="mini" @click="burdenBtn">添加配料</el-button>
             <i class="el-icon-info"></i>
           </div>
-        </div> -->
+        </div>
 
         <!-- <div class="form_box">
           <h5>添加赠送+</h5>
@@ -227,17 +251,20 @@
         <div class="tableDialog">
           <div class="tabs">
             <p>所有配料</p>
+            <p>载入配方</p>
           </div>
           <div class="burli1">
             <el-table
+              ref="multipleTable"
               :data="materials_arr"
               stripe
               style="width:100%"
               max-height='450'
               tooltip-effect="dark"
+              @selection-change="addMaterials"
               >
               <el-table-column
-                prop="material_name"
+                prop="materialName"
                 label="配料名称"
                 >
               </el-table-column>
@@ -246,25 +273,23 @@
                 label="单位">
               </el-table-column>
               <el-table-column
-              label="选择">
-                <template slot-scope="scope" >
-                  <el-button type="primary" @click="SelMaterials(scope.row)" size="small">添加</el-button>
-                </template>
+              type="selection"
+              width="80">
               </el-table-column>
             </el-table>
+            <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
           </div>
           <!-- 默认配料 -->
           <div class="burli2">
             <el-table
-              :data="materials_data"
+              :data="projectDetail.ccProjectMaterialList"
               stripe
-              style="width: 400px;margin-bottom:20px;"
               max-height='200'
               tooltip-effect="dark"
             >
               <el-table-column
-                prop="material_name"
-                label="已添加配料名称"
+                prop="materialName"
+                label="已添加配料"
                 >
               </el-table-column>
               <el-table-column
@@ -273,24 +298,17 @@
                 >
               </el-table-column>
               <el-table-column
-                prop="material_amount"
+                prop="materialNum"
                 label="数量">
                 <template slot-scope="scope" >
-                  <el-input-number v-model="scope.row.material_amount"  :min="1"></el-input-number>
-                </template>
-              </el-table-column>
-              <el-table-column
-              label="操作">
-                <template slot-scope="scope" >
-                  <el-button type="danger" @click="delSelect(scope.$index)" size="small"><i class="el-icon-delete"></i></el-button>
+                  <el-input-number v-model="scope.row.materialNum" :min="1"></el-input-number>
                 </template>
               </el-table-column>
             </el-table>
           </div>
         </div>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="burdening = false" size="small">取 消</el-button>
-          <el-button type="primary" @click="sureBurden" size="small">保存配料</el-button>
+          <el-button type="primary" @click="burdenDialog = false" size="small">确 定</el-button>
         </span>
       </el-dialog>
 
@@ -336,18 +354,23 @@
 </template>
 
 <script>
-import { projectDetail, editproject } from '@/api/product'
+import { projectDetail, editproject, getTagli, addTag, delTag, getBurden } from '@/api/product'
 import { clone } from '@/utils/common'
 import page from '@/components/common/page'
-const cityOptions = ['上海', '北京', '广州', '深圳', '上海', '北京', '广州', '深圳']
+
 export default {
   name: 'app',
   data() {
     return {
-      imageUrl: '',
+      skinList: ['干性', '混合性', '干燥', '中性', '过敏', '粗糙', '暗沉', '敏感', '暗哑'],
+      checkSkin: [],
+      skinInput: '',
+      editSkin: true, // 肤质
+      effectList: ['保湿', '去痘', '祛斑', '美白', '抗衰', '嫩肤补水', '纤体瘦身', '去脂修复', '淡痕', '清新淡雅'],
+      checkEffect: [],
+      effectInput: '',
+      editEffect: true, // 功效
       tuisong: false,
-      checkedCities1: ['上海', '北京'],
-      cities: cityOptions,
       search: '',
       bed: 1,
       input: '',
@@ -356,47 +379,169 @@ export default {
       projectDetail: '',  // 详情
       skin: false,      // 肤质
       effect: false,    // 功效
-      burdenDialog: false,    // 配料
       presentDialog: false,
       textarea: '',
-      materials_arr: '',
-      materials_data: '',
-      tags: [
-        {name: '标签一'},
-        {name: '标签二'},
-        {name: '标签三'},
-        {name: '标签四'},
-        {name: '标签五'},
-        {name: '标签一'},
-        {name: '标签二'},
-        {name: '标签三'},
-        {name: '标签四'},
-        {name: '标签五'}
-      ]
+      burdenDialog: false,    // 配料
+      materials_arr: [],    // 配料
+      materials_data: [],
+      hasget: [],
+      pageModel: {
+        page: 1,
+        rows: 10,
+        sumCount: 0
+      }
     }
   },
   created() {
     this.getprojectDetail()
+    this.getTagskin()
+    this.getTageffect()
+    this.getBurdenlist()
+    console.log('bb',this.materials_arr[0])
+  },
+  mounted() {
+    console.log('aa',this.materials_arr[0])
+    // this.toggleSelection(this.materials_arr[0])
+    // this.$refs.multipleTable.toggleRowSelection(this.materials_arr[0])
   },
   methods: {
+
     handleOpen(key, keyPath) {
       console.log(key, keyPath)
     },
     handleClose(key, keyPath) {
       console.log(key, keyPath)
     },
-    CloseTags(tag) {
-      this.tags.splice(this.tags.indexOf(tag), 1)
+    // 获取肤质
+    getTagskin() {
+      getTagli(1).then(res => {
+        this.skinList = res.data.data
+        console.log('获取肤质', res)
+      })
+    },
+    // 添加肤质
+    addSkin() {
+      if (this.skinInput == '') {
+        this.$message.error('不能为空')
+      } else {
+        let param = {
+          enterpriseId: '001',
+          tagName: this.skinInput,
+          tagType: 1
+        }
+        addTag(param).then(res => {
+          if (res.data.code == 200) {
+            console.log('添加肤质', res)
+            this.skinInput = ''
+            this.getTagskin()
+          }
+        })
+      }
+    },
+    // 删除肤质
+    CloseSkinTags(skin) {
+      let param = {
+        enterpriseId: '001',
+        tagName: skin,
+        tagType: 1
+      }
+      delTag(param).then(res => {
+        console.log('删除肤质', res)
+        if (res.data.code == 200) {
+          this.skinList.splice(this.skinList.indexOf(skin), 1)
+        } else {
+          this.$message.error('删除失败')
+        }
+      })
+    },
+    // 获取功效
+    getTageffect() {
+      getTagli(2).then(res => {
+        this.effectList = res.data.data
+        console.log('获取功效', res)
+      })
+    },
+    // 添加功效
+    addEffect() {
+      if (this.effectInput == '') {
+        this.$message.error('不能为空')
+      } else {
+        let param = {
+          enterpriseId: '001',
+          tagName: this.effectInput,
+          tagType: 2
+        }
+        addTag(param).then(res => {
+          if (res.data.code == 200) {
+            console.log('添加功效', res)
+            this.effectInput = ''
+            this.getTageffect()
+          }
+        })
+      }
+    },
+    // 删除功效
+    CloseEffectTags(effect) {
+      let param = {
+        enterpriseId: '001',
+        tagName: effect,
+        tagType: 2
+      }
+      delTag(param).then(res => {
+        console.log('删除功效', res)
+        if (res.data.code == 200) {
+          this.effectList.splice(this.effectList.indexOf(effect), 1)
+        } else {
+          this.$message.error('删除失败')
+        }
+      })
+    },
+    // 肤质
+    skinBtn() {
+      this.editSkin = false
+    },
+    skinClose() {
+      this.editSkin = true
+    },
+    // 功效
+    effectBtn() {
+      this.editEffect = false
+    },
+    effectClose() {
+      this.editEffect = true
     },
     // 获取项目详情
     getprojectDetail() {
       projectDetail(this.$route.params.id).then(res => {
-        console.log('项目详情', res)
         this.projectDetail = res.data.data
+        // this.materials_data = res.data.data.ccProjectMaterialList
+        this.checkSkin = res.data.data.fitSkin.split(',')
+        this.checkEffect = res.data.data.effect.split(',')
+        console.log('项目详情', res)
       })
+    },
+    // 获取配料列表
+    getBurdenlist() {
+      getBurden(this.pageModel, {}).then(res => {
+        console.log('获取配料列表', res, this.materials_arr)
+        this.materials_arr = res.data.data.rows
+        console.log('cc', this.materials_arr[0])
+      })
+    },
+    // 添加配料
+    addMaterials(val) {
+      this.projectDetail.ccProjectMaterialList = val
+      console.log(val)
+    },
+    // 删除配料tag
+    CloseBurdenTags(index) {
+      this.projectDetail.ccProjectMaterialList.splice(index, 1)
     },
     // 保存修改
     saveBtn() {
+      this.projectDetail.fitSkin = this.checkSkin.join(',')
+      this.projectDetail.effect = this.checkEffect.join(',')
+      // this.projectDetail.ccProjectMaterialList = this.materials_data
       editproject(this.projectDetail).then(res => {
         console.log('保存修改', res)
         if (res.data.code == 200) {
@@ -407,22 +552,32 @@ export default {
         }
       })
     },
-    skinBtn() {
-      this.skin = true
-    },
-    skinClose() {
-      this.skin = false
-    },
-    effectBtn() {
-      this.effect = true
-    },
-    effectClose() {
-      this.effect = false
-    },
     sureBurden() {
     },
+    // 初始化选择
+    // toggleSelection(rows) {
+    //   if (rows) {
+    //     rows.forEach(row => {
+    //       this.$refs.materials_arr.toggleRowSelection(row)
+    //     })
+    //   }
+    // },
     burdenBtn() {
+      console.log('打开弹框', this.projectDetail.ccProjectMaterialList)
       this.burdenDialog = true
+      // this.toggleSelection(this.materials_arr[0])
+      // this.$refs.materials_arr.toggleRowSelection(this.materials_arr[0],true)
+
+      // this.$refs.materials_arr.toggleRowSelection(this.projectDetail.ccProjectMaterialList)
+      // toggleSelection(rows) {
+      //   if (rows) {
+      //     rows.forEach(row => {
+      //     })
+      //   }
+      // },
+      // this.toggleSelection(this.projectDetail.ccProjectMaterialList)
+      // this.$refs.materials_arr.toggleRowSelection(2)
+      // this.$refs.materials_arr.toggleRowSelection(row);
     },
     presentBtn() {
       this.presentDialog = true
@@ -529,6 +684,9 @@ export default {
     .el-cascader {
       width: 230px;
     }
+    .el-select{
+      width: 260px;
+    }
   }
   .right_but{
     margin-left: 40px;
@@ -574,6 +732,7 @@ export default {
 .li_box{
   width: 800px;
   border:1px solid #C0CCDA;
+  min-height: 52px;
   .el-tag{
     margin: 10px 0px 10px 20px;
   }
