@@ -30,7 +30,7 @@
                       <span>{{child.name}}</span>
                     </template>
                     <template v-for="(child2, index2) in child.childMenu" :keys="index1">
-                      <el-menu-item :index="child.url+child2.url" @click="changeMenu(child2)">{{child2.name}}</el-menu-item>
+                      <el-menu-item :index="item.url+child.url+child2.url" @click="changeMenu(child2, item)">{{child2.name}}</el-menu-item>
                     </template>
                   </el-submenu>
                 </template>
@@ -85,7 +85,7 @@
         <div class="right_main">
           <div class="main-head">
             <div>
-              <input type="text" class="search" v-model="search" v-on:keyup.enter="searchBtn">
+              <input type="text" class="search" v-model="voucherParam.coupName" v-on:keyup.enter="searchBtn" placeholder="请输入代金券名称">
               <i class="el-icon-search" @click="searchBtn"></i>
             </div>
             <el-button type="primary" size="small" @click="added">新　增</el-button>
@@ -118,7 +118,7 @@
                 >
               </el-table-column>
               <el-table-column
-                prop="organ"
+                prop="coupQuota"
                 label="代金券额度"
                 >
               </el-table-column>
@@ -212,7 +212,7 @@
 
 <script>
 import { getMenu, getVoucher, getMenuAdd, getMenuById } from '@/api/login'
-import { clone } from '@/api/login'
+import { clone } from '@/utils/common'
 import page from '../../components/common/page'
 export default {
   name: 'voucher',
@@ -228,7 +228,6 @@ export default {
       },
       voucherParam: {}, //代金券参数
       menuList: [],
-      search: '',
       bed: 1,
       input: '',
       voucherDialog: false,
@@ -261,9 +260,10 @@ export default {
     //搜素客户
     searchBtn() {
       console.log('搜索')
+      this.getVoucherList()
     },
     selectRoleList () {
-      this.getSttafList()
+      this.getVoucherList()
     },
     // 得到左侧菜单栏
     getMenuList() {
@@ -278,12 +278,18 @@ export default {
       getVoucher(this.pageModel, this.voucherParam).then(res => {
         if (res.data.code == 200) {
           this.tableData = res.data.data.rows
+          this.pageModel.sumCount = res.data.data.total
+          console.log(res.data.data)
         }
       })
     },
     // 改变菜单时得到代金券数据
-    changeMenu(item) {
-      this.voucherParam.parentId = item.id
+    changeMenu(child, parent) {
+      this.voucherParam.parentId = child.id
+      if (arguments.length == 2) {
+        this.voucherParam.coupId = parent.id
+      }
+      console.log(child, parent)
       this.getVoucherList()
     },
     // 增加时得到菜单

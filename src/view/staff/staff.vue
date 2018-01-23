@@ -4,15 +4,13 @@
     <div class="main-content scroll">
       <div class="main-head">
         <div>
-          <el-input placeholder="请输入内容" v-model="inputContent" class="input-with-select">
+          <el-input placeholder="请输入内容" v-model="inputContent" class="input-with-select" @keyup.enter.native="searchBtn" clearable="true">
             <el-select v-model="selectInput" slot="prepend" placeholder="请选择">
               <el-option label="姓名" value="userName"></el-option>
               <el-option label="手机号" value="mobilePhoneNum"></el-option>
             </el-select>
             <el-button slot="append" icon="el-icon-search" @click="searchBtn"></el-button>
           </el-input>
-          <!-- <input type="text" class="search" v-model="search" v-on:keyup.enter="searchBtn">
-          <i class="el-icon-search" ></i> -->
         </div>
         <el-button type="primary" size="small" @click="added">新　增</el-button>
       </div>
@@ -121,7 +119,7 @@ export default {
     return {
       loading: false,
       inputContent: '',
-      selectInput: '',
+      selectInput: 'userName',
       search: '',
       dialogVisible: false,
       img: 'static/img/phone.png',

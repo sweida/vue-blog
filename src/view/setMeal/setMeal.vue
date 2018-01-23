@@ -71,6 +71,7 @@
                 </template>
               </el-table-column>
             </el-table>
+            <page :pageModel="pageModel" @selectList="selectRoleList"></page>
           </div>
         </div>
 
@@ -118,10 +119,20 @@
 </template>
 
 <script>
+import { getMenuMeal, getMealList } from '@/api/login'
+import page from '@/components/common/page'
 export default {
-  name: 'app',
+  name: 'meal',
+  components: {
+    page
+  },
   data() {
     return {
+      pageModel: {
+        page: 1,
+        rows: 10,
+        sumCount: 0
+      },
       search: '',
       bed: 1,
       input: '',
@@ -166,10 +177,29 @@ export default {
     added() {
       this.$router.push('/setMeal/addSetmeal')
     },
+    selectRoleList () {
+      this.getListMeal()
+    },
     //搜素客户
     searchBtn() {
       console.log('搜索')
+    },
+    // 得到套餐菜单
+    getMealMenu() {
+      getMenuMeal().then(res => {
+        console.log(res)
+      })
+    },
+    // 得到套餐列表
+    getListMeal() {
+      getMealList(this.pageModel, {}).then(res => {
+        console.log(res)
+      })
     }
+  },
+  created() {
+    this.getMealMenu()
+    this.getListMeal()
   }
 }
 </script>
