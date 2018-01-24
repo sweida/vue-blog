@@ -569,19 +569,19 @@ export default {
       span{
         padding-left: 15px;
       }
-      .navicon{
-        position: absolute;
-        right: 40px;
-        i{
-          color: #fff;
-          width: 20px;
-          height: 20px;
-          font-size: 12px;
-          background: #409EFF;
-          line-height: 20px;
-          padding: 0;
-          text-align: center;
-        }
+    }
+    .navicon{
+      position: absolute;
+      right: 40px;
+      i{
+        color: #fff;
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+        background: #409EFF;
+        line-height: 20px;
+        padding: 0;
+        text-align: center;
       }
     }
   }
