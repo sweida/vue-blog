@@ -362,8 +362,8 @@ export default {
     getvipList() {
       getvipCard(this.pageModel, {}).then(res => {
         console.log('获取会员卡列表', res)
-        this.pageModel.sumCount = res.data.data.total
         this.vipcardList = res.data.data.rows
+        this.pageModel.sumCount = res.data.data.total
       })
     },
     selectRoleList() {

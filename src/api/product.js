@@ -70,19 +70,71 @@ export function getBurden(pageModel, data) {
     data
   })
 }
-
-// // 添加赠送方案
-// export function addproject(data) {
-//   return fetch({
-//     url: 'apis/givePlan',
-//     method: 'post',
-//     data
-//   })
-// }
-// // 编辑项目
-// export function projectDetail(projectId) {
-//   return fetch({
-//     url: `apis/projectInfo/${projectId}`,
-//     method: 'GET'
-//   })
-// }
+// 获取赠送方案菜单
+export function giveNav(data) {
+  return fetch({
+    url: 'apis/menu/ccMaterial',
+    method: 'GET',
+    data
+  })
+}
+// 添加赠送方案菜单
+export function addgiveNav(data) {
+  return fetch({
+    url: 'apis/menu',
+    method: 'post',
+    data
+  })
+}
+// 删除赠送方案菜单
+export function delMenu(menuId) {
+  return fetch({
+    url: `apis/menu/${menuId}`,
+    method: 'DELETE'
+  })
+}
+// 修改赠送方案菜单
+export function editMenu(menuId, menuName) {
+  return fetch({
+    url: `apis/menu/${menuId}/${menuName}`,
+    method: 'put'
+  })
+}
+// 添加赠送方案
+export function addgivePlan(data) {
+  return fetch({
+    url: 'apis/givePlan',
+    method: 'post',
+    data
+  })
+}
+// 修改赠送方案
+export function editgivePlan(data) {
+  return fetch({
+    url: 'apis/givePlan',
+    method: 'put',
+    data
+  })
+}
+// 获取赠送方案列表
+export function getgivePlan(pageModel, data) {
+  return fetch({
+    url: `apis/givePlan/page/${pageModel.page}/${pageModel.rows}`,
+    method: 'post',
+    data
+  })
+}
+// 获取赠送方案详细
+export function givePlanDetail(givePlanId) {
+  return fetch({
+    url: `apis/givePlan/${givePlanId}`,
+    method: 'GET'
+  })
+}
+// 删除赠送方案
+export function delgivePlan(givePlanId) {
+  return fetch({
+    url: `apis/givePlan/${givePlanId}`,
+    method: 'DELETE'
+  })
+}

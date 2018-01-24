@@ -1,39 +1,120 @@
 <template>
   <div >
       <div class="header_title">赠送方案<i class="el-icon-info"></i></div>
-      <div class="main-content">
+      <div class="main-content scroll">
         <div class="left_tree scroll">
+
+          <!-- <el-menu
+            default-active="2"
+            class="el-menu-vertical-demo"
+            @open="handleOpen"
+            @close="handleClose"
+            @select="handleSelect">
+            <el-submenu :index="menuList.url">
+              <template slot="title">
+                <span>{{menuList.name}}</span>
+                <em class="navicon" v-if="menuList.url==openindex">
+                  <i class="el-icon-plus" @click="plusNav(item)"></i>
+                  <i class="el-icon-edit" @click="editNav"></i>
+                </em>
+              </template>
+              <template v-for="(item, index) in menuList.childMenu" :keys="index">
+                <el-menu-item :index="item.url" v-if="item.childMenu==null" @click="changeMenu(item)">
+                  <template slot="title">
+                    <span>{{item.name}}</span>
+                    <em class="navicon" v-if="item.url==openindex">
+                      <i class="el-icon-plus" @click="plusNav(item)"></i>
+                      <i class="el-icon-edit" @click="editNav"></i>
+                      <i class="el-icon-minus" @click="minusNav(item)"></i>
+                    </em>
+                  </template>
+                </el-menu-item>
+                <el-submenu :index="item.url" v-else>
+                  <template slot="title">
+                    <span>{{item.name}}</span>
+                    <em class="navicon" v-if="item.url==openindex">
+                      <i class="el-icon-plus" @click="plusNav(item)"></i>
+                      <i class="el-icon-edit" @click="editNav"></i>
+                      <i class="el-icon-minus" @click="minusNav(item)"></i>
+                    </em>
+                  </template>
+                  <template v-for="(child, index1) in item.childMenu" :keys="index1">
+                    <el-menu-item :index="child.url" v-if="child.childMenu==null" @click="changeMenu(child)">
+                      <span>{{child.name}}</span>
+                      <em class="navicon" v-if="child.url==openindex">
+                        <i class="el-icon-plus" @click="plusNav(child)"></i>
+                        <i class="el-icon-edit" @click="editNav"></i>
+                        <i class="el-icon-minus" @click="minusNav"></i>
+                      </em>
+                    </el-menu-item>
+                    <el-submenu :index="child.url" v-else>
+                      <template slot="title">
+                        <span>{{child.name}}</span>
+                        <em class="navicon" v-if="child.url==openindex">
+                          <i class="el-icon-plus" @click="plusNav(child)"></i>
+                          <i class="el-icon-edit" @click="editNav"></i>
+                          <i class="el-icon-minus" @click="minusNav(child)"></i>
+                        </em>
+                      </template>
+                      <template v-for="(child2, index2) in child.childMenu" :keys="index1">
+                        <el-menu-item :index="child2.url" @click="changeMenu(child2, item)">{{child2.name}}</el-menu-item>
+                        <em class="navicon" v-if="child2.url==openindex">
+                          <i class="el-icon-plus" @click="plusNav"></i>
+                          <i class="el-icon-edit" @click="editNav"></i>
+                          <i class="el-icon-minus" @click="minusNav(child2)"></i>
+                        </em>
+                      </template>
+                    </el-submenu>
+                  </template>
+                </el-submenu>
+              </template>
+            </el-submenu>
+          </el-menu> -->
+
+          <p class="nav-title" @click="navtitle">
+            <span>{{menuList.name}}</span>
+            <em class="navicon" v-if="openindex==menuList.url">
+              <i class="el-icon-plus" @click="plusNav(menuList)"></i>
+              <i class="el-icon-edit" @click="editNav(menuList, menuList.name)"></i>
+            </em>
+          </p>
           <el-menu
             default-active="2"
             class="el-menu-vertical-demo"
             @open="handleOpen"
-            @close="handleClose">
-            <el-submenu index="1">
-              <template slot="title">
-                <i class="el-icon-location"></i>
-                <span>导航一</span>
-              </template>
-              <el-menu-item-group>
-                <template slot="title">分组一</template>
-                <el-menu-item index="1-1">选项1</el-menu-item>
-                <el-menu-item index="1-2">选项2</el-menu-item>
-              </el-menu-item-group>
-              <el-menu-item-group title="分组2">
-                <el-menu-item index="1-3">选项3</el-menu-item>
-              </el-menu-item-group>
-              <el-submenu index="1-4">
-                <template slot="title">选项4</template>
-                <el-menu-item index="1-4-1">选项1</el-menu-item>
+            @close="handleClose"
+            @select="handleSelect">
+            <template v-for="(item, index) in menuList.childMenu" :keys="index">
+              <el-menu-item :index="item.url" v-if="item.childMenu==null" @click="changeMenu(item)">
+                <template slot="title">
+                  <span>{{item.name}}</span>
+                  <em class="navicon" v-if="item.url==openindex">
+                    <i class="el-icon-plus" @click="plusNav(item)"></i>
+                    <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
+                    <i class="el-icon-minus" @click="minusNav(item)"></i>
+                  </em>
+                </template>
+              </el-menu-item>
+              <el-submenu :index="item.url" v-else>
+                <template slot="title">
+                  <span>{{item.name}}</span>
+                  <em class="navicon" v-if="item.url==openindex">
+                    <i class="el-icon-plus" @click="plusNav(item)"></i>
+                    <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
+                    <i class="el-icon-minus" @click="minusNav(item)"></i>
+                  </em>
+                </template>
+                <template v-for="(child, index1) in item.childMenu" :keys="index1">
+                  <el-menu-item :index="child.url" @click="changeMenu(child)">
+                    <span>{{child.name}}</span>
+                    <em class="navicon" v-if="child.url==openindex">
+                      <i class="el-icon-edit" @click="editNav(child, child.name)"></i>
+                      <i class="el-icon-minus" @click="minusNav(child)"></i>
+                    </em>
+                  </el-menu-item>
+                </template>
               </el-submenu>
-            </el-submenu>
-            <el-menu-item index="2">
-              <i class="el-icon-menu"></i>
-              <span slot="title">导航二</span>
-            </el-menu-item>
-            <el-menu-item index="3">
-              <i class="el-icon-setting"></i>
-              <span slot="title">导航三</span>
-            </el-menu-item>
+            </template>
           </el-menu>
         </div>
         <div class="right_main">
@@ -46,56 +127,56 @@
           </div>
           <div class="main_table">
             <el-table
-              :data="tableData"
+              :data="givePlanli"
               stripe
               style="width: 100%"
               max-height="600"
               tooltip-effect="dark"
               >
               <el-table-column
-                prop="name"
+                prop="givePlanName"
                 label="名称"
                 width="300px"
                 >
-                <template slot-scope="scope" >
-                  <span v-if="editBtn">{{scope.row.name}} <i class="el-icon-edit" @click="editTitle(scope.$index)"></i></span>
+                <!-- <template slot-scope="scope" >
+                  <span v-if="editBtn">{{scope.row.givePlanName}} <i class="el-icon-edit" @click="editTitle(scope.$index)"></i></span>
                   <template v-else>
-                    <el-input v-model="scope.row.name" size="mini" class="text_edit"></el-input>
+                    <el-input v-model="scope.row.givePlanName" size="mini" class="text_edit"></el-input>
                     <el-button type="primary" size="mini">确定</el-button>
                     <el-button size="mini" @click="editClose">取消</el-button>
                   </template>
-                </template>
+                </template> -->
               </el-table-column>
               <el-table-column
-                prop="startDate"
+                prop="createDate"
                 label="生效日期"
                 width="150px">
               </el-table-column>
               <el-table-column
-                prop="endDate"
+                prop="effectiveDate"
                 label="使用截止日期"
                 width="150px">
               </el-table-column>
               <el-table-column
-                label="修改详情"
-                >
+                label="修改详情">
                 <template slot-scope="scope">
-                  <i class="el-icon-edit" @click="edit(scope.$index)"></i>
+                  <i class="el-icon-edit" @click="editBtn(scope.$index, scope.row)"></i>
                 </template>
               </el-table-column>
               <el-table-column
                 label="删除">
                 <template slot-scope="scope">
-                  <i class="el-icon-delete" @click="deleteBtn(scope.$index)"></i>
+                  <i class="el-icon-delete" @click="deleteBtn(scope.$index, scope.row)"></i>
                 </template>
               </el-table-column>
             </el-table>
+            <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
           </div>
         </div>
 
       </div>
 
-      <el-dialog :visible.sync="presentDialog" title="编辑配料" width="1050px" class="burbox">
+      <el-dialog :visible.sync="presentDialog" title="添加赠送方案" width="1150px" class="burbox">
         <div class="tableDialog">
           <div class="tabs">
             <p>所有配料</p>
@@ -108,62 +189,88 @@
               max-height='450'
               tooltip-effect="dark"
               >
-
               <el-table-column
-                prop="material_name"
-                label="配料名称"
+                prop="name"
+                label="名称"
                 >
               </el-table-column>
               <el-table-column
-                prop="unit"
-                label="单位">
+                prop="price"
+                label="价值">
               </el-table-column>
               <el-table-column
-              label="选择">
-                <template slot-scope="scope" >
-                  <el-button type="primary" @click="SelMaterials(scope.row)" size="small">添加</el-button>
-                </template>
+              type="selection"
+              width="80">
               </el-table-column>
             </el-table>
           </div>
           <!-- 默认配料 -->
-          <div class="burli2">
+          <div class="burli3">
             <el-table
               :data="materials_data"
               stripe
-              style="width: 400px;margin-bottom:20px;"
-              max-height='200'
+              style="width: 100%;margin-bottom:20px;"
+              max-height='300'
               tooltip-effect="dark"
             >
               <el-table-column
-                prop="material_name"
-                label="已添加配料名称"
+                prop="givePlanType"
+                label="类型"
                 >
               </el-table-column>
               <el-table-column
-                prop="unit"
-                label="单位"
+                prop="name"
+                label="名称"
                 >
               </el-table-column>
               <el-table-column
-                prop="material_amount"
+                prop="price"
+                label="价值"
+                >
+              </el-table-column>
+              <el-table-column
+                prop="number"
                 label="数量">
                 <template slot-scope="scope" >
-                  <el-input-number v-model="scope.row.material_amount"  :min="1"></el-input-number>
-                </template>
-              </el-table-column>
-              <el-table-column
-              label="操作">
-                <template slot-scope="scope" >
-                  <el-button type="danger" @click="delSelect(scope.$index)" size="small"><i class="el-icon-delete"></i></el-button>
+                  <el-input-number v-model="scope.row.number"  :min="1"></el-input-number>
                 </template>
               </el-table-column>
             </el-table>
+
+            <h4>设置</h4>
+            <el-form ref="form" v-model="form" label-width="120px" label-position='left'>
+              <el-form-item label="赠送方案名称">
+                <el-input size="medium" v-model="form.givePlanName" placeholder="填写赠送方案名称"></el-input>
+              </el-form-item>
+              <el-form-item label="所属类目">
+                <el-select v-model="form.parentId" size="medium" placeholder="请选择类目">
+                  <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+                <!-- <el-cascader
+                  :options="options"
+                  v-model="selectedOptions"
+                  @change="handleChange">
+                </el-cascader> -->
+              </el-form-item>
+              <el-form-item label="生效日期" >
+                <el-date-picker type="date" placeholder="选择生效日期" v-model="form.createDate" size="medium"></el-date-picker>
+              </el-form-item>
+              <el-form-item label="使用截止日期" >
+                <el-date-picker type="date" placeholder="选择使用截止日期" v-model="form.effectiveDate" size="medium"></el-date-picker>
+              </el-form-item>
+            </el-form>
+
           </div>
         </div>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="burdening = false" size="small">取 消</el-button>
-          <el-button type="primary" @click="sureBurden" size="small">保存配料</el-button>
+          <el-button @click="presentDialog = false" size="small">取 消</el-button>
+          <el-button type="primary" @click="savePlanBtn" size="small">保 存</el-button>
+          <el-button type="primary" @click="editPlanBtn" size="small">保存修改</el-button>
         </span>
       </el-dialog>
 
@@ -171,60 +278,272 @@
 </template>
 
 <script>
+import { giveNav, delMenu, editMenu, addgiveNav, addgivePlan, getgivePlan, delgivePlan, editgivePlan, givePlanDetail } from '@/api/product'
+import page from '@/components/common/page'
+import { parseTime, clone } from '@/utils/common'
 export default {
   name: 'app',
+  components: {
+    page
+  },
   data() {
     return {
+      openindex: '',
+      menuList: [],
+      givePlanli: [], //  赠送列表
+      options: '',
       search: '',
-      bed: 1,
-      input: '',
       presentDialog: false,
-      editBtn: true,
-      banner: 'static/img/phone.png',
-      form: {
-        type: 1,
-        exclusive: 1,
-        region: '',
-        desc: ''
-      },
-      tableData: [{
-        name: '美白面部护理套',
-        startDate: '2016-05-02',
-        endDate: '2018-05-02'
-      }, {
-        name: '果冻肌之三重',
-        startDate: '2016-05-02',
-        endDate: '2018-05-02'
-      }, {
-        name: '紧致换肤',
-        startDate: '2016-05-02',
-        endDate: '2018-05-02'
-      }, {
-        name: '相宜本草柔肤水百合',
-        startDate: '2016-05-02',
-        endDate: '2018-05-02'
-      }]
+      materials_arr: [],    // 配料
+      materials_data: [],
+      form: '',
+      formInfo: '',
+      pageModel: {
+        page: 1,
+        rows: 10,
+        sumCount: 0
+      }
     }
   },
+  created() {
+    this.getgivePlanList()
+    this.getgiveNav()
+  },
   methods: {
+    // 获取赠送菜单
+    getgiveNav() {
+      giveNav().then(res => {
+        if (res.data.code == 200) {
+          this.menuList = res.data.data[0]
+        }
+        console.log('获取赠送菜单', res, this.menuList)
+      })
+    },
+    // 新增菜单
+    plusNav(item) {
+      event.stopPropagation()
+      this.$prompt('请输入新增的类目名称', '提示', {
+      }).then(({ value }) => {
+        console.log(value)
+        let param = {
+          icon: '',
+          name: value,
+          parentId: item.id
+        }
+        addgiveNav(param).then(res => {
+          console.log('添加菜单', res)
+          if (res.data.code == 200) {
+            this.getgiveNav()
+            this.$message.success('新增菜单成功!')
+          } else {
+            this.$message.error('新增菜单失败!')
+          }
+        })
+        this.$message.success('新增类目成功')
+      }).catch(() => {
+      })
+    },
+    // 删除菜单
+    minusNav(item) {
+      event.stopPropagation()
+      console.log(item.id)
+      this.$confirm('是否删除该类目?', '提示', {
+        type: 'warning'
+      }).then(() => {
+        delMenu(item.id).then(res => {
+          console.log('删除菜单', res)
+          if (res.data.code == 200) {
+            this.getgiveNav()
+            this.$message.success(res.data.msg)
+          } else {
+            this.$message.error(res.data.msg)
+          }
+        })
+      }).catch(() => {
+      })
+    },
+    // 修改菜单
+    editNav(item, name) {
+      console.log(item, name)
+      event.stopPropagation()
+      this.$prompt('请输入修改的类目名称', '提示', {
+        inputValue: name
+      }).then(({ value }) => {
+        editMenu(item.id, value).then(res => {
+          console.log('修改菜单', res)
+          if (res.data.code == 200) {
+            this.getgiveNav()
+            this.$message.success('修改菜单成功!')
+          } else {
+            this.$message.error('修改菜单失败!')
+          }
+        })
+        this.$message.success('新增类目成功')
+      }).catch(() => {
+      })
+    },
+    handleSelect(key, keyPath) {
+      this.openindex = key
+      console.log('handleSelect', key, keyPath)
+    },
     handleOpen(key, keyPath) {
-      console.log(key, keyPath)
+      this.openindex = key
+      console.log('handleOpen', key, keyPath)
     },
     handleClose(key, keyPath) {
-      console.log(key, keyPath)
+      this.openindex = ''
+      console.log('handleOpen', key, keyPath)
     },
+    navtitle() {
+      this.openindex = this.menuList.url
+      console.log(this.openindex)
+    },
+    // 改变菜单时得到代金券数据
+    changeMenu(child, parent) {
+      console.log(child, parent)
+    },
+    // 获取赠送列表
+    getgivePlanList() {
+      getgivePlan(this.pageModel, {}).then(res => {
+        console.log('获取赠送列表', res)
+        this.givePlanli = res.data.data.rows
+        this.pageModel.sumCount = res.data.data.total
+        this.givePlanli.forEach(item => {
+          item.createDate = parseTime(item.createDate, '{y}-{m}-{d}')
+          item.effectiveDate = parseTime(item.effectiveDate, '{y}-{m}-{d}')
+        })
+      })
+    },
+    // 删除赠送
+    deleteBtn(index, row) {
+      console.log(row)
+      this.$confirm('是否删除该赠送方案?', '提示', {
+        type: 'warning'
+      }).then(() => {
+        delgivePlan(row.givePlanId).then(res => {
+          if (res.data.code == 200) {
+            console.log(res)
+            this.givePlanli.splice(index, 1)
+            this.$message.success(res.data.msg)
+            this.getgivePlanList()
+          } else {
+            this.$message.error('删除失败!')
+          }
+        })
+      }).catch(() => {
+      })
+    },
+    // 打开弹框
     added() {
+      this.form = {
+        givePlanName: '',
+        createDate: '',
+        effectiveDate: '',
+        parentId: ''
+      }
       this.presentDialog = true
+      console.log('form', this.form)
+    },
+    // 保存添加赠送
+    savePlanBtn() {
+      if (this.form.givePlanName == '') {
+        this.$message.error('方案名称不能为空')
+      } else if (this.form.effectiveDate < this.form.createDate || this.form.createDate == '' || this.form.createDate == null) {
+        this.$message.error('日期有误，请重新选择日期')
+      } else {
+        let param = Object.assign({
+          enterpriseId: '001',
+          ccGivePlanSubtabulationList: [
+            {
+              giveId: '',
+              givePlanId: '',
+              givePlanSubtabulationId: '',
+              givePlanType: '',
+              name: '',
+              number: 0,
+              price: 0
+            }
+          ]
+        }, this.form)
+        addgivePlan(param).then(res => {
+          console.log('添加赠送', res)
+          if (res.data.code == 200) {
+            this.presentDialog = false
+            this.getgivePlanList()
+            this.$message.success('新增赠送方案成功!')
+          } else {
+            this.$message.error('新增失败!')
+          }
+        })
+      }
+    },
+    // 打开编辑弹框
+    editBtn(index, row) {
+      this.presentDialog = true
+      givePlanDetail(row.givePlanId).then(res => {
+        if (res.data.code == 200) {
+          this.form = res.data.data
+          // this.form.givePlanName = res.data.data.givePlanName
+          // this.form.createDate = res.data.data.createDate
+          // this.form.effectiveDate = res.data.data.effectiveDate
+          // this.form.givePlanId = res.data.data.givePlanId
+        }
+        console.log('打开编辑弹框', this.form)
+      })
+    },
+    // 修改赠送方案
+    editPlanBtn() {
+      if (this.form.givePlanName == '') {
+        this.$message.error('方案名称不能为空')
+      } else if (this.form.effectiveDate < this.form.createDate || this.form.createDate == '' || this.form.createDate == null) {
+        this.$message.error('日期有误，请重新选择日期')
+      } else {
+        let param = Object.assign({
+          enterpriseId: '001',
+          ccGivePlanSubtabulationList: [
+            {
+              giveId: '',
+              givePlanId: '',
+              givePlanSubtabulationId: '',
+              givePlanType: '',
+              name: '',
+              number: 0,
+              price: 0
+            }
+          ]
+        }, this.form)
+        editgivePlan(param).then(res => {
+          console.log('添加赠送', res)
+          if (res.data.code == 200) {
+            this.presentDialog = false
+            this.getgivePlanList()
+            this.form = {
+              givePlanName: '',
+              createDate: '',
+              effectiveDate: '',
+              parentId: ''
+            }
+            this.$message.success('修改赠送方案成功!')
+          } else {
+            this.$message.error('新增失败!')
+          }
+        })
+      }
     },
     //搜素客户
     searchBtn() {
       console.log('搜索')
     },
+
     editTitle() {
       this.editBtn = false
     },
     editClose() {
       this.editBtn = true
+    },
+    // 分页
+    selectRoleList() {
+      this.getgivePlanList()
     }
   }
 }
@@ -235,11 +554,35 @@ export default {
   padding:0;
   display: flex;
   .left_tree{
-    width: 160px;
+    width: 240px;
     height: 100%;
     border-right: 4px solid #F3F8FF;
+    position: relative;
+    .nav-title{
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 18px;
+      padding: 25px 20px 10px;
+    }
     .el-menu{
       border-right: 0;
+      span{
+        padding-left: 15px;
+      }
+      .navicon{
+        position: absolute;
+        right: 40px;
+        i{
+          color: #fff;
+          width: 20px;
+          height: 20px;
+          font-size: 12px;
+          background: #409EFF;
+          line-height: 20px;
+          padding: 0;
+          text-align: center;
+        }
+      }
     }
   }
   .right_main{
@@ -277,26 +620,17 @@ export default {
 .text_edit{
   width: 140px;
 }
-.form_box{
-  display: flex;
-  width: 500px;
-  margin: 30px auto;
-  h4{
-    width: 100px;
-    font-size: 16px;
-    padding-top: 8px;
-  }
-  .el-form{
-    width: 350px;
-    .el-radio{
-      color:#1F2D3D;
-    }
-    .el-cascader {
-      width: 230px;
-    }
-  }
 
+.el-form{
+  .el-form-item {
+    margin-bottom: 8px;
+  }
+  .el-input{
+    width: 220px;
+  }
 }
-
+.main_table{
+  margin-bottom: 20px;
+}
 
 </style>

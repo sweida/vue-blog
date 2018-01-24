@@ -10,8 +10,13 @@
           @close="handleClose">
           <el-submenu index="1">
             <template slot="title">
-              <i class="el-icon-location"></i>
+              <!-- <i class="el-icon-location"></i> -->
               <span>导航一</span>
+              <em class="navicon">
+                <i class="el-icon-plus" @click="plusNav"></i>
+                <i class="el-icon-edit" @click="editNav"></i>
+                <i class="el-icon-minus" @click="minusNav"></i>
+              </em>
             </template>
             <el-menu-item-group>
               <template slot="title">分组一</template>
@@ -22,8 +27,22 @@
               <el-menu-item index="1-3">选项3</el-menu-item>
             </el-menu-item-group>
             <el-submenu index="1-4">
-              <template slot="title">选项4</template>
-              <el-menu-item index="1-4-1">选项1</el-menu-item>
+              <template slot="title">
+                选项4
+                <em class="navicon">
+                  <i class="el-icon-plus" @click="plusNav"></i>
+                  <i class="el-icon-edit" @click="editNav"></i>
+                  <i class="el-icon-minus" @click="minusNav"></i>
+                </em>
+              </template>
+              <el-menu-item index="1-4-1">
+                选项1
+                <em class="navicon">
+                  <i class="el-icon-plus" @click="plusNav"></i>
+                  <i class="el-icon-edit" @click="editNav"></i>
+                  <i class="el-icon-minus" @click="minusNav"></i>
+                </em>
+              </el-menu-item>
             </el-submenu>
           </el-submenu>
           <el-menu-item index="2">
@@ -88,7 +107,6 @@
 <script>
 import { addproject, getproject, delProject } from '@/api/product'
 import page from '@/components/common/page'
-import { clone } from '@/utils/common'
 export default {
   name: 'app',
   components: {
@@ -109,6 +127,18 @@ export default {
     this.getprojectList()
   },
   methods: {
+    plusNav() {
+      event.stopPropagation()
+      console.log(1)
+    },
+    minusNav() {
+      event.stopPropagation()
+      console.log(2)
+    },
+    editNav() {
+      event.stopPropagation()
+      console.log(3)
+    },
     handleOpen(key, keyPath) {
       console.log(key, keyPath)
     },
@@ -165,7 +195,7 @@ export default {
   padding:0;
   display: flex;
   .left_tree{
-    width: 160px;
+    width: 260px;
     height: 100%;
     border-right: 4px solid #F3F8FF;
     .el-menu{
@@ -206,6 +236,19 @@ export default {
 }
 .main_table{
   margin-bottom: 20px;
+}
+.navicon{
+  position: absolute;
+  right: 40px;
+  i{
+    color: #fff;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    background: #409EFF;
+    line-height: 20px;
+    padding: 0;
+  }
 }
 
 </style>

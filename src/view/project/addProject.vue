@@ -41,7 +41,10 @@
             <p>建议分辨率为400*400</p>
           </div>
         </div>
-        <vue-editor v-model="content"></vue-editor>
+        <div class="form_box">
+          <h5>需知与描述</h5>
+          <vue-editor v-model="content"></vue-editor>
+        </div>
         <div class="form_box">
           <h5>适合肤质</h5>
           <div class="li_box">
@@ -123,26 +126,26 @@
           </div>
         </div>
 
-        <!-- <div class="form_box">
+        <div class="form_box">
           <h5>添加赠送+</h5>
           <div class="li_box">
             <el-tag
-              v-for="tag in tags"
-              :key="tag.name"
+              v-for="(Burden,index) in materials_data"
+              :key="Burden.materialName"
               closable
               :disable-transitions="false"
-              @close="CloseTags(tag)"
+              @close="CloseBurdenTags(index)"
               >
-              {{tag.name}}
+              {{Burden.materialName+Burden.materialNum+Burden.unit}}
             </el-tag>
           </div>
           <div class="right_but">
             <el-button type="primary" size="mini" @click="presentBtn">添加赠送</el-button>
             <i class="el-icon-info"></i>
           </div>
-        </div> -->
+        </div>
 
-        <div class="form_box">
+        <!-- <div class="form_box">
           <h5>推送</h5>
           <div class="li_box" v-if="tuisong">
           </div>
@@ -168,19 +171,19 @@
               <textarea class="scroll"></textarea>
             </div>
           </div>
-
           <div class="right_but">
             <el-button type="primary" size="mini">添加推送</el-button>
             <i class="el-icon-info"></i>
           </div>
-        </div>
+        </div> -->
+
         <div class="form_box">
           <h5>其它信息</h5>
           <el-form ref="form" :model="form" label-width="170px" label-position='left'>
             <el-form-item label="折扣信息">
               <el-radio-group v-model="form.isDiscount">
-                <el-radio :label="0">参与会员折扣</el-radio>
-                <el-radio :label="1">不参与会员折扣</el-radio>
+                <el-radio :label="0">不参与会员折扣</el-radio>
+                <el-radio :label="1">参与会员折扣</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="是否支持上面服务">
@@ -207,20 +210,6 @@
                 <el-radio :label="1">是</el-radio>
               </el-radio-group>
             </el-form-item>
-            <!-- <el-form-item label="消耗提成类型" class="radio-input">
-              <el-radio-group v-model="form.commissionType" >
-                <el-radio :label="0">消耗固定提成</el-radio>
-                <el-radio :label="1">消耗百分比提成</el-radio>
-              </el-radio-group>
-              <div class="other" v-if="form.commissionType==0">
-                <span>提成金额</span>
-                <el-input size="mini" v-model="form.commissionMoney"></el-input>
-              </div>
-              <div class="other" v-else>
-                <span>百分比例</span>
-                <el-input size="mini" v-model="form.commissionPercentage"></el-input>
-              </div>
-            </el-form-item> -->
             <el-form-item label="销售提成类型" class="radio-input">
               <el-radio-group v-model="form.commissionType" >
                 <el-radio :label="0">消耗固定提成</el-radio>
@@ -307,41 +296,68 @@
         </span>
       </el-dialog>
 
-      <el-dialog title="新增赠送" :visible.sync="presentDialog" width="1000px">
-        <div class="form_box">
-          <h5>选择</h5>
-          <el-form ref="form" :model="form" label-width="120px" label-position='left'>
-            <el-form-item label="类型">
-              <el-radio-group v-model="form.type">
-                <el-radio :label="0">代金券</el-radio>
-                <el-radio :label="1">现金券</el-radio>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="是否专项">
-              <el-radio-group v-model="form.exclusive">
-                <el-radio :label="1">通用</el-radio>
-                <el-radio :label="2">专项</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-form>
-        </div>
-        <div class="form_box">
-          <h5>设置</h5>
-          <el-form ref="form" :model="form" label-width="120px" label-position='left'>
-            <el-form-item label="额度（元）">
-              <el-input size="medium" v-model="form.desc"></el-input>
-            </el-form-item>
-            <el-form-item label="数量（张）">
-              <el-input size="medium" v-model="form.desc"></el-input>
-            </el-form-item>
-            <el-form-item label="有效期（天）">
-              <el-input size="medium" v-model="form.desc"></el-input>
-            </el-form-item>
-          </el-form>
+      <!-- 赠送弹框 -->
+      <el-dialog title="新增赠送" :visible.sync="presentDialog" width="1000px" class="burbox">
+        <div class="tableDialog">
+          <div class="tabs">
+            <p>所有配料</p>
+            <p>载入配方</p>
+          </div>
+          <div class="burli1">
+            <el-table
+              :data="materials_arr"
+              stripe
+              style="width:100%"
+              max-height='450'
+              tooltip-effect="dark"
+              @selection-change="addMaterials"
+              >
+              <el-table-column
+                prop="materialName"
+                label="配料名称"
+                >
+              </el-table-column>
+              <el-table-column
+                prop="unit"
+                label="单位">
+              </el-table-column>
+              <el-table-column
+              type="selection"
+              width="80">
+              </el-table-column>
+            </el-table>
+            <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
+          </div>
+          <!-- 默认配料 -->
+          <div class="burli2">
+            <el-table
+              :data="materials_data"
+              stripe
+              max-height='200'
+              tooltip-effect="dark"
+            >
+              <el-table-column
+                prop="materialName"
+                label="已添加配料"
+                >
+              </el-table-column>
+              <el-table-column
+                prop="unit"
+                label="单位"
+                >
+              </el-table-column>
+              <el-table-column
+                prop="materialNum"
+                label="数量">
+                <template slot-scope="scope" >
+                  <el-input-number v-model="scope.row.materialNum" :min="1"></el-input-number>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
         </div>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="voucherDialog = false" size="small">取 消</el-button>
-          <el-button type="primary" @click="voucherDialog = false" size="small">确 定</el-button>
+          <el-button type="primary" @click="presentDialog = false" size="small">确 定</el-button>
         </span>
       </el-dialog>
 
@@ -441,7 +457,7 @@ export default {
         enterpriseId: '001',
         fitSkin: this.checkSkin.join(','),  // 肤质
         effect: this.checkEffect.join(','),   // 功效
-        detail: '',
+        detail: this.content,
         isGive: 0,
         ccProjectMaterialList: this.materials_data,
         ccProjectPushList: [],
@@ -651,6 +667,9 @@ export default {
 .avatar-uploader .el-upload:hover {
   border-color: #409EFF;
 }
+.form_box .ql-container{
+  height: 200px;
+}
 </style>
 
 <style scoped lang="scss">
@@ -704,6 +723,9 @@ export default {
     color:#475669;
     font-size: 16px;
     padding-top: 8px;
+  }
+  .quillWrapper{
+    width: 75%;
   }
   .el-form{
     width: 650px;
@@ -773,8 +795,11 @@ export default {
     padding: 5px 20px;
     .el-checkbox {
       margin-left: 0px;
-      width: 120px;
+      width: 124px;
       line-height: 40px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
   .edit_box{

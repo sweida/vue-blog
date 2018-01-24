@@ -132,8 +132,8 @@ export default {
       this.loading = true
       getRoom(this.pageModel, {}).then(res => {
         this.loading = false
-        this.pageModel.sumCount = res.data.data.total
         this.tableData = res.data.data.rows
+        this.pageModel.sumCount = res.data.data.total
       })
     },
     selectRoleList() {

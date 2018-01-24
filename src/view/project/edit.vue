@@ -30,7 +30,6 @@
                 </el-option>
               </el-select>
             </el-form-item>
-
           </el-form>
           <div class="uploader_box">
             <el-upload
@@ -44,6 +43,11 @@
             </el-upload>
             <p>建议分辨率为400*400</p>
           </div>
+        </div>
+
+        <div class="form_box">
+          <h5>需知与描述</h5>
+          <vue-editor v-model="projectDetail.detail"></vue-editor>
         </div>
 
         <div class="form_box">
@@ -357,9 +361,12 @@
 import { projectDetail, editproject, getTagli, addTag, delTag, getBurden } from '@/api/product'
 import { clone } from '@/utils/common'
 import page from '@/components/common/page'
-
+import { VueEditor } from 'vue2-editor'
 export default {
   name: 'app',
+  components: {
+     VueEditor
+  },
   data() {
     return {
       skinList: ['干性', '混合性', '干燥', '中性', '过敏', '粗糙', '暗沉', '敏感', '暗哑'],
@@ -397,10 +404,10 @@ export default {
     this.getTagskin()
     this.getTageffect()
     this.getBurdenlist()
-    console.log('bb',this.materials_arr[0])
+    console.log('bb', this.materials_arr[0])
   },
   mounted() {
-    console.log('aa',this.materials_arr[0])
+    console.log('aa', this.materials_arr[0])
     // this.toggleSelection(this.materials_arr[0])
     // this.$refs.multipleTable.toggleRowSelection(this.materials_arr[0])
   },
@@ -618,6 +625,9 @@ export default {
 .avatar-uploader .el-upload:hover {
   border-color: #409EFF;
 }
+.form_box .ql-container{
+  height: 200px;
+}
 </style>
 
 <style scoped lang="scss">
@@ -671,6 +681,9 @@ export default {
     color:#475669;
     font-size: 16px;
     padding-top: 8px;
+  }
+  .quillWrapper{
+    width: 75%;
   }
   .el-form{
     width: 650px;
@@ -740,8 +753,11 @@ export default {
     padding: 5px 20px;
     .el-checkbox {
       margin-left: 0px;
-      width: 120px;
+      width: 124px;
       line-height: 40px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
   .edit_box{
