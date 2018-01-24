@@ -116,10 +116,11 @@ export function getMenuAdd() {
   })
 }
 // 代金券增加时获取菜单Byid
-export function getMenuById(data) {
+export function getMenuById(pageModel, data) {
   return fetch({
-    url: `apis/menu/couponNav/${data[0]}/${data[1]}`,
-    method: 'GET'
+    url: `apis/menu/package/${pageModel.topId}/${pageModel.page}/${pageModel.rows}`,
+    method: 'POST',
+    data
   })
 }
 // 套餐菜单
@@ -134,6 +135,20 @@ export function getMealList(pageModel, data) {
     url: `apis/package/${pageModel.page}/${pageModel.rows}`,
     method: 'POST',
     data
+  })
+}
+// 产品菜单
+export function getMenuProduct() {
+  return fetch({
+    url: 'apis/menu/product',
+    method: 'GET'
+  })
+}
+// 产品菜单
+export function getMenuProject() {
+  return fetch({
+    url: 'apis/menu/project',
+    method: 'GET'
   })
 }
 export function toLogin(data) {

@@ -53,7 +53,7 @@
               tooltip-effect="dark"
               >
               <el-table-column
-                prop="name"
+                prop="packageName"
                 label="名称"
                 width="150px">
               </el-table-column>
@@ -144,27 +144,7 @@ export default {
         region: '',
         desc: ''
       },
-      tableData: [{
-        date: '2016-05-02',
-        name: '王狮传奇南山总店',
-        phone: '13798661922',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05  -04',
-        name: '王狮传奇南山总店',
-        phone: '13798661922',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王狮传奇南山总店',
-        phone: '13798661922',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王狮传奇南山总店',
-        phone: '13798661922',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }]
+      tableData: []
     }
   },
   methods: {
@@ -193,12 +173,12 @@ export default {
     // 得到套餐列表
     getListMeal() {
       getMealList(this.pageModel, {}).then(res => {
-        console.log(res)
+        this.tableData = res.data.data.rows
       })
     }
   },
   created() {
-    this.getMealMenu()
+    //this.getMealMenu()
     this.getListMeal()
   }
 }

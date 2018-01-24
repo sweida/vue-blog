@@ -106,7 +106,8 @@
         <div class="form_box setmeal_main">
           <h5>套餐明细</h5>
           <div class="contents">
-            <el-dropdown @command="handleCommand">
+            <el-dropdown @command="
+            selectDown">
               <el-button type="primary" size="small">
                 添加组合
               </el-button>
@@ -116,10 +117,10 @@
                 <el-dropdown-item command="c">代金券</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-            <div v-for="item in addList">
+            <div v-for="(item, index) in addList">
               <div class="meal_box" v-if="item.type == '产品'">
                 <div class="head_box">
-                  <span>NO.2</span>
+                  <span>NO.{{index+1}}</span>
                   <span>类型<em>{{item.type}}</em></span>
                   <span>组合名称<el-input size="mini" v-model="item.name"></el-input></span>
                   <span>是否必选
@@ -140,26 +141,29 @@
                     tooltip-effect="dark"
                     >
                     <el-table-column
-                      prop="name"
+                      prop="projectName"
                       label="名称">
                     </el-table-column>
                     <el-table-column
-                      prop="room"
+                      width="100px"
                       label="产品价格">
+                      <template slot-scope="scope">
+                        <el-input size="mini" class="count" v-model="scope.row.projectPrice"></el-input>
+                      </template>
                     </el-table-column>
                     <el-table-column
                       label="删除">
                       <template slot-scope="scope">
-                        <i class="el-icon-delete" @click="deleteBtn(scope.$index,scope.row)"></i>
+                        <i class="el-icon-delete" @click="deleteBtn(scope.$index,item.tableData)"></i>
                       </template>
                     </el-table-column>
                   </el-table>
-                  <div class="addbtn">添加+</div>
+                  <div class="addbtn" @click="addProduct(index)">添加+</div>
                 </div>
               </div>
               <div class="meal_box" v-if="item.type == '项目'">
                 <div class="head_box">
-                  <span>NO.2</span>
+                  <span>NO.{{index+1}}</span>
                   <span>类型<em>{{item.type}}</em></span>
                   <span>组合名称<el-input size="mini" v-model="item.name"></el-input></span>
                   <span>是否必选
@@ -181,12 +185,15 @@
                     tooltip-effect="dark"
                     >
                     <el-table-column
-                      prop="name"
+                      prop="projectName"
                       label="名称">
                     </el-table-column>
                     <el-table-column
-                      prop="room"
+                      width="100px"
                       label="消耗价格">
+                      <template slot-scope="scope">
+                        <el-input size="mini" class="count" v-model="scope.row.projectPrice"></el-input>
+                      </template>
                     </el-table-column>
                     <el-table-column
                       prop="bed"
@@ -202,16 +209,16 @@
                     <el-table-column
                       label="删除">
                       <template slot-scope="scope">
-                        <i class="el-icon-delete" @click="deleteBtn(scope.$index,scope.row)"></i>
+                        <i class="el-icon-delete" @click="deleteBtn(scope.$index,item.tableData)"></i>
                       </template>
                     </el-table-column>
                   </el-table>
-                  <div class="addbtn">添加+</div>
+                  <div class="addbtn" @click="addProject(index)">添加+</div>
                 </div>
               </div>
               <div class="meal_box" v-if="item.type == '代金券'">
                 <div class="head_box">
-                  <span>NO.2</span>
+                  <span>NO.{{index+1}}</span>
                   <span>类型<em>{{item.type}}</em></span>
                   <span>组合名称<el-input size="mini" v-model="item.name"></el-input></span>
                   <i class="el-icon-close"></i>
@@ -225,21 +232,24 @@
                     tooltip-effect="dark"
                     >
                     <el-table-column
-                      prop="name"
+                      prop="projectName"
                       label="名称">
                     </el-table-column>
                     <el-table-column
-                      prop="room"
+                      width="100px"
                       label="代金券金额（元）">
+                      <template slot-scope="scope">
+                        <el-input size="mini" class="count" v-model="scope.row.projectPrice"></el-input>
+                      </template>
                     </el-table-column>
                     <el-table-column
                       label="删除">
                       <template slot-scope="scope">
-                        <i class="el-icon-delete" @click="deleteBtn(scope.$index,scope.row)"></i>
+                        <i class="el-icon-delete" @click="deleteBtn(scope.$index,item.tableData)"></i>
                       </template>
                     </el-table-column>
                   </el-table>
-                  <div class="addbtn">添加+</div>
+                  <div class="addbtn" @click="addVoucher(index)">添加+</div>
                 </div>
               </div>
             </div>
@@ -254,10 +264,32 @@
       <div class="footer">
         <el-button type="primary" size="medium">保　存</el-button>
       </div>
-      <el-dialog :visible.sync="seatDialog" title="编辑配料" width="1050px" class="burbox">
+      <!-- 添加产品 -->
+      <el-dialog :visible.sync="addProductDialog" title="选择项目" width="1050px" class="burbox">
         <div class="tableDialog">
           <div class="tabs">
-            <p>所有配料</p>
+            <el-menu
+            default-active="productList.url"
+            >
+             <el-submenu :index="'productList.url'">
+               <template slot="title">
+                 <span>{{productList.name}}</span>
+               </template>
+               <template v-for="(child, index1) in productList.childMenu" :keys="index1">
+                 <el-menu-item :index="productList.url+child.url" v-if="child.childMenu == null" @click="changeMenu(child)">
+                   <span>{{child.name}}</span>
+                 </el-menu-item>
+                 <el-submenu :index="productList.url+child.url" v-else>
+                   <template slot="title">
+                     <span>{{child.name}}</span>
+                   </template>
+                   <template v-for="(child2, index2) in child.childMenu" :keys="index1">
+                     <el-menu-item :index="productList.url+child.url+child2.url" @click="changeMenu(child2, item)">{{child2.name}}</el-menu-item>
+                   </template>
+                 </el-submenu>
+               </template>
+             </el-submenu>
+          </el-menu>
           </div>
           <div class="burli1">
             <el-table
@@ -265,67 +297,227 @@
               stripe
               style="width:100%"
               max-height='450'
+              @selection-change="handleSelectionChange"
               tooltip-effect="dark"
               >
-
               <el-table-column
-                prop="material_name"
-                label="配料名称"
+              label="选择"
+              type="selection"
+              width="80">
+              </el-table-column>
+              <el-table-column
+                label="序号"
+                type="index"
+                width="50">
+              </el-table-column>
+              <el-table-column
+                prop="projectName"
+                label="名称"
                 >
               </el-table-column>
               <el-table-column
-                prop="unit"
-                label="单位">
+                prop="projectPrice"
+                label="价值">
+              </el-table-column>
+            </el-table>
+            <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
+          </div>
+          <!-- 选择产品 -->
+          <div class="burli2">
+            <el-table
+              :data="multipleSelection"
+              stripe
+              style="width:100%"
+              max-height='450'
+              tooltip-effect="dark"
+              >
+              <el-table-column
+                prop="projectName"
+                label="名称"
+                >
               </el-table-column>
               <el-table-column
-              label="选择">
-                <template slot-scope="scope" >
-                  <el-button type="primary" @click="SelMaterials(scope.row)" size="small">添加</el-button>
-                </template>
+                prop="projectPrice"
+                label="价值">
               </el-table-column>
             </el-table>
           </div>
-          <!-- 默认配料 -->
-          <div class="burli2">
-            <!-- <el-table
-                :data="materials_data"
-                stripe
-                style="width: 400px;margin-bottom:20px;"
-                max-height='200'
-                tooltip-effect="dark"
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="comformAddproduct" size="small">确 定</el-button>
+        </span>
+      </el-dialog>
+      <!-- 添加项目 -->
+      <el-dialog :visible.sync="addProjectDialog" title="选择项目" width="1050px" class="burbox">
+        <div class="tableDialog">
+          <div class="tabs">
+            <el-menu
+            default-active="projectList.url"
+            >
+             <el-submenu :index="'projectList.url'">
+               <template slot="title">
+                 <span>{{projectList.name}}</span>
+               </template>
+               <template v-for="(child, index1) in projectList.childMenu" :keys="index1">
+                 <el-menu-item :index="projectList.url+child.url" v-if="child.childMenu == null" @click="changeMenu(child)">
+                   <span>{{child.name}}</span>
+                 </el-menu-item>
+                 <el-submenu :index="projectList.url+child.url" v-else>
+                   <template slot="title">
+                     <span>{{child.name}}</span>
+                   </template>
+                   <template v-for="(child2, index2) in child.childMenu" :keys="index1">
+                     <el-menu-item :index="projectList.url+child.url+child2.url" @click="changeMenu(child2, item)">{{child2.name}}</el-menu-item>
+                   </template>
+                 </el-submenu>
+               </template>
+             </el-submenu>
+          </el-menu>
+          </div>
+          <div class="burli1">
+            <el-table
+              :data="materials_arr"
+              stripe
+              style="width:100%"
+              max-height='450'
+              @selection-change="handleSelectionChange"
+              tooltip-effect="dark"
               >
               <el-table-column
-                prop="material_name"
-                label="已添加配料名称"
+              label="选择"
+              type="selection"
+              width="80">
+              </el-table-column>
+              <el-table-column
+                label="序号"
+                type="index"
+                width="50">
+              </el-table-column>
+              <el-table-column
+                prop="projectName"
+                label="名称"
                 >
               </el-table-column>
               <el-table-column
-                prop="unit"
-                label="单位"
+                prop="projectPrice"
+                label="价值">
+              </el-table-column>
+            </el-table>
+            <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
+          </div>
+          <!-- 选择产品 -->
+          <div class="burli2">
+            <el-table
+              :data="multipleSelection"
+              stripe
+              style="width:100%"
+              max-height='450'
+              tooltip-effect="dark"
+              >
+              <el-table-column
+                prop="projectName"
+                label="名称"
                 >
               </el-table-column>
               <el-table-column
-                prop="material_amount"
-                label="数量">
-                <template slot-scope="scope" >
-                  <el-input-number v-model="scope.row.material_amount"  :min="1"></el-input-number>
-                </template>
+                prop="projectPrice"
+                label="价值">
               </el-table-column>
-              <el-table-column
-              label="操作">
-                <template slot-scope="scope" >
-                  <el-button type="danger" @click="delSelect(scope.$index)" size="small"><i class="el-icon-delete"></i></el-button>
-                </template>
-              </el-table-column>
-            </el-table> -->
+            </el-table>
           </div>
         </div>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="burdening = false" size="small">取 消</el-button>
-          <el-button type="primary" @click="sureBurden" size="small">保存配料</el-button>
+          <el-button type="primary" @click="comformAddproduct" size="small">确 定</el-button>
         </span>
       </el-dialog>
-
+      <!-- 添加代金券 -->
+      <el-dialog :visible.sync="addVoucherDialog" title="选择代金券" width="1050px" class="burbox">
+        <div class="tableDialog">
+          <div class="tabs scroll">
+            <el-menu
+            ><template v-for="(item, index) in menuVoucherList" :keys="index">
+              <el-menu-item :index="item.url" v-if="item.childMenu==null" @click="changeMenu(item)">
+                <template slot="title">
+                  <span>{{item.name}}</span>
+                </template>
+              </el-menu-item>
+              <el-submenu :index="item.url" v-else>
+                <template slot="title">
+                  <span>{{item.name}}</span>
+                </template>
+                <template v-for="(child, index1) in item.childMenu" :keys="index1">
+                  <el-menu-item :index="item.url+child.url" v-if="child.childMenu==null" @click="changeMenu(child)">
+                    <span>{{child.name}}</span>
+                  </el-menu-item>
+                  <el-submenu :index="item.url+child.url" v-else>
+                    <template slot="title">
+                      <span>{{child.name}}</span>
+                    </template>
+                    <template v-for="(child2, index2) in child.childMenu" :keys="index1">
+                      <el-menu-item :index="item.url+child.url+child2.url" @click="changeMenu(child2, item)">{{child2.name}}</el-menu-item>
+                    </template>
+                  </el-submenu>
+                </template>
+              </el-submenu>
+            </template>
+          </el-menu>
+          </div>
+          <div class="burli1">
+            <el-table
+              :data="materials_arr"
+              stripe
+              style="width:100%"
+              max-height='450'
+              @selection-change="handleSelectionChange"
+              tooltip-effect="dark"
+              >
+              <el-table-column
+              label="选择"
+              type="selection"
+              width="80">
+              </el-table-column>
+              <el-table-column
+                label="序号"
+                type="index"
+                width="50">
+              </el-table-column>
+              <el-table-column
+                prop="projectName"
+                label="名称"
+                >
+              </el-table-column>
+              <el-table-column
+                prop="projectPrice"
+                label="价值">
+              </el-table-column>
+            </el-table>
+            <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
+          </div>
+          <!-- 选择产品 -->
+          <div class="burli2">
+            <el-table
+              :data="multipleSelection"
+              stripe
+              style="width:100%"
+              max-height='450'
+              tooltip-effect="dark"
+              >
+              <el-table-column
+                prop="projectName"
+                label="名称"
+                >
+              </el-table-column>
+              <el-table-column
+                prop="projectPrice"
+                label="价值">
+              </el-table-column>
+            </el-table>
+          </div>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="comformAddproduct" size="small">确 定</el-button>
+        </span>
+      </el-dialog>
       <!-- <el-dialog title="新增赠送" :visible.sync="presentDialog" width="1000px">
         <div class="form_box">
           <h5>选择</h5>
@@ -362,18 +554,31 @@
           <el-button type="primary" @click="voucherDialog = false" size="small">确 定</el-button>
         </span>
       </el-dialog> -->
-
   </div>
 </template>
 
 <script>
-const cityOptions = ['上海', '北京', '广州', '深圳','上海', '北京', '广州', '深圳']
+import { getMenuProduct, getMenuProject, getMenu, getMenuById } from '@/api/login'
+const cityOptions = ['上海', '北京', '广州', '深圳', '上海', '北京', '广州', '深圳']
 export default {
   name: 'app',
   data() {
     return {
+      pageModel: {
+        page: 1,
+        rows: 10,
+        sumCount: 0
+      },
+      addProductDialog: false,
+      addProjectDialog: false,
+      addVoucherDialog: false,
+      addIndex: -1, // 添加时改变index用于记录下标向数组添加数据
       materials_arr: [],
-      mealType: '产品',
+      multipleSelection: [],
+      materials_data: [],
+      productList: {}, // 产品菜单
+      projectList: {}, // 项目菜单
+      menuVoucherList: {}, //代金券菜单
       imageUrl: '',
       tuisong: false,
       checkedCities1: ['上海', '北京'],
@@ -382,48 +587,27 @@ export default {
       bed: 1,
       input: '',
       seatDialog: false,
-      banner: 'static/img/phone.png',
-      textarea: '',
-      addList: [
-        {
-          name: '',
-          type: '产品',
-          isNecessary: 1, // 是否必选
-          inputCount: '', // 次数
-          tableData: [{
-            date: '2016-05-02',
-            name: '王狮传奇南山总店',
-            phone: '13798661922',
-            address: '上海市普陀区金沙江路 1518 弄',
-            value2: ''
-          }]
-        },
-        {
-          name: '',
-          type: '项目',
-          isNecessary: 1, // 是否必选
-          inputCount: '', // 次数
-          maxCount: '', // 最多输入次数
-          tableData: [{
-            date: '2016-05-02',
-            name: '王狮传奇南山总店',
-            phone: '13798661922',
-            address: '上海市普陀区金沙江路 1518 弄',
-            value2: ''
-          }]
-        },
-        {
-          type: '代金券',
-          name: '',
-          tableData: [{
-            date: '2016-05-02',
-            name: '王狮传奇南山总店',
-            phone: '13798661922',
-            address: '上海市普陀区金沙江路 1518 弄',
-            value2: ''
-          }]
-        }
-      ],
+      pruductParam: { //添加产品数据
+        name: '',
+        type: '产品',
+        isNecessary: 1, // 是否必选
+        inputCount: '1', // 次数
+        tableData: []
+      },
+      projectParam: {
+        name: '',
+        type: '项目',
+        isNecessary: 1, // 是否必选
+        inputCount: '1', // 次数
+        maxCount: '1', // 最多输入次数
+        tableData: []
+      },
+      voucherParam: {
+        type: '代金券',
+        name: '',
+        tableData: []
+      },
+      addList: [], //添加的组合
       form: {
         packageName: '套餐名称', // 套餐名称
         packagePrice: '套餐价格', // 套餐价格
@@ -442,47 +626,6 @@ export default {
         commissionMoney: '', // 提成金额
         commissionPercentage: '' // 百分比例
       },
-      // form1: {
-      //   name: '',
-      //   type: '产品',
-      //   isNecessary: 1, // 是否必选
-      //   inputCount: '', // 次数
-      //   tableData: [{
-      //     date: '2016-05-02',
-      //     name: '王狮传奇南山总店',
-      //     phone: '13798661922',
-      //     address: '上海市普陀区金沙江路 1518 弄',
-      //     value2: ''
-      //   }]
-      // },
-      // form2: {
-      //   name: '',
-      //   type: '项目',
-      //   isNecessary: 1, // 是否必选
-      //   inputCount: '', // 次数
-      //   maxCount: '', // 最多输入次数
-      //   tableData: [{
-      //     date: '2016-05-02',
-      //     name: '王狮传奇南山总店',
-      //     phone: '13798661922',
-      //     address: '上海市普陀区金沙江路 1518 弄',
-      //     value2: ''
-      //   }]
-      // },
-      // form3: {
-      //   type: '代金券',
-      //   name: '',
-      //   tableData: [{
-      //     date: '2016-05-02',
-      //     name: '王狮传奇南山总店',
-      //     phone: '13798661922',
-      //     address: '上海市普陀区金沙江路 1518 弄',
-      //     value2: ''
-      //   }]
-      // },
-      projectItem: {}, // 添加项目
-      productItem: {}, // 添加产品
-      voucherItem: {}, // 添加代金券
       tableData: [{
         date: '2016-05-02',
         name: '王狮传奇南山总店',
@@ -505,6 +648,8 @@ export default {
     }
   },
   methods: {
+    selectRoleList() {
+    },
     handleOpen(key, keyPath) {
       console.log(key, keyPath)
     },
@@ -534,7 +679,7 @@ export default {
       this.effect = false
     },
     burdenBtn() {
-      this.burdenDialog = true
+      this.addProductDialog = true
     },
     presentBtn() {
       this.presentDialog = true
@@ -545,8 +690,9 @@ export default {
     addseatBtn() {
       this.seatDialog = true
     },
+    // 删除已添加
     deleteBtn(index, item) {
-      console.log(item)
+      item.splice(index, 1)
     },
     sureBurden() {},
     beforeAvatarUpload(file) {
@@ -564,9 +710,63 @@ export default {
     addGroup() {
 
     },
-    handleCommand(command) {
-      this.$message('click on item ' + command)
+    // 选择事件
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+    },
+
+    selectDown(command) {
+      if (command == 'a') {
+        this.addList.push(this.projectParam)
+      } else if (command == 'b') {
+        this.addList.push(this.pruductParam)
+      } else {
+        this.addList.push(this.voucherParam)
+      }
+    },
+    // 改变菜单时得到项目数据
+    changeMenu(child, parent, item) {
+      this.pageModel.topId = 2
+      let param = {
+        'parentId': child.id
+      }
+      getMenuById(this.pageModel, param).then(res => {
+        this.materials_arr = res.data.data.rows
+      })
+    },
+    // 添加产品
+    addProduct(index) {
+      this.addIndex = index
+      getMenuProduct().then(res => {
+        this.productList = res.data.data[0]
+      })
+      this.addProductDialog = true
+    },
+    // 添加项目
+    addProject(index) {
+      this.addIndex = index
+      getMenuProject().then(res => {
+        this.projectList = res.data.data[0]
+      })
+      this.addProjectDialog = true
+    },
+    // 添加代金券
+    addVoucher(index) {
+      this.addIndex = index
+      getMenu().then(res => {
+        if (res.data.code == 200) {
+          this.menuVoucherList = res.data.data
+          this.addVoucherDialog = true
+        }
+      })
+    },
+    comformAddproduct() {
+      this.addList[this.addIndex].tableData = this.addList[this.addIndex].tableData.concat(this.multipleSelection)
+      // this.addProductDialog = false
     }
+  },
+  created() {
+
   }
 }
 </script>
