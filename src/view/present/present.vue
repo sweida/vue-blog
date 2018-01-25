@@ -26,14 +26,16 @@
                   </em>
                 </template>
               </el-menu-item>
-              <el-submenu :index="item.url" v-else>
-                <template slot="title">
-                  <span>{{item.name}}</span>
-                  <em class="navicon" v-if="item.url==openindex">
-                    <i class="el-icon-plus" @click="plusNav(item)"></i>
-                    <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
-                    <i class="el-icon-minus" @click="minusNav(item)"></i>
-                  </em>
+              <el-submenu :index="item.url"  v-else>
+                <template slot="title" >
+                  <div @click="changeMenu(item)">
+                    <span >{{item.name}}</span>
+                    <em class="navicon" v-if="item.url==openindex">
+                      <i class="el-icon-plus" @click="plusNav(item)"></i>
+                      <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
+                      <i class="el-icon-minus" @click="minusNav(item)"></i>
+                    </em>
+                  </div>
                 </template>
                 <template v-for="(child, index1) in item.childMenu" :keys="index1">
                   <el-menu-item :index="child.url" @click="changeMenu(child)">
@@ -246,7 +248,7 @@ export default {
     }
   },
   created() {
-    this.getgivePlanList()
+    // this.getgivePlanList()
     this.getgiveNav()
   },
   methods: {
@@ -330,6 +332,9 @@ export default {
       this.openindex = key
       console.log('handleOpen', key, keyPath)
     },
+    handleOpen2(item) {
+      console.log('handleOpen2', item)
+    },
     handleClose(key, keyPath) {
       this.openindex = ''
       console.log('handleOpen', key, keyPath)
@@ -341,7 +346,9 @@ export default {
     // 改变菜单时得到代金券数据
     changeMenu(child) {
       console.log('changeMenu', child.id)
-      this.givePlanParam = child.id
+      this.givePlanParam = {
+        parentId: child.id
+      }
       this.getgivePlanList()
     },
     // 获取赠送列表
@@ -575,7 +582,7 @@ export default {
     margin-bottom: 8px;
   }
   .el-input{
-    width: 220px;
+    width: 217px;
   }
 }
 .main_table{

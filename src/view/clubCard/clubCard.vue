@@ -241,7 +241,7 @@ export default {
       editactDesc(param).then(res => {
         console.log('修改活动说明', res)
         // this.actDesc = res.data.data.actDesc
-        // this.$message.success('活动说明保存成功')
+        this.$message.success('活动说明保存成功')
       })
     },
     handleClose(tag) {
