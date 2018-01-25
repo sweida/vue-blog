@@ -36,9 +36,7 @@
             </el-upload>
             <p>建议分辨率为400*400</p>
           </div>
-
         </div>
-
         <div class="form_box">
           <h5>其它信息</h5>
           <el-form ref="form" :model="form" label-width="170px" label-position='left'>
@@ -130,7 +128,7 @@
                     </el-radio-group>
                   </span>
                   <span>次数<el-input size="mini" class="count" v-model="item.inputCount"></el-input></span>
-                  <i class="el-icon-close"></i>
+                  <i class="el-icon-close" @click="delGroup(index)"></i>
                 </div>
                 <div class="set_table">
                   <el-table
@@ -174,7 +172,7 @@
                   </span>
                   <span>次数<el-input size="mini" class="count" v-model="item.inputCount"></el-input></span>
                   <span>每次最多可选次数<el-input size="mini" class="count" v-model="item.maxCount"></el-input></span>
-                  <i class="el-icon-close"></i>
+                  <i class="el-icon-close" @click="delGroup(index)"></i>
                 </div>
                 <div class="set_table">
                   <el-table
@@ -221,7 +219,7 @@
                   <span>NO.{{index+1}}</span>
                   <span>类型<em>{{item.type}}</em></span>
                   <span>组合名称<el-input size="mini" v-model="item.name"></el-input></span>
-                  <i class="el-icon-close"></i>
+                  <i class="el-icon-close" @click="delGroup(index)"></i>
                 </div>
                 <div class="set_table">
                   <el-table
@@ -760,9 +758,13 @@ export default {
         }
       })
     },
+    // 删除组合
+    delGroup(index) {
+      this.addList.splice(index, 1)
+    },
+    // 确认添加产品
     comformAddproduct() {
       this.addList[this.addIndex].tableData = this.addList[this.addIndex].tableData.concat(this.multipleSelection)
-      // this.addProductDialog = false
     }
   },
   created() {
