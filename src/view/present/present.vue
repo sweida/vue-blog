@@ -212,7 +212,8 @@
 </template>
 
 <script>
-import { giveNav, delMenu, editMenu, addgiveNav, addgivePlan, getgivePlan, delgivePlan, editgivePlan, givePlanDetail } from '@/api/product'
+import { addgivePlan, getgivePlan, delgivePlan, editgivePlan, givePlanDetail } from '@/api/product'
+import { giveNav, delMenu, editMenu, addMenu } from '@/api/tree'
 import page from '@/components/common/page'
 import { parseTime, clone } from '@/utils/common'
 export default {
@@ -272,7 +273,7 @@ export default {
           name: value,
           parentId: item.id
         }
-        addgiveNav(param).then(res => {
+        addMenu(param).then(res => {
           console.log('添加菜单', res)
           if (res.data.code == 200) {
             this.getgiveNav()
