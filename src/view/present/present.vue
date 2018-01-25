@@ -3,74 +3,6 @@
       <div class="header_title">赠送方案<i class="el-icon-info"></i></div>
       <div class="main-content scroll">
         <div class="left_tree scroll">
-
-          <!-- <el-menu
-            default-active="2"
-            class="el-menu-vertical-demo"
-            @open="handleOpen"
-            @close="handleClose"
-            @select="handleSelect">
-            <el-submenu :index="menuList.url">
-              <template slot="title">
-                <span>{{menuList.name}}</span>
-                <em class="navicon" v-if="menuList.url==openindex">
-                  <i class="el-icon-plus" @click="plusNav(item)"></i>
-                  <i class="el-icon-edit" @click="editNav"></i>
-                </em>
-              </template>
-              <template v-for="(item, index) in menuList.childMenu" :keys="index">
-                <el-menu-item :index="item.url" v-if="item.childMenu==null" @click="changeMenu(item)">
-                  <template slot="title">
-                    <span>{{item.name}}</span>
-                    <em class="navicon" v-if="item.url==openindex">
-                      <i class="el-icon-plus" @click="plusNav(item)"></i>
-                      <i class="el-icon-edit" @click="editNav"></i>
-                      <i class="el-icon-minus" @click="minusNav(item)"></i>
-                    </em>
-                  </template>
-                </el-menu-item>
-                <el-submenu :index="item.url" v-else>
-                  <template slot="title">
-                    <span>{{item.name}}</span>
-                    <em class="navicon" v-if="item.url==openindex">
-                      <i class="el-icon-plus" @click="plusNav(item)"></i>
-                      <i class="el-icon-edit" @click="editNav"></i>
-                      <i class="el-icon-minus" @click="minusNav(item)"></i>
-                    </em>
-                  </template>
-                  <template v-for="(child, index1) in item.childMenu" :keys="index1">
-                    <el-menu-item :index="child.url" v-if="child.childMenu==null" @click="changeMenu(child)">
-                      <span>{{child.name}}</span>
-                      <em class="navicon" v-if="child.url==openindex">
-                        <i class="el-icon-plus" @click="plusNav(child)"></i>
-                        <i class="el-icon-edit" @click="editNav"></i>
-                        <i class="el-icon-minus" @click="minusNav"></i>
-                      </em>
-                    </el-menu-item>
-                    <el-submenu :index="child.url" v-else>
-                      <template slot="title">
-                        <span>{{child.name}}</span>
-                        <em class="navicon" v-if="child.url==openindex">
-                          <i class="el-icon-plus" @click="plusNav(child)"></i>
-                          <i class="el-icon-edit" @click="editNav"></i>
-                          <i class="el-icon-minus" @click="minusNav(child)"></i>
-                        </em>
-                      </template>
-                      <template v-for="(child2, index2) in child.childMenu" :keys="index1">
-                        <el-menu-item :index="child2.url" @click="changeMenu(child2, item)">{{child2.name}}</el-menu-item>
-                        <em class="navicon" v-if="child2.url==openindex">
-                          <i class="el-icon-plus" @click="plusNav"></i>
-                          <i class="el-icon-edit" @click="editNav"></i>
-                          <i class="el-icon-minus" @click="minusNav(child2)"></i>
-                        </em>
-                      </template>
-                    </el-submenu>
-                  </template>
-                </el-submenu>
-              </template>
-            </el-submenu>
-          </el-menu> -->
-
           <p class="nav-title" @click="navtitle">
             <span>{{menuList.name}}</span>
             <em class="navicon" v-if="openindex==menuList.url">
@@ -79,7 +11,6 @@
             </em>
           </p>
           <el-menu
-            default-active="2"
             class="el-menu-vertical-demo"
             @open="handleOpen"
             @close="handleClose"
@@ -243,25 +174,26 @@
                 <el-input size="medium" v-model="form.givePlanName" placeholder="填写赠送方案名称"></el-input>
               </el-form-item>
               <el-form-item label="所属类目">
-                <el-select v-model="form.parentId" size="medium" placeholder="请选择类目">
-                  <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
                 <!-- <el-cascader
-                  :options="options"
+                  :options="menuList"
                   v-model="selectedOptions"
                   @change="handleChange">
                 </el-cascader> -->
+                <el-cascader
+                  placeholder="请选择类目名称"
+                  @change="handleItemChange"
+                  v-model="selectedOptions"
+                  change-on-select
+                  :options="menuList.childMenu"
+                  :props="defaultProps"
+                  :clearable="true">
+                </el-cascader>
               </el-form-item>
               <el-form-item label="生效日期" >
-                <el-date-picker type="date" placeholder="选择生效日期" v-model="form.createDate" size="medium"></el-date-picker>
+                <el-date-picker type="date" placeholder="选择生效日期" v-model="form.createDate" size="medium" :editable="false"></el-date-picker>
               </el-form-item>
               <el-form-item label="使用截止日期" >
-                <el-date-picker type="date" placeholder="选择使用截止日期" v-model="form.effectiveDate" size="medium"></el-date-picker>
+                <el-date-picker type="date" placeholder="选择使用截止日期" v-model="form.effectiveDate" size="medium" :editable="false"></el-date-picker>
               </el-form-item>
             </el-form>
 
@@ -269,8 +201,8 @@
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="presentDialog = false" size="small">取 消</el-button>
-          <el-button type="primary" @click="savePlanBtn" size="small">保 存</el-button>
-          <el-button type="primary" @click="editPlanBtn" size="small">保存修改</el-button>
+          <el-button type="primary" @click="savePlanBtn" size="small" v-if="!form.givePlanId">保 存</el-button>
+          <el-button type="primary" @click="editPlanBtn" size="small" v-else>保存修改</el-button>
         </span>
       </el-dialog>
 
@@ -291,13 +223,21 @@ export default {
       openindex: '',
       menuList: [],
       givePlanli: [], //  赠送列表
-      options: '',
+      givePlanParam: {},    // 赠送参数
       search: '',
       presentDialog: false,
       materials_arr: [],    // 配料
       materials_data: [],
       form: '',
       formInfo: '',
+      options: [],
+      selectedOptions: [],
+      aa: '22',
+      defaultProps: {
+        children: 'childMenu',
+        value: 'id',
+        label: 'name'
+      },
       pageModel: {
         page: 1,
         rows: 10,
@@ -399,12 +339,14 @@ export default {
       console.log(this.openindex)
     },
     // 改变菜单时得到代金券数据
-    changeMenu(child, parent) {
-      console.log(child, parent)
+    changeMenu(child) {
+      console.log('changeMenu', child.id)
+      this.givePlanParam = child.id
+      this.getgivePlanList()
     },
     // 获取赠送列表
     getgivePlanList() {
-      getgivePlan(this.pageModel, {}).then(res => {
+      getgivePlan(this.pageModel, this.givePlanParam).then(res => {
         console.log('获取赠送列表', res)
         this.givePlanli = res.data.data.rows
         this.pageModel.sumCount = res.data.data.total
@@ -441,13 +383,20 @@ export default {
         effectiveDate: '',
         parentId: ''
       }
+      this.selectedOptions = []
       this.presentDialog = true
       console.log('form', this.form)
+    },
+    // 选择菜单获取id
+    handleItemChange(val) {
+      this.form.takeMode = val.join(',')
+      this.form.parentId = val[val.length - 1]
+      console.log('点击', val, val[val.length - 1], this.form.takeMode)
     },
     // 保存添加赠送
     savePlanBtn() {
       if (this.form.givePlanName == '') {
-        this.$message.error('方案名称不能为空')
+        this.$message.error('赠送方案名称不能为空')
       } else if (this.form.effectiveDate < this.form.createDate || this.form.createDate == '' || this.form.createDate == null) {
         this.$message.error('日期有误，请重新选择日期')
       } else {
@@ -483,12 +432,12 @@ export default {
       givePlanDetail(row.givePlanId).then(res => {
         if (res.data.code == 200) {
           this.form = res.data.data
-          // this.form.givePlanName = res.data.data.givePlanName
-          // this.form.createDate = res.data.data.createDate
-          // this.form.effectiveDate = res.data.data.effectiveDate
-          // this.form.givePlanId = res.data.data.givePlanId
+          let arr = res.data.data.takeMode.split(',')
+          this.selectedOptions = arr.map((item) => {
+            return +item
+          })
         }
-        console.log('打开编辑弹框', this.form)
+        console.log('打开编辑弹框', this.form, res.data.data.takeMode, this.selectedOptions)
       })
     },
     // 修改赠送方案
