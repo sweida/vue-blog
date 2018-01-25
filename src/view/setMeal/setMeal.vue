@@ -3,37 +3,51 @@
       <div class="header_title">套餐<i class="el-icon-info"></i></div>
       <div class="main-content">
         <div class="left_tree scroll">
+          <p class="nav-title" @click="navtitle">
+            <span>{{menuList.name}}</span>
+            <em class="navicon" v-if="openindex==menuList.url">
+              <i class="el-icon-plus" @click="plusNav(menuList)"></i>
+              <i class="el-icon-edit" @click="editNav(menuList, menuList.name)"></i>
+            </em>
+          </p>
           <el-menu
-            default-active="2"
             class="el-menu-vertical-demo"
             @open="handleOpen"
-            @close="handleClose">
-            <el-submenu index="1">
-              <template slot="title">
-                <i class="el-icon-location"></i>
-                <span>导航一</span>
-              </template>
-              <el-menu-item-group>
-                <template slot="title">分组一</template>
-                <el-menu-item index="1-1">选项1</el-menu-item>
-                <el-menu-item index="1-2">选项2</el-menu-item>
-              </el-menu-item-group>
-              <el-menu-item-group title="分组2">
-                <el-menu-item index="1-3">选项3</el-menu-item>
-              </el-menu-item-group>
-              <el-submenu index="1-4">
-                <template slot="title">选项4</template>
-                <el-menu-item index="1-4-1">选项1</el-menu-item>
+            @close="handleClose"
+            @select="handleSelect">
+            <template v-for="(item, index) in menuList.childMenu" :keys="index">
+              <el-menu-item :index="item.url" v-if="item.childMenu==null" @click="changeMenu(item)">
+                <template slot="title">
+                  <span>{{item.name}}</span>
+                  <em class="navicon" v-if="item.url==openindex">
+                    <i class="el-icon-plus" @click="plusNav(item)"></i>
+                    <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
+                    <i class="el-icon-minus" @click="minusNav(item)"></i>
+                  </em>
+                </template>
+              </el-menu-item>
+              <el-submenu :index="item.url"  v-else>
+                <template slot="title" >
+                  <div @click="changeMenu(item)">
+                    <span >{{item.name}}</span>
+                    <em class="navicon" v-if="item.url==openindex">
+                      <i class="el-icon-plus" @click="plusNav(item)"></i>
+                      <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
+                      <i class="el-icon-minus" @click="minusNav(item)"></i>
+                    </em>
+                  </div>
+                </template>
+                <template v-for="(child, index1) in item.childMenu" :keys="index1">
+                  <el-menu-item :index="child.url" @click="changeMenu(child)">
+                    <span>{{child.name}}</span>
+                    <em class="navicon" v-if="child.url==openindex">
+                      <i class="el-icon-edit" @click="editNav(child, child.name)"></i>
+                      <i class="el-icon-minus" @click="minusNav(child)"></i>
+                    </em>
+                  </el-menu-item>
+                </template>
               </el-submenu>
-            </el-submenu>
-            <el-menu-item index="2">
-              <i class="el-icon-menu"></i>
-              <span slot="title">导航二</span>
-            </el-menu-item>
-            <el-menu-item index="3">
-              <i class="el-icon-setting"></i>
-              <span slot="title">导航三</span>
-            </el-menu-item>
+            </template>
           </el-menu>
         </div>
         <div class="right_main">
@@ -133,6 +147,8 @@ export default {
         rows: 10,
         sumCount: 0
       },
+      openindex: '', // 点击时操作按钮显示与否
+      menuList: {},
       search: '',
       bed: 1,
       input: '',
@@ -148,11 +164,95 @@ export default {
     }
   },
   methods: {
+    navtitle() {
+      this.openindex = this.menuList.url
+      console.log(this.openindex)
+    },
+    handleSelect(key, keyPath) {
+      this.openindex = key
+      console.log('handleSelect', key, keyPath)
+    },
     handleOpen(key, keyPath) {
-      console.log(key, keyPath)
+      this.openindex = key
+      console.log('handleOpen', key, keyPath)
+    },
+    handleOpen2(item) {
+      console.log('handleOpen2', item)
     },
     handleClose(key, keyPath) {
-      console.log(key, keyPath)
+      this.openindex = ''
+      console.log('handleOpen', key, keyPath)
+    },
+    // 改变菜单时得到套餐数据
+    changeMenu(child) {
+      console.log('changeMenu', child.id)
+      // this.givePlanParam = {
+      //   parentId: child.id
+      // }
+      // this.getgivePlanList()
+    },
+    // 新增菜单
+    plusNav(item) {
+      event.stopPropagation()
+      // this.$prompt('请输入新增的类目名称', '提示', {
+      // }).then(({ value }) => {
+      //   console.log(value)
+      //   let param = {
+      //     icon: '',
+      //     name: value,
+      //     parentId: item.id
+      //   }
+      //   addgiveNav(param).then(res => {
+      //     console.log('添加菜单', res)
+      //     if (res.data.code == 200) {
+      //       this.getgiveNav()
+      //       this.$message.success('新增菜单成功!')
+      //     } else {
+      //       this.$message.error('新增菜单失败!')
+      //     }
+      //   })
+      //   this.$message.success('新增类目成功')
+      // }).catch(() => {
+      // })
+    },
+    // 删除菜单
+    minusNav(item) {
+      // event.stopPropagation()
+      // console.log(item.id)
+      // this.$confirm('是否删除该类目?', '提示', {
+      //   type: 'warning'
+      // }).then(() => {
+      //   delMenu(item.id).then(res => {
+      //     console.log('删除菜单', res)
+      //     if (res.data.code == 200) {
+      //       this.getgiveNav()
+      //       this.$message.success(res.data.msg)
+      //     } else {
+      //       this.$message.error(res.data.msg)
+      //     }
+      //   })
+      // }).catch(() => {
+      // })
+    },
+    // 修改菜单
+    editNav(item, name) {
+      // console.log(item, name)
+      // event.stopPropagation()
+      // this.$prompt('请输入修改的类目名称', '提示', {
+      //   inputValue: name
+      // }).then(({ value }) => {
+      //   editMenu(item.id, value).then(res => {
+      //     console.log('修改菜单', res)
+      //     if (res.data.code == 200) {
+      //       this.getgiveNav()
+      //       this.$message.success('修改菜单成功!')
+      //     } else {
+      //       this.$message.error('修改菜单失败!')
+      //     }
+      //   })
+      //   this.$message.success('新增类目成功')
+      // }).catch(() => {
+      // })
     },
     added() {
       this.$router.push('/setMeal/addSetmeal')
@@ -167,7 +267,10 @@ export default {
     // 得到套餐菜单
     getMealMenu() {
       getMenuMeal().then(res => {
-        console.log(res)
+        if (res.data.code == 200) {
+          this.menuList = res.data.data[0]
+          console.log(this.menuList)
+        }
       })
     },
     // 得到套餐列表
@@ -178,8 +281,8 @@ export default {
     }
   },
   created() {
-    //this.getMealMenu()
-    this.getListMeal()
+    this.getMealMenu()
+    // this.getListMeal()
   }
 }
 </script>
@@ -189,16 +292,40 @@ export default {
   padding:0;
   display: flex;
   .left_tree{
-    width: 160px;
+    width: 240px;
     height: 100%;
     border-right: 4px solid #F3F8FF;
+    position: relative;
+    .nav-title{
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 18px;
+      padding: 25px 20px 10px;
+    }
     .el-menu{
       border-right: 0;
+      span{
+        padding-left: 15px;
+      }
+    }
+    .navicon{
+      position: absolute;
+      right: 40px;
+      i{
+        color: #fff;
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+        background: #409EFF;
+        line-height: 20px;
+        padding: 0;
+        text-align: center;
+      }
     }
   }
   .right_main{
     padding: 0 30px;
-    width: 700px;
+    width: 900px;
     .main-head{
       color:#5e6d82;
       height: 80px;
@@ -228,26 +355,20 @@ export default {
     }
   }
 }
-.form_box{
-  display: flex;
-  width: 500px;
-  margin: 30px auto;
-  h4{
-    width: 100px;
-    font-size: 16px;
-    padding-top: 8px;
-  }
-  .el-form{
-    width: 350px;
-    .el-radio{
-      color:#1F2D3D;
-    }
-    .el-cascader {
-      width: 230px;
-    }
-  }
-
+.text_edit{
+  width: 140px;
 }
 
+.el-form{
+  .el-form-item {
+    margin-bottom: 8px;
+  }
+  .el-input{
+    width: 217px;
+  }
+}
+.main_table{
+  margin-bottom: 20px;
+}
 
 </style>
