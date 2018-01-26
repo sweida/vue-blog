@@ -254,16 +254,30 @@
           </div>
         </div>
         <div class="addGive">
-          <el-button type="primary" size="small">
+          <el-button type="primary" size="small" @click="presentDialog = true">
             添加赠送方案
           </el-button>
+          <div class="form_box">
+            <div class="li_box">
+              <el-tag
+              v-for="tag in tags"
+              :key="tag.name"
+              closable
+              :disable-transitions="false"
+              @close="CloseBurdenTags(index)"
+              >
+              <!-- {{Burden.materialName+Burden.materialNum+Burden.unit}} -->
+              </el-tag>
+            </div>
+          </div>
         </div>
       </div>
+
       <div class="footer">
         <el-button type="primary" size="medium">保　存</el-button>
       </div>
       <!-- 添加产品 -->
-      <el-dialog :visible.sync="addProductDialog" title="选择项目" width="1050px" class="burbox">
+      <el-dialog :visible.sync="addProductDialog" title="选择产品" width="1050px" class="burbox">
         <div class="tableDialog">
           <div class="tabs">
             <el-menu
@@ -516,47 +530,100 @@
           <el-button type="primary" @click="comformAddproduct" size="small">确 定</el-button>
         </span>
       </el-dialog>
-      <!-- <el-dialog title="新增赠送" :visible.sync="presentDialog" width="1000px">
-        <div class="form_box">
-          <h5>选择</h5>
-          <el-form ref="form" :model="form" label-width="120px" label-position='left'>
-            <el-form-item label="类型">
-              <el-radio-group v-model="form.type">
-                <el-radio :label="1">代金券</el-radio>
-                <el-radio :label="2">现金券</el-radio>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="是否专项">
-              <el-radio-group v-model="              <el-radio :label="1">通用</el-radio>
-                <el-radio :label="2">专项</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-form>
-        </div>
-        <div class="form_box">
-          <h5>设置</h5>
-          <el-form ref="form" :model="form" label-width="120px" label-position='left'>
-            <el-form-item label="额度（元）">
-              <el-input size="medium" v-model="form.desc"></el-input>
-            </el-form-item>
-            <el-form-item label="数量（张）">
-              <el-input size="medium" v-model="form.desc"></el-input>
-            </el-form-item>
-            <el-form-item label="有效期（天）">
-              <el-input size="medium" v-model="form.desc"></el-input>
-            </el-form-item>
-          </el-form>
+      <el-dialog title="添加赠送方案" :visible.sync="presentDialog" width="1000px" class="burbox">
+        <div class="tableDialog">
+          <div class="tabs scroll">
+            <el-menu
+              class="el-menu-vertical-demo">
+              <template v-for="(item, index) in addGivemenuList" :keys="index">
+                <el-menu-item :index="item.url" v-if="item.childMenu==null" @click="changeMenu(item)">
+                  <template slot="title">
+                    <span>{{item.name}}</span>
+                  </template>
+                </el-menu-item>
+                <el-submenu :index="item.url" v-else>
+                  <template slot="title">
+                    <span>{{item.name}}</span>
+                  </template>
+                  <template v-for="(child, index1) in item.childMenu" :keys="index1">
+                    <el-menu-item :index="item.url+child.url" v-if="child.childMenu==null" @click="changeMenu(child)">
+                      <span>{{child.name}}</span>
+                    </el-menu-item>
+                    <el-submenu :index="item.url+child.url" v-else>
+                      <template slot="title">
+                        <span>{{child.name}}</span>
+                      </template>
+                      <template v-for="(child2, index2) in child.childMenu" :keys="index1">
+                        <el-menu-item :index="item.url+child.url+child2.url" @click="changeMenu(child2, item)">{{child2.name}}</el-menu-item>
+                      </template>
+                    </el-submenu>
+                  </template>
+                </el-submenu>
+              </template>
+            </el-menu>
+          </div>
+          <div class="burli1">
+            <el-table
+              :data="materials_arr"
+              stripe
+              style="width:100%"
+              max-height='450'
+              @selection-change="handleSelectionChange"
+              tooltip-effect="dark"
+              >
+              <el-table-column
+              label="选择"
+              type="selection"
+              width="80">
+              </el-table-column>
+              <el-table-column
+                label="序号"
+                type="index"
+                width="50">
+              </el-table-column>
+              <el-table-column
+                prop="projectName"
+                label="名称"
+                >
+              </el-table-column>
+              <el-table-column
+                prop="projectPrice"
+                label="价值">
+              </el-table-column>
+            </el-table>
+            <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
+          </div>
+          <!-- 选择产品 -->
+          <div class="burli2">
+            <el-table
+              :data="multipleSelection"
+              stripe
+              style="width:100%"
+              max-height='450'
+              tooltip-effect="dark"
+              >
+              <el-table-column
+                prop="projectName"
+                label="名称"
+                >
+              </el-table-column>
+              <el-table-column
+                prop="projectPrice"
+                label="价值">
+              </el-table-column>
+            </el-table>
+          </div>
         </div>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="voucherDialog = false" size="small">取 消</el-button>
-          <el-button type="primary" @click="voucherDialog = false" size="small">确 定</el-button>
+          <el-button type="primary" @click="comformAddproduct" size="small">确 定</el-button>
         </span>
-      </el-dialog> -->
+      </el-dialog>
   </div>
 </template>
 
 <script>
 import { getMenuProduct, getMenuProject, getMenu, getMenuById } from '@/api/login'
+import { giveNav } from '@/api/tree'
 const cityOptions = ['上海', '北京', '广州', '深圳', '上海', '北京', '广州', '深圳']
 export default {
   name: 'app',
@@ -570,13 +637,15 @@ export default {
       addProductDialog: false,
       addProjectDialog: false,
       addVoucherDialog: false,
+      presentDialog: false, // 添加赠送
       addIndex: -1, // 添加时改变index用于记录下标向数组添加数据
       materials_arr: [],
       multipleSelection: [],
       materials_data: [],
       productList: {}, // 产品菜单
       projectList: {}, // 项目菜单
-      menuVoucherList: {}, //代金券菜单
+      menuVoucherList: {}, // 代金券菜单
+      addGivemenuList: [], // 添加赠送方案
       imageUrl: '',
       tuisong: false,
       checkedCities1: ['上海', '北京'],
@@ -758,17 +827,27 @@ export default {
         }
       })
     },
+    // 获取赠送菜单
+    getgiveNav() {
+      giveNav().then(res => {
+        if (res.data.code == 200) {
+          this.addGivemenuList = res.data.data
+        }
+        console.log('获取赠送菜单', res, this.menuList)
+      })
+    },
     // 删除组合
     delGroup(index) {
       this.addList.splice(index, 1)
     },
+    CloseBurdenTags() {},
     // 确认添加产品
     comformAddproduct() {
       this.addList[this.addIndex].tableData = this.addList[this.addIndex].tableData.concat(this.multipleSelection)
     }
   },
   created() {
-
+    this.getgiveNav()
   }
 }
 </script>

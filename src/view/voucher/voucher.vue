@@ -6,31 +6,60 @@
           <el-menu
             class="el-menu-vertical-demo"
             @open="handleOpen"
-            @close="handleClose">
+            @close="handleClose"
+            @select="handleSelect">
             <template v-for="(item, index) in menuList" :keys="index">
-              <el-menu-item :index="item.url" v-if="item.childMenu==null" @click="changeMenu(item)">
+              <el-menu-item :index="item.url" v-if="item.childMenu==null || item.childMenu==''" @click="changeMenu(item)">
                 <template slot="title">
-                  <i class="el-icon-location"></i>
-                  <span>{{item.name}}</span>
+                  <span class="title">{{item.name}}</span>
+                  <em class="navicon" v-if="item.url==openindex">
+                    <i class="el-icon-plus" @click="plusNav(item)"></i>
+                    <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
+                  </em>
                 </template>
               </el-menu-item>
-              <el-submenu :index="item.url" v-else>
-                <template slot="title">
-                  <i class="el-icon-location"></i>
-                  <span>{{item.name}}</span>
+              <el-submenu :index="item.url"  v-else>
+                <template slot="title" >
+                  <div @click="changeMenu(item)">
+                    <span class="title">{{item.name}}</span>
+                    <em class="navicon" v-if="item.url==openindex">
+                      <i class="el-icon-plus" @click="plusNav(item)"></i>
+                      <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
+                    </em>
+                  </div>
                 </template>
                 <template v-for="(child, index1) in item.childMenu" :keys="index1">
-                  <el-menu-item :index="item.url+child.url" v-if="child.childMenu==null" @click="changeMenu(child)">
-                    <i class="el-icon-location"></i>
-                    <span>{{child.name}}</span>
-                  </el-menu-item>
-                  <el-submenu :index="item.url+child.url" v-else>
+                  <el-menu-item :index="child.url" @click="changeMenu(child)" v-if="child.childMenu==null || child.childMenu==''">
                     <template slot="title">
-                      <i class="el-icon-location"></i>
                       <span>{{child.name}}</span>
+                      <em class="navicon" v-if="child.url==openindex">
+                        <i class="el-icon-plus" @click="plusNav(child)"></i>
+                        <i class="el-icon-edit" @click="editNav(child, child.name)"></i>
+                        <i class="el-icon-minus" @click="minusNav(child)"></i>
+                      </em>
                     </template>
-                    <template v-for="(child2, index2) in child.childMenu" :keys="index1">
-                      <el-menu-item :index="item.url+child.url+child2.url" @click="changeMenu(child2, item)">{{child2.name}}</el-menu-item>
+                  </el-menu-item>
+                  <el-submenu :index="child.url"  v-else>
+                    <template slot="title" >
+                      <div @click="changeMenu(child)">
+                        <span >{{child.name}}</span>
+                        <em class="navicon" v-if="child.url==openindex">
+                          <i class="el-icon-plus" @click="plusNav(child)"></i>
+                          <i class="el-icon-edit" @click="editNav(child, child.name)"></i>
+                          <i class="el-icon-minus" @click="minusNav(child)"></i>
+                        </em>
+                      </div>
+                    </template>
+                    <template v-for="(son, index1) in child.childMenu" :keys="index1">
+                      <el-menu-item :index="son.url" @click="changeMenu(son)">
+                        <template slot="title">
+                          <span>{{son.name}}</span>
+                          <em class="navicon" v-if="son.url==openindex">
+                            <i class="el-icon-edit" @click="editNav(son, son.name)"></i>
+                            <i class="el-icon-minus" @click="minusNav(son)"></i>
+                          </em>
+                        </template>
+                      </el-menu-item>
                     </template>
                   </el-submenu>
                 </template>
@@ -130,7 +159,7 @@
                 <el-radio :label="2">专项</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="名称">
+            <el-form-item label="名称" v-if="form.exclusive==2">
               <el-cascader
                 placeholder="可搜索名称"
                 @change="handleItemChange"
@@ -140,6 +169,16 @@
                 :clearable="true"
                 filterable>
               </el-cascader>
+            </el-form-item>
+            <el-form-item label="" v-if="form.exclusive==2">
+              <el-select v-model="value" placeholder="请选择">
+                <el-option
+                  v-for="item in optionsDetail"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-form>
         </div>
@@ -168,6 +207,7 @@
 
 <script>
 import { getMenu, getVoucher, getMenuAdd, getMenuById } from '@/api/login'
+import { delMenu, editMenu, addMenu } from '@/api/tree'
 import { clone } from '@/utils/common'
 import page from '../../components/common/page'
 export default {
@@ -177,11 +217,29 @@ export default {
   },
   data() {
     return {
+      optionsDetail: [{
+        value: '选项1',
+        label: '黄金糕'
+      }, {
+        value: '选项2',
+        label: '双皮奶'
+      }, {
+        value: '选项3',
+        label: '蚵仔煎'
+      }, {
+        value: '选项4',
+        label: '龙须面'
+      }, {
+        value: '选项5',
+        label: '北京烤鸭'
+      }],
+      value: '',
       pageModel: {
         page: 1,
         rows: 10,
         sumCount: 0
       },
+      openindex: '', // 点击时操作按钮显示与否
       voucherParam: {}, //代金券参数
       menuList: [],
       bed: 1,
@@ -204,14 +262,23 @@ export default {
     }
   },
   methods: {
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath)
-    },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath)
-    },
     added() {
       this.voucherDialog = true
+    },
+    handleSelect(key, keyPath) {
+      this.openindex = key
+      console.log('handleSelect', key, keyPath)
+    },
+    handleOpen(key, keyPath) {
+      this.openindex = key
+      console.log('handleOpen', key, keyPath)
+    },
+    handleOpen2(item) {
+      console.log('handleOpen2', item)
+    },
+    handleClose(key, keyPath) {
+      this.openindex = ''
+      console.log('handleOpen', key, keyPath)
     },
     //搜素客户
     searchBtn() {
@@ -226,6 +293,7 @@ export default {
       getMenu().then(res => {
         if (res.data.code == 200) {
           this.menuList = res.data.data
+          console.log(res)
         }
       })
     },
@@ -249,7 +317,7 @@ export default {
       this.getVoucherList()
     },
     // 增加时得到菜单
-    addMenu() {
+    addOptionMenu() {
       getMenuAdd().then(res => {
         if (res.data.code == 200) {
           this.options = res.data.data
@@ -257,24 +325,88 @@ export default {
         }
       })
     },
-    // 添加时获取名称
-    handleItemChange(val) {
-      if (val.length >= 2) {
-        let parentIndex = this.options.findIndex(item => {
-          return item.id == val[0]
-        })
-        let childId = this.options[parentIndex].childMenu.findIndex(item => {
-          return item.id == val[1]
-        })
-        getMenuById([1, 6]).then(res => {
+    // 新增菜单
+    plusNav(item) {
+      event.stopPropagation()
+      this.$prompt('请输入新增的类目名称', '提示', {
+      }).then(({ value }) => {
+        console.log(value)
+        let param = {
+          icon: '',
+          name: value,
+          parentId: item.id
+        }
+        addMenu(param).then(res => {
+          console.log('添加菜单', res)
           if (res.data.code == 200) {
-            // this.options[parentIndex].childMenu[childId].childMenu = [{'id': 1, 'name': 'mam'}]
-            this.$set(this.options[parentIndex].childMenu[childId], 'childMenu', [{'id': 1, 'name': 'mam'}])
-            // this.$set(this.options[parentIndex].childMenu, childId, this.options[parentIndex].childMenu[childId])
-            // this.$set(this.options, parentIndex, this.options[parentIndex])
+            this.getMealMenu()
+            this.$message.success('新增菜单成功!')
+          } else {
+            this.$message.error('新增菜单失败!')
           }
         })
-      }
+        this.$message.success('新增类目成功')
+      }).catch(() => {
+      })
+    },
+    // 删除菜单
+    minusNav(item) {
+      event.stopPropagation()
+      console.log(item.id)
+      this.$confirm('是否删除该类目?', '提示', {
+        type: 'warning'
+      }).then(() => {
+        delMenu(item.id).then(res => {
+          console.log('删除菜单', res)
+          if (res.data.code == 200) {
+            this.getMealMenu()
+            this.$message.success(res.data.msg)
+          } else {
+            this.$message.error(res.data.msg)
+          }
+        })
+      }).catch(() => {
+      })
+    },
+    // 修改菜单
+    editNav(item, name) {
+      console.log(item, name)
+      event.stopPropagation()
+      this.$prompt('请输入修改的类目名称', '提示', {
+        inputValue: name
+      }).then(({ value }) => {
+        editMenu(item.id, value).then(res => {
+          console.log('修改菜单', res)
+          if (res.data.code == 200) {
+            this.getMealMenu()
+            this.$message.success('修改菜单成功!')
+          } else {
+            this.$message.error('修改菜单失败!')
+          }
+        })
+        this.$message.success('新增类目成功')
+      }).catch(() => {
+      })
+    },
+    // 添加时获取名称
+    handleItemChange(val) {
+      // console.log(val)
+      // if (val.length >= 2) {
+      //   let parentIndex = this.options.findIndex(item => {
+      //     return item.id == val[0]
+      //   })
+      //   let childId = this.options[parentIndex].childMenu.findIndex(item => {
+      //     return item.id == val[1]
+      //   })
+      // this.$set(this.options[parentIndex].childMenu[childId], 'childMenu', [{'id': 1, 'name': 'mam'}])
+      //   getMenuById([parentIndex, childId]).then(res => {
+      //     if (res.data.code == 200) {
+      //       this.options[parentIndex].childMenu[childId].childMenu = [{'id': 1, 'name': 'mam'}]
+      //       this.$set(this.options[parentIndex].childMenu, childId, this.options[parentIndex].childMenu[childId])
+      //       this.$set(this.options, parentIndex, this.options[parentIndex])
+      //     }
+      //   })
+      // }
     }
 
   },
@@ -289,7 +421,7 @@ export default {
   created() {
     this.getMenuList()
     this.getVoucherList()
-    this.addMenu()
+    this.addOptionMenu()
     // getMenuById([1, 6]).then(res => {
     //   if (res.data.code == 200) {
     //     // this.options = res.data.data
@@ -305,16 +437,40 @@ export default {
   padding:0;
   display: flex;
   .left_tree{
-    width: 200px;
+    width: 240px;
     height: 100%;
     border-right: 4px solid #F3F8FF;
+    position: relative;
+    .nav-title{
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 18px;
+      padding: 25px 20px 10px;
+    }
     .el-menu{
       border-right: 0;
+      span{
+        padding-left: 15px;
+      }
+    }
+    .navicon{
+      position: absolute;
+      right: 40px;
+      i{
+        color: #fff;
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+        background: #409EFF;
+        line-height: 20px;
+        padding: 0;
+        text-align: center;
+      }
     }
   }
   .right_main{
-    padding:0 30px;
-    flex:1;
+    padding: 0 30px;
+    width: 900px;
     .main-head{
       color:#5e6d82;
       height: 80px;

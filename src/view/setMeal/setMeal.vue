@@ -16,7 +16,7 @@
             @close="handleClose"
             @select="handleSelect">
             <template v-for="(item, index) in menuList.childMenu" :keys="index">
-              <el-menu-item :index="item.url" v-if="item.childMenu==null" @click="changeMenu(item)">
+              <el-menu-item :index="item.url" v-if="item.childMenu==null || item.childMenu.length==0" @click="changeMenu(item)">
                 <template slot="title">
                   <span>{{item.name}}</span>
                   <em class="navicon" v-if="item.url==openindex">
@@ -134,6 +134,7 @@
 
 <script>
 import { getMenuMeal, getMealList } from '@/api/login'
+import { delMenu, editMenu, addMenu } from '@/api/tree'
 import page from '@/components/common/page'
 export default {
   name: 'meal',
@@ -194,65 +195,65 @@ export default {
     // 新增菜单
     plusNav(item) {
       event.stopPropagation()
-      // this.$prompt('请输入新增的类目名称', '提示', {
-      // }).then(({ value }) => {
-      //   console.log(value)
-      //   let param = {
-      //     icon: '',
-      //     name: value,
-      //     parentId: item.id
-      //   }
-      //   addgiveNav(param).then(res => {
-      //     console.log('添加菜单', res)
-      //     if (res.data.code == 200) {
-      //       this.getgiveNav()
-      //       this.$message.success('新增菜单成功!')
-      //     } else {
-      //       this.$message.error('新增菜单失败!')
-      //     }
-      //   })
-      //   this.$message.success('新增类目成功')
-      // }).catch(() => {
-      // })
+      this.$prompt('请输入新增的类目名称', '提示', {
+      }).then(({ value }) => {
+        console.log(value)
+        let param = {
+          icon: '',
+          name: value,
+          parentId: item.id
+        }
+        addMenu(param).then(res => {
+          console.log('添加菜单', res)
+          if (res.data.code == 200) {
+            this.getMealMenu()
+            this.$message.success('新增菜单成功!')
+          } else {
+            this.$message.error('新增菜单失败!')
+          }
+        })
+        this.$message.success('新增类目成功')
+      }).catch(() => {
+      })
     },
     // 删除菜单
     minusNav(item) {
-      // event.stopPropagation()
-      // console.log(item.id)
-      // this.$confirm('是否删除该类目?', '提示', {
-      //   type: 'warning'
-      // }).then(() => {
-      //   delMenu(item.id).then(res => {
-      //     console.log('删除菜单', res)
-      //     if (res.data.code == 200) {
-      //       this.getgiveNav()
-      //       this.$message.success(res.data.msg)
-      //     } else {
-      //       this.$message.error(res.data.msg)
-      //     }
-      //   })
-      // }).catch(() => {
-      // })
+      event.stopPropagation()
+      console.log(item.id)
+      this.$confirm('是否删除该类目?', '提示', {
+        type: 'warning'
+      }).then(() => {
+        delMenu(item.id).then(res => {
+          console.log('删除菜单', res)
+          if (res.data.code == 200) {
+            this.getMealMenu()
+            this.$message.success(res.data.msg)
+          } else {
+            this.$message.error(res.data.msg)
+          }
+        })
+      }).catch(() => {
+      })
     },
     // 修改菜单
     editNav(item, name) {
-      // console.log(item, name)
-      // event.stopPropagation()
-      // this.$prompt('请输入修改的类目名称', '提示', {
-      //   inputValue: name
-      // }).then(({ value }) => {
-      //   editMenu(item.id, value).then(res => {
-      //     console.log('修改菜单', res)
-      //     if (res.data.code == 200) {
-      //       this.getgiveNav()
-      //       this.$message.success('修改菜单成功!')
-      //     } else {
-      //       this.$message.error('修改菜单失败!')
-      //     }
-      //   })
-      //   this.$message.success('新增类目成功')
-      // }).catch(() => {
-      // })
+      console.log(item, name)
+      event.stopPropagation()
+      this.$prompt('请输入修改的类目名称', '提示', {
+        inputValue: name
+      }).then(({ value }) => {
+        editMenu(item.id, value).then(res => {
+          console.log('修改菜单', res)
+          if (res.data.code == 200) {
+            this.getMealMenu()
+            this.$message.success('修改菜单成功!')
+          } else {
+            this.$message.error('修改菜单失败!')
+          }
+        })
+        this.$message.success('新增类目成功')
+      }).catch(() => {
+      })
     },
     added() {
       this.$router.push('/setMeal/addSetmeal')
