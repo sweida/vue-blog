@@ -5,11 +5,23 @@
         <div class="form_box form_top">
           <h5>基础信息</h5>
           <el-form ref="form" v-model="form" label-width="120px" label-position='left'>
+            <el-form-item label="宝贝编号" v-if="form.projectId">
+              <span>{{form.projectId}}</span>
+            </el-form-item>
             <el-form-item label="宝贝名称">
               <el-input size="medium" v-model="form.projectName"></el-input>
             </el-form-item>
             <el-form-item label="所属类目">
-              <el-input size="medium" v-model="form.parentId"></el-input>
+              <!-- <el-input size="medium" v-model="form.parentId"></el-input> -->
+              <el-cascader
+                placeholder="请选择类目名称"
+                @change="handleItemChange"
+                v-model="selectedOptions"
+                change-on-select
+                :options="menuList"
+                :props="defaultProps"
+                :clearable="true">
+              </el-cascader>
             </el-form-item>
             <el-form-item label="价格">
               <el-input size="medium" type="number" v-model="form.projectPrice" ></el-input>
@@ -43,7 +55,7 @@
         </div>
         <div class="form_box">
           <h5>需知与描述</h5>
-          <vue-editor v-model="content"></vue-editor>
+          <vue-editor v-model="form.detail"></vue-editor>
         </div>
         <div class="form_box">
           <h5>适合肤质</h5>
@@ -111,7 +123,7 @@
           <h5>配料</h5>
           <div class="li_box">
             <el-tag
-              v-for="(Burden,index) in materials_data"
+              v-for="(Burden,index) in form.ccProjectMaterialList"
               :key="Burden.materialName"
               closable
               :disable-transitions="false"
@@ -126,11 +138,11 @@
           </div>
         </div>
 
-        <div class="form_box">
+        <!-- <div class="form_box">
           <h5>添加赠送+</h5>
           <div class="li_box">
             <el-tag
-              v-for="(Burden,index) in materials_data"
+              v-for="(Burden,index) in form.materials_data"
               :key="Burden.materialName"
               closable
               :disable-transitions="false"
@@ -143,7 +155,7 @@
             <el-button type="primary" size="mini" @click="presentBtn">添加赠送</el-button>
             <i class="el-icon-info"></i>
           </div>
-        </div>
+        </div> -->
 
         <!-- <div class="form_box">
           <h5>推送</h5>
@@ -182,40 +194,40 @@
           <el-form ref="form" :model="form" label-width="170px" label-position='left'>
             <el-form-item label="折扣信息">
               <el-radio-group v-model="form.isDiscount">
-                <el-radio :label="0">不参与会员折扣</el-radio>
-                <el-radio :label="1">参与会员折扣</el-radio>
+                <el-radio :label="'0'">不参与会员折扣</el-radio>
+                <el-radio :label="'1'">参与会员折扣</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="是否支持上面服务">
               <el-radio-group v-model="form.isDoorService">
-                <el-radio :label="0">否</el-radio>
-                <el-radio :label="1">是</el-radio>
+                <el-radio :label="'0'">否</el-radio>
+                <el-radio :label="'1'">是</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="是否销售">
               <el-radio-group v-model="form.isSale">
-                <el-radio :label="0">否</el-radio>
-                <el-radio :label="1">是</el-radio>
+                <el-radio :label="'0'">否</el-radio>
+                <el-radio :label="'1'">是</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="在ipad上显示">
               <el-radio-group v-model="form.isIpadShow">
-                <el-radio :label="0">否</el-radio>
-                <el-radio :label="1">是</el-radio>
+                <el-radio :label="'0'">否</el-radio>
+                <el-radio :label="'1'">是</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="作为ipad推荐项目">
               <el-radio-group v-model="form.isIpadRecommendProject">
-                <el-radio :label="0">否</el-radio>
-                <el-radio :label="1">是</el-radio>
+                <el-radio :label="'0'">否</el-radio>
+                <el-radio :label="'1'">是</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="销售提成类型" class="radio-input">
               <el-radio-group v-model="form.commissionType" >
-                <el-radio :label="0">消耗固定提成</el-radio>
-                <el-radio :label="1">消耗百分比提成</el-radio>
+                <el-radio :label="'0'">消耗固定提成</el-radio>
+                <el-radio :label="'1'">消耗百分比提成</el-radio>
               </el-radio-group>
-              <div class="other" v-if="form.commissionType==0">
+              <div class="other" v-if="form.commissionType=='0'">
                 <span>提成金额</span>
                 <el-input size="mini" v-model="form.commissionMoney"></el-input>
               </div>
@@ -229,9 +241,11 @@
       </div>
       <div class="footer">
         <el-button size="medium" onclick="history.back()">取　消</el-button>
-        <el-button type="primary" size="medium" @click="saveBtn">保　存</el-button>
+        <el-button type="primary" size="medium" @click="editBtn" v-if="form.projectId">保存修改</el-button>
+        <el-button type="primary" size="medium" @click="saveBtn" v-else>保　存</el-button>
       </div>
 
+      <!-- 配料弹框 -->
       <el-dialog :visible.sync="burdenDialog" title="编辑配料" width="1050px" class="burbox">
         <div class="tableDialog">
           <div class="tabs">
@@ -266,7 +280,7 @@
           <!-- 默认配料 -->
           <div class="burli2">
             <el-table
-              :data="materials_data"
+              :data="form.ccProjectMaterialList"
               stripe
               max-height='200'
               tooltip-effect="dark"
@@ -331,7 +345,7 @@
           <!-- 默认配料 -->
           <div class="burli2">
             <el-table
-              :data="materials_data"
+              :data="form.materials_data"
               stripe
               max-height='200'
               tooltip-effect="dark"
@@ -365,7 +379,8 @@
 </template>
 
 <script>
-import { addproject, getproject, getTagli, addTag, delTag, getBurden } from '@/api/product'
+import { addproject, getproject, getTagli, addTag, delTag, getBurden, projectDetail, editproject } from '@/api/product'
+import { mixppMenu } from '@/api/tree'
 import page from '@/components/common/page'
 import { clone } from '@/utils/common'
 import { VueEditor } from 'vue2-editor'
@@ -376,53 +391,49 @@ export default {
   },
   data() {
     return {
-      content: '',
-      skinList: ['干性', '混合性', '干燥', '中性', '过敏', '粗糙', '暗沉', '敏感', '暗哑'],
+      menuList: [],   // 菜单
+      defaultProps: {
+        children: 'childMenu',
+        value: 'id',
+        label: 'name'
+      },
+      content: '',    // 文章
+      skinList: [],
       checkSkin: [],
       skinInput: '',
       editSkin: true, // 肤质
-      effectList: ['保湿', '去痘', '祛斑', '美白', '抗衰', '嫩肤补水', '纤体瘦身', '去脂修复', '淡痕', '清新淡雅'],
+      effectList: [],
       checkEffect: [],
       effectInput: '',
       editEffect: true, // 功效
-      addBurdlist: [    //配料列表
-        { id: '1111',
-          name: '阿萨德1'
-        },
-        { id: '1111',
-          name: '阿萨德2'
-        },
-        { id: '1111',
-          name: '阿萨德3'
-        }
-      ],
-
+      burdenDialog: false,    // 配料
       tuisong: false,   // 推送
-      input: '',
-      voucherDialog: false,
       imageUrl: 'static/img/phone.png',
       presentDialog: false,
       textarea: '',
+      selectedOptions: [],
       form: {
         projectName: '',
+        arrId: '',
         projectPrice: '',
-        projectType: 0,
+        projectType: '',
         availabilityDay: 2000,  // 有效天数
         consumeTime: 30,      // 耗时
         parentId: '',         // 父id
-        isDiscount: 0,
-        isDoorService: 0,
-        isIpadShow: 0,
-        isIpadRecommendProject: 0,
-        isMateriel: 0,        // 是否有配料
-        isSale: 1,            // 是否销售
-        commissionType: 0,
+        detail: '',           // 文章
+        ccProjectMaterialList: [],   // 配料
+        // isMateriel: 0,        // 是否有配料
+        isSale: '1',            // 是否销售
+        isDiscount: '0',
+        isDoorService: '0',
+        isIpadShow: '0',
+        isIpadRecommendProject: '0',
+        commissionType: '0',
         commissionMoney: '',
         commissionPercentage: ''
       },
-      burdenDialog: false,    // 配料
       materials_arr: [],
-      materials_data: [],
+
       hasget: [],
       pageModel: {
         page: 1,
@@ -435,42 +446,47 @@ export default {
     this.getTagskin()
     this.getTageffect()
     this.getBurdenlist()
+    this.getmixMenu()
+    if (this.$route.params.id != undefined) {
+      this.getprojectDetail()
+    }
   },
   methods: {
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath)
+    // 获取项目产品菜单
+    getmixMenu() {
+      mixppMenu().then(res => {
+        this.menuList = res.data.data
+        console.log('获取项目和产品菜单', res)
+      })
     },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath)
+    // 选择类目获取id
+    handleItemChange(val) {
+      this.form.arrId = val.join(',')
+      this.form.parentId = val[val.length - 1]
+      this.form.projectType = val[0]
+      console.log('点击', val, val[val.length - 1], this.form.arrId)
     },
-
-    added() {
-      this.voucherDialog = true
-    },
-    //搜素客户
-    searchBtn() {
-      console.log('搜索')
+    // 获取项目详情
+    getprojectDetail() {
+      projectDetail(this.$route.params.id).then(res => {
+        this.form = res.data.data
+        this.checkSkin = res.data.data.fitSkin.split(',')
+        this.checkEffect = res.data.data.effect.split(',')
+        let arr = res.data.data.arrId.split(',')
+        this.selectedOptions = arr.map((item) => {
+          return +item
+        })
+        console.log('项目详情', res, this.$route.params.id, this.form)
+      })
     },
     // 保存
     saveBtn() {
       let param = Object.assign({
         enterpriseId: '001',
-        fitSkin: this.checkSkin.join(','),  // 肤质
+        fitSkin: this.checkSkin.join(','),    // 肤质
         effect: this.checkEffect.join(','),   // 功效
-        detail: this.content,
+        ccProjectPushList: [],                // 推送
         isGive: 0,
-        ccProjectMaterialList: this.materials_data,
-        ccProjectPushList: [],
-        // ccProjectPushList: [
-        //   {
-        //     hour: '',
-        //     id: 0,
-        //     minute: '',
-        //     numberDays: 0,
-        //     projectId: '',
-        //     pushContent: ''
-        //   }
-        // ],
         ccProjectGiveList: [
           {
             enterpriseId: '001',
@@ -492,8 +508,8 @@ export default {
           }
         ]
       }, this.form)
-      if (this.form.projectName == '' || this.form.projectPrice == '') {
-        this.$message.error('项目名称和价格不能为空')
+      if (this.form.projectName == '' || this.form.projectPrice == '' || this.form.arrId == '') {
+        this.$message.error('项目名称、类目和价格不能为空')
       } else {
         addproject(param).then(res => {
           console.log('添加项目', res)
@@ -505,7 +521,20 @@ export default {
           }
         })
       }
-
+    },
+    // 保存修改
+    editBtn() {
+      this.form.fitSkin = this.checkSkin.join(',')
+      this.form.effect = this.checkEffect.join(',')
+      editproject(this.form).then(res => {
+        console.log('保存修改', res)
+        if (res.data.code == 200) {
+          this.$router.push('/project')
+          this.$message.success('修改成功!')
+        } else {
+          this.$message.error('新增失败!')
+        }
+      })
     },
     // 获取肤质
     getTagskin() {
@@ -614,12 +643,12 @@ export default {
     },
     // 添加配料
     addMaterials(val) {
-      this.materials_data = val
+      this.form.ccProjectMaterialList = val
       console.log(val)
     },
     // 删除配料tag
     CloseBurdenTags(index) {
-      this.materials_data.splice(index, 1)
+      this.form.ccProjectMaterialList.splice(index, 1)
     },
     sureBurden() {
 
@@ -737,7 +766,7 @@ export default {
       width:110px;
     }
     .el-cascader {
-      width: 230px;
+      width: 260px;
     }
     .el-select{
       width: 260px;

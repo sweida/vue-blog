@@ -1,5 +1,68 @@
 <template>
   <div >
+    <!-- <el-menu
+      class="el-menu-vertical-demo"
+      @open="handleOpen"
+      @close="handleClose"
+      @select="handleSelect">
+      <template v-for="(item, index) in menuList" :keys="index">
+        <el-menu-item :index="item.url" v-if="item.childMenu==null || item.childMenu==''" @click="changeMenu(item)">
+          <template slot="title">
+            <span class="title">{{item.name}}</span>
+            <em class="navicon" v-if="item.url==openindex">
+              <i class="el-icon-plus" @click="plusNav(item)"></i>
+              <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
+            </em>
+          </template>
+        </el-menu-item>
+        <el-submenu :index="item.url"  v-else>
+          <template slot="title" >
+            <div @click="changeMenu(item)">
+              <span class="title">{{item.name}}</span>
+              <em class="navicon" v-if="item.url==openindex">
+                <i class="el-icon-plus" @click="plusNav(item)"></i>
+                <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
+              </em>
+            </div>
+          </template>
+          <template v-for="(child, index1) in item.childMenu" :keys="index1">
+            <el-menu-item :index="child.url" @click="changeMenu(child)" v-if="child.childMenu==null || child.childMenu==''">
+              <template slot="title">
+                <span>{{child.name}}</span>
+                <em class="navicon" v-if="child.url==openindex">
+                  <i class="el-icon-plus" @click="plusNav(child)"></i>
+                  <i class="el-icon-edit" @click="editNav(child, child.name)"></i>
+                  <i class="el-icon-minus" @click="minusNav(child)"></i>
+                </em>
+              </template>
+            </el-menu-item>
+            <el-submenu :index="child.url"  v-else>
+              <template slot="title" >
+                <div @click="changeMenu(child)">
+                  <span >{{child.name}}</span>
+                  <em class="navicon" v-if="child.url==openindex">
+                    <i class="el-icon-plus" @click="plusNav(child)"></i>
+                    <i class="el-icon-edit" @click="editNav(child, child.name)"></i>
+                    <i class="el-icon-minus" @click="minusNav(child)"></i>
+                  </em>
+                </div>
+              </template>
+              <template v-for="(son, index1) in child.childMenu" :keys="index1">
+                <el-menu-item :index="son.url" @click="changeMenu(son)">
+                  <template slot="title">
+                    <span>{{son.name}}</span>
+                    <em class="navicon" v-if="son.url==openindex">
+                      <i class="el-icon-edit" @click="editNav(son, son.name)"></i>
+                      <i class="el-icon-minus" @click="minusNav(son)"></i>
+                    </em>
+                  </template>
+                </el-menu-item>
+              </template>
+            </el-submenu>
+          </template>
+        </el-submenu>
+      </template>
+    </el-menu> -->
       <div class="header_title"><span><router-link to="/project">项目</router-link> <i class="el-icon-arrow-right"></i> 添加项目</span><i class="el-icon-info"></i></div>
       <div class="main-content scroll">
         <div class="form_box form_top">
@@ -12,7 +75,15 @@
               <el-input size="medium" v-model="projectDetail.projectName"></el-input>
             </el-form-item>
             <el-form-item label="所属类目">
-              <el-input size="medium" v-model="projectDetail.parentId"></el-input>
+              <el-cascader
+                placeholder="请选择类目名称"
+                @change="handleItemChange"
+                v-model="selectedOptions"
+                change-on-select
+                :options="projectDetail.parentId"
+                :props="defaultProps"
+                :clearable="true">
+              </el-cascader>
             </el-form-item>
             <el-form-item label="价格">
               <el-input size="medium" v-model="projectDetail.projectPrice"></el-input>
@@ -391,6 +462,12 @@ export default {
       burdenDialog: false,    // 配料
       materials_arr: [],    // 配料
       materials_data: [],
+      selectedOptions: [],
+      defaultProps: {
+        children: 'childMenu',
+        value: 'id',
+        label: 'name'
+      },
       hasget: [],
       pageModel: {
         page: 1,

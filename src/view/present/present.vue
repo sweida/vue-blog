@@ -16,7 +16,7 @@
             @close="handleClose"
             @select="handleSelect">
             <template v-for="(item, index) in menuList.childMenu" :keys="index">
-              <el-menu-item :index="item.url" v-if="item.childMenu==null" @click="changeMenu(item)">
+              <el-menu-item :index="item.url" v-if="item.childMenu==null || item.childMenu==''" @click="changeMenu(item)">
                 <template slot="title">
                   <span>{{item.name}}</span>
                   <em class="navicon" v-if="item.url==openindex">
@@ -176,11 +176,6 @@
                 <el-input size="medium" v-model="form.givePlanName" placeholder="填写赠送方案名称"></el-input>
               </el-form-item>
               <el-form-item label="所属类目">
-                <!-- <el-cascader
-                  :options="menuList"
-                  v-model="selectedOptions"
-                  @change="handleChange">
-                </el-cascader> -->
                 <el-cascader
                   placeholder="请选择类目名称"
                   @change="handleItemChange"
@@ -226,7 +221,7 @@ export default {
       openindex: '',
       menuList: [],
       givePlanli: [], //  赠送列表
-      givePlanParam: {},    // 赠送参数
+      MenuParam: {},    // 赠送参数
       search: '',
       presentDialog: false,
       materials_arr: [],    // 配料
@@ -347,14 +342,14 @@ export default {
     // 改变菜单时得到代金券数据
     changeMenu(child) {
       console.log('changeMenu', child.id)
-      this.givePlanParam = {
+      this.MenuParam = {
         parentId: child.id
       }
       this.getgivePlanList()
     },
     // 获取赠送列表
     getgivePlanList() {
-      getgivePlan(this.pageModel, this.givePlanParam).then(res => {
+      getgivePlan(this.pageModel, this.MenuParam).then(res => {
         console.log('获取赠送列表', res)
         this.givePlanli = res.data.data.rows
         this.pageModel.sumCount = res.data.data.total
@@ -507,87 +502,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.main-content{
-  padding:0;
-  display: flex;
-  .left_tree{
-    width: 240px;
-    height: 100%;
-    border-right: 4px solid #F3F8FF;
-    position: relative;
-    .nav-title{
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 18px;
-      padding: 25px 20px 10px;
-    }
-    .el-menu{
-      border-right: 0;
-      span{
-        padding-left: 15px;
-      }
-    }
-    .navicon{
-      position: absolute;
-      right: 40px;
-      i{
-        color: #fff;
-        width: 20px;
-        height: 20px;
-        font-size: 12px;
-        background: #409EFF;
-        line-height: 20px;
-        padding: 0;
-        text-align: center;
-      }
-    }
-  }
-  .right_main{
-    padding: 0 30px;
-    width: 900px;
-    .main-head{
-      color:#5e6d82;
-      height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      span{
-        padding-left: 10px;
-        color:#99a9c0;
-      }
-      .search{
-        width: 200px;
-        padding:0 38px 0 16px;
-        background: #f7f7f7;
-        border:0;
-        outline: none;
-        border-radius: 15px;
-        line-height: 30px;
-      }
-      i{
-        cursor: pointer;
-        font-size: 20px;
-        position: relative;
-        top: 3px;
-        left: -35px;
-      }
-    }
-  }
-}
-.text_edit{
-  width: 140px;
-}
-
-.el-form{
-  .el-form-item {
-    margin-bottom: 8px;
-  }
-  .el-input{
-    width: 217px;
-  }
-}
-.main_table{
-  margin-bottom: 20px;
-}
-
+@import "../../style/project.scss";
 </style>
