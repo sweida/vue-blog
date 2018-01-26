@@ -55,3 +55,11 @@ export function mixppMenu(data) {
     data
   })
 }
+// 获取项目、产品、套餐、代金券方案的菜单
+export function ccGetMenu(data) {
+  return fetch({
+    url: 'apis/menu/ccGetMenu',
+    method: 'GET',
+    data
+  })
+}

@@ -86,7 +86,7 @@ body {
   display: flex;
   height: 550px;
   .tabs{
-    width: 150px;
+    width: 170px;
     border-right: 2px solid #f3f8fe;
     p{
       margin-top: 40px;
@@ -94,6 +94,17 @@ body {
       line-height: 36px;
       text-indent: 20px;
       color:#20a1ff;
+    }
+    .el-menu {
+      border-right: 0;
+      .title{
+        font-size: 15px;
+        font-weight: bold;
+      }
+      .el-menu-item, .el-submenu__title {
+        height: 45px;
+        line-height: 45px;
+      }
     }
   }
   .burli1{

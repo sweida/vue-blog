@@ -34,7 +34,7 @@
                     <em class="navicon" v-if="item.url==openindex">
                       <i class="el-icon-plus" @click="plusNav(item)"></i>
                       <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
-                      <i class="el-icon-minus" @click="minusNav(item)" v-if="projectList==''"></i>
+                      <!-- <i class="el-icon-minus" @click="minusNav(item)" v-if="projectList==''"></i> -->
                     </em>
                   </div>
                 </template>

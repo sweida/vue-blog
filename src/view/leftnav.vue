@@ -19,7 +19,7 @@
           {name: '房间', url: '/room'},
           {name: '职位权限', url: '/scope'},
           {name: '员工管理', url: '/staff'},
-          {name: '代金券', url: '/voucher'},
+          {name: '优惠券', url: '/voucher'},
           {name: '会员卡', url: '/clubCard'},
           {name: '赠送方案', url: '/present'},
           {name: '项目', url: '/project'},

@@ -7,7 +7,7 @@
             <span>{{menuList.name}}</span>
             <em class="navicon" v-if="openindex==menuList.url">
               <i class="el-icon-plus" @click="plusNav(menuList)"></i>
-              <i class="el-icon-edit" @click="editNav(menuList, menuList.name)"></i>
+              <i class="el-icon-edit" @click="editNav(menuList, menuList.name)" v-if="givePlanli==''"></i>
             </em>
           </p>
           <el-menu
@@ -22,7 +22,7 @@
                   <em class="navicon" v-if="item.url==openindex">
                     <i class="el-icon-plus" @click="plusNav(item)"></i>
                     <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
-                    <i class="el-icon-minus" @click="minusNav(item)"></i>
+                    <i class="el-icon-minus" @click="minusNav(item)" v-if="givePlanli==''"></i>
                   </em>
                 </template>
               </el-menu-item>
@@ -33,7 +33,7 @@
                     <em class="navicon" v-if="item.url==openindex">
                       <i class="el-icon-plus" @click="plusNav(item)"></i>
                       <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
-                      <i class="el-icon-minus" @click="minusNav(item)"></i>
+                      <!-- <i class="el-icon-minus" @click="minusNav(item)" v-if="givePlanli==''"></i> -->
                     </em>
                   </div>
                 </template>
@@ -42,7 +42,7 @@
                     <span>{{child.name}}</span>
                     <em class="navicon" v-if="child.url==openindex">
                       <i class="el-icon-edit" @click="editNav(child, child.name)"></i>
-                      <i class="el-icon-minus" @click="minusNav(child)"></i>
+                      <i class="el-icon-minus" @click="minusNav(child)" v-if="givePlanli==''"></i>
                     </em>
                   </el-menu-item>
                 </template>
@@ -71,14 +71,6 @@
                 label="名称"
                 width="300px"
                 >
-                <!-- <template slot-scope="scope" >
-                  <span v-if="editBtn">{{scope.row.givePlanName}} <i class="el-icon-edit" @click="editTitle(scope.$index)"></i></span>
-                  <template v-else>
-                    <el-input v-model="scope.row.givePlanName" size="mini" class="text_edit"></el-input>
-                    <el-button type="primary" size="mini">确定</el-button>
-                    <el-button size="mini" @click="editClose">取消</el-button>
-                  </template>
-                </template> -->
               </el-table-column>
               <el-table-column
                 prop="createDate"
@@ -109,26 +101,97 @@
 
       </div>
 
-      <el-dialog :visible.sync="presentDialog" title="添加赠送方案" width="1150px" class="burbox">
+      <el-dialog :visible.sync="presentDialog" title="添加赠送方案" width="1250px" class="burbox">
         <div class="tableDialog">
-          <div class="tabs">
-            <p>所有配料</p>
+          <div class="tabs scroll">
+
+            <el-menu
+              class="el-menu-vertical-demo"
+              @open="handleOpen"
+              @close="handleClose"
+              @select="handleSelect">
+              <template v-for="(item, index) in dialogMenu" :keys="index">
+                <el-submenu :index="item.url">
+                  <template slot="title" >
+                    <div @click="dialogChangeMenu(item)">
+                      <span class="title">{{item.name}}</span>
+                    </div>
+                  </template>
+                  <template v-for="(child, index1) in item.childMenu" :keys="index1">
+                    <el-menu-item :index="child.url" @click="dialogChangeMenu(child)" v-if="child.childMenu==null || child.childMenu==''">
+                      <template slot="title">
+                        <span>{{child.name}}</span>
+                      </template>
+                    </el-menu-item>
+                    <el-submenu :index="child.url"  v-else>
+
+                      <template slot="title" >
+                        <div @click="dialogChangeMenu(child)">
+                          <span >{{child.name}}</span>
+                        </div>
+                      </template>
+                      <template v-for="(son, index2) in child.childMenu" :keys="index2">
+
+                        <el-menu-item :index="son.url" @click="dialogChangeMenu(son)" v-if="son.childMenu==null || son.childMenu==''">
+                          <template slot="title">
+                            <span>{{son.name}}</span>
+                          </template>
+                        </el-menu-item>
+
+                        <el-submenu :index="son.url"  v-else>
+                          <template slot="title" >
+                            <div @click="dialogChangeMenu(son)">
+                              <span >{{son.name}}</span>
+                            </div>
+                          </template>
+                          <template v-for="(grandson, index3) in son.childMenu" :keys="index3">
+                            <el-menu-item :index="grandson.url" @click="dialogChangeMenu(grandson)" v-if="grandson.childMenu==null || grandson.childMenu==''">
+                              <template slot="title">
+                                <span>{{grandson.name}}</span>
+                              </template>
+                            </el-menu-item>
+                            <el-submenu :index="grandson.url"  v-else>
+                              <template slot="title" >
+                                <div @click="dialogChangeMenu(grandson)">
+                                  <span >{{grandson.name}}</span>
+                                </div>
+                              </template>
+                              <template v-for="(grandchild, index4) in grandson.childMenu" :keys="index4">
+                                <el-menu-item :index="grandchild.url" @click="dialogChangeMenu(grandchild)" >
+                                  <template slot="title">
+                                    <span>{{grandchild.name}}</span>
+                                  </template>
+                                </el-menu-item>
+                              </template>
+                            </el-submenu>
+
+                          </template>
+                        </el-submenu>
+                      </template>
+                    </el-submenu>
+                  </template>
+
+                </el-submenu>
+              </template>
+            </el-menu>
+
           </div>
           <div class="burli1">
             <el-table
-              :data="materials_arr"
+              :data="tableList"
               stripe
               style="width:100%"
               max-height='450'
               tooltip-effect="dark"
+              @selection-change="addtableList"
               >
               <el-table-column
-                prop="name"
+                prop="projectName"
                 label="名称"
                 >
               </el-table-column>
               <el-table-column
-                prop="price"
+                prop="projectPrice"
                 label="价值">
               </el-table-column>
               <el-table-column
@@ -137,27 +200,30 @@
               </el-table-column>
             </el-table>
           </div>
-          <!-- 默认配料 -->
+          <!-- 已选列表 -->
           <div class="burli3">
             <el-table
-              :data="materials_data"
+              :data="hastableList"
               stripe
               style="width: 100%;margin-bottom:20px;"
               max-height='300'
               tooltip-effect="dark"
             >
               <el-table-column
-                prop="givePlanType"
+                prop="projectType"
                 label="类型"
                 >
+                <template slot-scope="scope" >
+                  {{projectType[scope.row.projectType-1]}}
+                </template>
               </el-table-column>
               <el-table-column
-                prop="name"
+                prop="projectName"
                 label="名称"
                 >
               </el-table-column>
               <el-table-column
-                prop="price"
+                prop="projectPrice"
                 label="价值"
                 >
               </el-table-column>
@@ -207,8 +273,8 @@
 </template>
 
 <script>
-import { addgivePlan, getgivePlan, delgivePlan, editgivePlan, givePlanDetail } from '@/api/product'
-import { giveNav, delMenu, editMenu, addMenu } from '@/api/tree'
+import { addgivePlan, getgivePlan, delgivePlan, editgivePlan, givePlanDetail, getproject } from '@/api/product'
+import { giveNav, delMenu, editMenu, addMenu, ccGetMenu } from '@/api/tree'
 import page from '@/components/common/page'
 import { parseTime, clone } from '@/utils/common'
 export default {
@@ -224,19 +290,27 @@ export default {
       MenuParam: {},    // 赠送参数
       search: '',
       presentDialog: false,
-      materials_arr: [],    // 配料
-      materials_data: [],
+      dialogMenu: [],       // 弹框菜单
+      diologMenuParam: {},   // 弹框菜单参数
+      tableList: [],        // 弹框点击菜单获取列表
+      hastableList: [],     // 已选列表
       form: '',
       formInfo: '',
       options: [],
       selectedOptions: [],
       aa: '22',
+      projectType: ['项目', '产品', '套餐', '优惠券'],
       defaultProps: {
         children: 'childMenu',
         value: 'id',
         label: 'name'
       },
       pageModel: {
+        page: 1,
+        rows: 10,
+        sumCount: 0
+      },
+      diologpageModel: {
         page: 1,
         rows: 10,
         sumCount: 0
@@ -339,6 +413,12 @@ export default {
       this.openindex = this.menuList.url
       console.log(this.openindex)
     },
+    // 选择菜单获取id
+    handleItemChange(val) {
+      this.form.takeMode = val.join(',')
+      this.form.parentId = val[val.length - 1]
+      console.log('点击', val, val[val.length - 1], this.form.takeMode)
+    },
     // 改变菜单时得到代金券数据
     changeMenu(child) {
       console.log('changeMenu', child.id)
@@ -388,13 +468,38 @@ export default {
       }
       this.selectedOptions = []
       this.presentDialog = true
+      this.getccGetMenu()
       console.log('form', this.form)
     },
-    // 选择菜单获取id
-    handleItemChange(val) {
-      this.form.takeMode = val.join(',')
-      this.form.parentId = val[val.length - 1]
-      console.log('点击', val, val[val.length - 1], this.form.takeMode)
+    // 获取项目、产品、套餐、优惠券菜单
+    getccGetMenu() {
+      ccGetMenu().then(res => {
+        if (res.data.code == 200) {
+          this.dialogMenu = res.data.data
+        }
+        console.log('获取项目、产品、套餐、优惠券菜单', res)
+      })
+    },
+    // 改变菜单时得到列表数据
+    dialogChangeMenu(child) {
+      console.log('changeMenu', child)
+      this.diologMenuParam = {
+        parentId: child.id
+      }
+      this.getprojectList()
+    },
+    // 添加列表
+    addtableList(val) {
+      this.hastableList = val
+      console.log(val)
+    },
+    // 获取项目列表
+    getprojectList() {
+      getproject(this.diologpageModel, this.diologMenuParam).then(res => {
+        console.log('获取项目列表', res)
+        this.diologpageModel.sumCount = res.data.data.total
+        this.tableList = res.data.data.rows
+      })
     },
     // 保存添加赠送
     savePlanBtn() {
@@ -503,4 +608,7 @@ export default {
 
 <style scoped lang="scss">
 @import "../../style/project.scss";
+.el-menu {
+  border-right: 0;
+}
 </style>
