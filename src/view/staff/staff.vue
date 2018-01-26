@@ -4,7 +4,7 @@
     <div class="main-content scroll">
       <div class="main-head">
         <div>
-          <el-input placeholder="请输入内容" v-model="inputContent" class="input-with-select" @keyup.enter.native="searchBtn" clearable="true">
+          <el-input placeholder="请输入内容" v-model="inputContent" class="input-with-select" @keyup.enter.native="searchBtn" :clearable="true">
             <el-select v-model="selectInput" slot="prepend" placeholder="请选择">
               <el-option label="姓名" value="userName"></el-option>
               <el-option label="手机号" value="mobilePhoneNum"></el-option>
@@ -100,13 +100,12 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false" size="small">取 消</el-button>
-        <el-button type="primary" @click="confirmAdd('ruleForm')" v-if="addShow" size="small">确 定</el-button>
+        <el-button type="primary" @click="confirmAdd" v-if="addShow" size="small">确 定</el-button>
         <el-button type="primary" @click="confirmEdit" v-else size="small">确 定</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
-
 <script>
 import { getJob, getSttaf, delSttaf, addSttaf, editSttaf } from '../../api/login'
 import page from '../../components/common/page'
@@ -204,7 +203,7 @@ export default {
       })
     },
     // 新增员工
-    confirmAdd(formName) {
+    confirmAdd() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           let param = this.newstaff

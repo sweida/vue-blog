@@ -158,3 +158,18 @@ export function actDescList(type) {
     method: 'get'
   })
 }
+// 修改设置
+export function editSetting(data) {
+  return fetch({
+    url: 'apis/SysSetting',
+    method: 'PUT',
+    data
+  })
+}
+export function getSetting(data) {
+  return fetch({
+    url: `apis/SysSetting/${data}`,
+    method: 'GET',
+    data
+  })
+}
