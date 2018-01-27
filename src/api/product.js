@@ -138,3 +138,41 @@ export function delgivePlan(givePlanId) {
     method: 'DELETE'
   })
 }
+// 获取代金券列表
+export function getVoucher(pageModel, data) {
+  return fetch({
+    url: `apis/coupon/page/${pageModel.page}/${pageModel.rows}`,
+    method: 'post',
+    data
+  })
+}
+// 添加代金券
+export function addVoucher(data) {
+  return fetch({
+    url: 'apis/coupon',
+    method: 'post',
+    data
+  })
+}
+// 修改代金券
+export function editVoucher(data) {
+  return fetch({
+    url: 'apis/coupon',
+    method: 'put',
+    data
+  })
+}
+// 删除代金券
+export function delVoucher(couponId) {
+  return fetch({
+    url: `apis/coupon/${couponId}`,
+    method: 'DELETE'
+  })
+}
+// 获取代金券详细
+export function VoucherDetail(couponId) {
+  return fetch({
+    url: `apis/coupon/${couponId}`,
+    method: 'GET'
+  })
+}

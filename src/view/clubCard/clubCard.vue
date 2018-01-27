@@ -39,7 +39,7 @@
                   :key="tag.name"
                   closable
                   :disable-transitions="false"
-                  @close="handleClose(tag)"
+                  @close="handleTagsClose(tag)"
                   >
                   {{tag.name}}
                 </el-tag>
@@ -104,10 +104,37 @@
 
       </div>
 
-    <el-dialog :visible.sync="burdening" title="编辑配料" width="1050px" class="burbox">
+    <el-dialog :visible.sync="burdening" title="添加赠送" width="1050px" class="burbox">
       <div class="tableDialog">
         <div class="tabs">
-          <p>所有配料</p>
+          <p class="nav-title" @click="navtitle">
+            <span>{{menuList.name}}</span>
+          </p>
+          <el-menu
+            class="el-menu-vertical-demo"
+            @open="handleOpen"
+            @close="handleClose"
+            @select="handleSelect">
+            <template v-for="(item, index) in menuList.childMenu" :keys="index">
+              <el-menu-item :index="item.url" v-if="item.childMenu==null || item.childMenu==''" @click="changeMenu(item)">
+                <template slot="title">
+                  <span>{{item.name}}</span>
+                </template>
+              </el-menu-item>
+              <el-submenu :index="item.url"  v-else>
+                <template slot="title" >
+                  <div @click="changeMenu(item)">
+                    <span >{{item.name}}</span>
+                  </div>
+                </template>
+                <template v-for="(child, index1) in item.childMenu" :keys="index1">
+                  <el-menu-item :index="child.url" @click="changeMenu(child)">
+                    <span>{{child.name}}</span>
+                  </el-menu-item>
+                </template>
+              </el-submenu>
+            </template>
+          </el-menu>
         </div>
         <div class="burli1">
           <el-table
@@ -182,6 +209,7 @@
 
 <script>
 import { addvipCard, editvipCard, getvipCard, delvipCard, actDescInfo, editactDesc } from '@/api/setting'
+import { giveNav, delMenu, editMenu, addMenu, ccGetMenu } from '@/api/tree'
 import page from '@/components/common/page'
 import { clone } from '@/utils/common'
 export default {
@@ -197,6 +225,7 @@ export default {
       actDesc: '',
       banner: 'static/img/phone.png',
       change: true,
+      menuList: '',
       materials_data: [],
       materials_arr: [],
       pageModel: {
@@ -229,6 +258,7 @@ export default {
     this.vipinput = clone(this.vipCard)
     this.getvipList()
     this.getactDescList()
+    this.getgiveNav()
   },
   methods: {
     subText() {
@@ -244,11 +274,36 @@ export default {
         this.$message.success('活动说明保存成功')
       })
     },
-    handleClose(tag) {
+    handleTagsClose(tag) {
       this.tags.splice(this.tags.indexOf(tag), 1)
     },
+    // 弹框
     addpresent() {
       this.burdening = true
+    },
+    // 获取赠送菜单
+    getgiveNav() {
+      giveNav().then(res => {
+        if (res.data.code == 200) {
+          this.menuList = res.data.data[0]
+        }
+        console.log('获取赠送菜单', res, this.menuList)
+      })
+    },
+    handleSelect(key, keyPath) {
+      console.log('handleSelect', key, keyPath)
+    },
+    handleOpen(key, keyPath) {
+      console.log('handleOpen', key, keyPath)
+    },
+    handleClose(key, keyPath) {
+      console.log('handleOpen', key, keyPath)
+    },
+    navtitle() {
+    },
+    // 改变菜单时得到列表数据
+    changeMenu(child) {
+      console.log('changeMenu', child)
     },
     sureBurden() {
     },
@@ -312,6 +367,7 @@ export default {
       }).catch(() => {
       })
     },
+
     // 编辑会员卡 vipTypeId
     editvipBtn(index, row) {
       console.log(row)

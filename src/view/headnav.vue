@@ -3,7 +3,7 @@
 	  <div class="logo"><img src="../assets/logo.png" alt=""></div>
 	  <div class="nav">
 	    <div>
-				<el-menu
+				<!-- <el-menu
 					:router="true"
 					default-active="/home"
 					class="el-menu-demo"
@@ -15,7 +15,7 @@
 					<el-menu-item index="/buyproduct">后台</el-menu-item>
 					<el-menu-item index="/home">设定</el-menu-item>
 					<el-menu-item index="/HoldRecord">推广</el-menu-item>
-				</el-menu>
+				</el-menu> -->
 	    </div>
 
       <div class="right-nav">
@@ -44,9 +44,11 @@
                     <span class="admin-name">{{admin.name}}
                     </span>
                   </template>
+									<el-menu-item index="/message">客户</el-menu-item>
+									<el-menu-item index="/message">后台</el-menu-item>
+									<el-menu-item index="/password">推广</el-menu-item>
                   <el-menu-item index="/message">账号信息</el-menu-item>
                   <el-menu-item index="/password">修改密码</el-menu-item>
-                  <el-menu-item index="/password">后台</el-menu-item>
                   <el-menu-item index="" @click.native="logout">退出登录</el-menu-item>
               </el-submenu>
           </el-menu>

@@ -1,30 +1,28 @@
 <template>
   <div >
       <div class="header_title">代金券<i class="el-icon-info"></i></div>
-      <div class="main-content">
+      <div class="main-content scroll">
         <div class="left_tree scroll">
           <el-menu
             class="el-menu-vertical-demo"
             @open="handleOpen"
             @close="handleClose"
             @select="handleSelect">
-            <template v-for="(item, index) in menuList" :keys="index">
+            <template v-for="(item, index) in menuList.childMenu" :keys="index">
               <el-menu-item :index="item.url" v-if="item.childMenu==null || item.childMenu==''" @click="changeMenu(item)">
                 <template slot="title">
                   <span class="title">{{item.name}}</span>
                   <em class="navicon" v-if="item.url==openindex">
                     <i class="el-icon-plus" @click="plusNav(item)"></i>
-                    <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
                   </em>
                 </template>
               </el-menu-item>
-              <el-submenu :index="item.url"  v-else>
+              <el-submenu :index="item.url" v-else>
                 <template slot="title" >
                   <div @click="changeMenu(item)">
                     <span class="title">{{item.name}}</span>
                     <em class="navicon" v-if="item.url==openindex">
                       <i class="el-icon-plus" @click="plusNav(item)"></i>
-                      <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
                     </em>
                   </div>
                 </template>
@@ -33,35 +31,11 @@
                     <template slot="title">
                       <span>{{child.name}}</span>
                       <em class="navicon" v-if="child.url==openindex">
-                        <i class="el-icon-plus" @click="plusNav(child)"></i>
                         <i class="el-icon-edit" @click="editNav(child, child.name)"></i>
                         <i class="el-icon-minus" @click="minusNav(child)"></i>
                       </em>
                     </template>
                   </el-menu-item>
-                  <el-submenu :index="child.url"  v-else>
-                    <template slot="title" >
-                      <div @click="changeMenu(child)">
-                        <span >{{child.name}}</span>
-                        <em class="navicon" v-if="child.url==openindex">
-                          <i class="el-icon-plus" @click="plusNav(child)"></i>
-                          <i class="el-icon-edit" @click="editNav(child, child.name)"></i>
-                          <i class="el-icon-minus" @click="minusNav(child)"></i>
-                        </em>
-                      </div>
-                    </template>
-                    <template v-for="(son, index1) in child.childMenu" :keys="index1">
-                      <el-menu-item :index="son.url" @click="changeMenu(son)">
-                        <template slot="title">
-                          <span>{{son.name}}</span>
-                          <em class="navicon" v-if="son.url==openindex">
-                            <i class="el-icon-edit" @click="editNav(son, son.name)"></i>
-                            <i class="el-icon-minus" @click="minusNav(son)"></i>
-                          </em>
-                        </template>
-                      </el-menu-item>
-                    </template>
-                  </el-submenu>
                 </template>
               </el-submenu>
             </template>
@@ -73,7 +47,7 @@
               <input type="text" class="search" v-model="voucherParam.coupName" v-on:keyup.enter="searchBtn" placeholder="请输入代金券名称">
               <i class="el-icon-search" @click="searchBtn"></i>
             </div>
-            <el-button type="primary" size="small" @click="added">新　增</el-button>
+            <el-button type="primary" size="small" @click="addBtn">新　增</el-button>
           </div>
           <div class="main_table">
             <el-table
@@ -121,13 +95,13 @@
                 label="修改"
                 >
                 <template slot-scope="scope">
-                  <i class="el-icon-edit" @click="edit(scope.$index)"></i>
+                  <i class="el-icon-edit" @click="editBtn(scope.$index, scope.row)"></i>
                 </template>
               </el-table-column>
               <el-table-column
                 label="删除">
                 <template slot-scope="scope">
-                  <i class="el-icon-delete" @click="deleteBtn(scope.$index)"></i>
+                  <i class="el-icon-delete" @click="deleteBtn(scope.$index, scope.row)"></i>
                 </template>
               </el-table-column>
               <el-table-column
@@ -186,19 +160,20 @@
           <h4>设置</h4>
           <el-form ref="form" :model="form" label-width="120px" label-position='left'>
             <el-form-item label="额度（元）">
-              <el-input size="medium" v-model="form.desc"></el-input>
+              <el-input size="medium" v-model="form.coupQuota"></el-input>
             </el-form-item>
             <el-form-item label="数量（张）">
-              <el-input size="medium" v-model="form.desc"></el-input>
+              <el-input size="medium" v-model="form.coupNum"></el-input>
             </el-form-item>
             <el-form-item label="有效期（天）">
-              <el-input size="medium" v-model="form.desc"></el-input>
+              <el-input size="medium" v-model="form.coupValidfate"></el-input>
             </el-form-item>
           </el-form>
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="voucherDialog = false" size="small">取 消</el-button>
-          <el-button type="primary" @click="voucherDialog = false" size="small">确 定</el-button>
+          <el-button type="primary" @click="addvoucherBtn" size="small" v-if="form.coupId==''">确 定</el-button>
+          <el-button type="primary" @click="editvoucherBtn" size="small" v-else>保存修改</el-button>
         </span>
       </el-dialog>
 
@@ -206,8 +181,8 @@
 </template>
 
 <script>
-import { getMenu, getVoucher, getMenuAdd, getMenuById } from '@/api/login'
-import { delMenu, editMenu, addMenu } from '@/api/tree'
+import { getVoucher, addVoucher, editVoucher, delVoucher, VoucherDetail } from '@/api/product'
+import { vouMenu, delMenu, editMenu, addMenu } from '@/api/tree'
 import { clone } from '@/utils/common'
 import page from '../../components/common/page'
 export default {
@@ -217,40 +192,34 @@ export default {
   },
   data() {
     return {
-      optionsDetail: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
-      }],
+      optionsDetail: [],
       value: '',
       pageModel: {
         page: 1,
         rows: 10,
         sumCount: 0
       },
-      openindex: '', // 点击时操作按钮显示与否
-      voucherParam: {}, //代金券参数
+      openindex: '',      // 点击菜单显示操作按钮
+      voucherParam: {},   //代金券参数
       menuList: [],
       bed: 1,
       input: '',
       voucherDialog: false,
       banner: 'static/img/phone.png',
+      MenuParam: {},
       form: {
         type: 1,
         exclusive: 1,
-        region: '',
-        desc: ''
+        arrId: '',
+        coupId: '',
+        // coupName: '',      // 名称
+        coupNum: '',       // 数量
+        coupPrice: '500',  // 项目价格
+        coupQuota: '',
+        coupType: 0,
+        coupValidfate: '',   // 有效天
+        parentId: 18,
+        topParent: 0
       },
       tableData: [],
       options: [],
@@ -259,69 +228,21 @@ export default {
         value: 'id',
         label: 'name'
       }
+
     }
   },
+  created() {
+    this.getvouMenu()
+    // this.getVoucherList()
+    // this.addOptionMenu()
+  },
   methods: {
-    added() {
-      this.voucherDialog = true
-    },
-    handleSelect(key, keyPath) {
-      this.openindex = key
-      console.log('handleSelect', key, keyPath)
-    },
-    handleOpen(key, keyPath) {
-      this.openindex = key
-      console.log('handleOpen', key, keyPath)
-    },
-    handleOpen2(item) {
-      console.log('handleOpen2', item)
-    },
-    handleClose(key, keyPath) {
-      this.openindex = ''
-      console.log('handleOpen', key, keyPath)
-    },
-    //搜素客户
-    searchBtn() {
-      console.log('搜索')
-      this.getVoucherList()
-    },
-    selectRoleList () {
-      this.getVoucherList()
-    },
-    // 得到左侧菜单栏
-    getMenuList() {
-      getMenu().then(res => {
+    // 获取优惠券菜单
+    getvouMenu() {
+      vouMenu().then(res => {
         if (res.data.code == 200) {
-          this.menuList = res.data.data
-          console.log(res)
-        }
-      })
-    },
-    // 得到总代金券数据
-    getVoucherList() {
-      getVoucher(this.pageModel, this.voucherParam).then(res => {
-        if (res.data.code == 200) {
-          this.tableData = res.data.data.rows
-          this.pageModel.sumCount = res.data.data.total
-          console.log(res.data.data)
-        }
-      })
-    },
-    // 改变菜单时得到代金券数据
-    changeMenu(child, parent) {
-      this.voucherParam.parentId = child.id
-      if (arguments.length == 2) {
-        this.voucherParam.coupId = parent.id
-      }
-      console.log(child, parent)
-      this.getVoucherList()
-    },
-    // 增加时得到菜单
-    addOptionMenu() {
-      getMenuAdd().then(res => {
-        if (res.data.code == 200) {
-          this.options = res.data.data
-          console.log(res.data.data)
+          this.menuList = res.data.data[0]
+          console.log('获取优惠券菜单', res)
         }
       })
     },
@@ -339,7 +260,7 @@ export default {
         addMenu(param).then(res => {
           console.log('添加菜单', res)
           if (res.data.code == 200) {
-            this.getMealMenu()
+            this.getvouMenu()
             this.$message.success('新增菜单成功!')
           } else {
             this.$message.error('新增菜单失败!')
@@ -359,7 +280,7 @@ export default {
         delMenu(item.id).then(res => {
           console.log('删除菜单', res)
           if (res.data.code == 200) {
-            this.getMealMenu()
+            this.getvouMenu()
             this.$message.success(res.data.msg)
           } else {
             this.$message.error(res.data.msg)
@@ -378,7 +299,7 @@ export default {
         editMenu(item.id, value).then(res => {
           console.log('修改菜单', res)
           if (res.data.code == 200) {
-            this.getMealMenu()
+            this.getvouMenu()
             this.$message.success('修改菜单成功!')
           } else {
             this.$message.error('修改菜单失败!')
@@ -388,27 +309,108 @@ export default {
       }).catch(() => {
       })
     },
+    handleSelect(key, keyPath) {
+      this.openindex = key
+      console.log('handleSelect', key, keyPath)
+    },
+    handleOpen(key, keyPath) {
+      this.openindex = key
+      console.log('handleOpen', key, keyPath)
+    },
+    handleClose(key, keyPath) {
+      this.openindex = ''
+      console.log('handleOpen', key, keyPath)
+    },
+    // 改变菜单时得到代金券数据
+    changeMenu(child) {
+      console.log('changeMenu', child)
+      this.MenuParam = {
+        parentId: child.id
+      }
+      this.getVoucherList()
+    },
+    // 获取代金券数据
+    getVoucherList() {
+      getVoucher(this.pageModel, this.MenuParam).then(res => {
+        if (res.data.code == 200) {
+          this.pageModel.sumCount = res.data.data.total
+          this.tableData = res.data.data.rows
+          console.log('获取代金券列表', res.data.data)
+        }
+      })
+    },
+    // 新增按钮
+    addBtn() {
+      this.voucherDialog = true
+    },
+    //搜素客户
+    searchBtn() {
+      console.log('搜索')
+      // this.getVoucherList()
+    },
+    // 保存新增
+    addvoucherBtn() {
+      let param = Object.assign({
+        enterpriseId: '001',
+        coupName: '代金券',
+        organId: 1
+        // coupType: 0
+      }, this.form)
+      addVoucher(param).then(res => {
+        console.log('添加项目', res)
+        if (res.data.code == 200) {
+          this.$message.success('新增成功!')
+          this.voucherDialog = false
+        } else {
+          this.$message.error('新增失败!')
+        }
+      })
+    },
+    // 删除项目
+    deleteBtn(index, row) {
+      console.log(row)
+      this.$confirm('是否删除该项目?', '提示', {
+        type: 'warning'
+      }).then(() => {
+        delVoucher(row.coupId).then(res => {
+          if (res.data.code == 200) {
+            console.log(res)
+            this.tableData.splice(index, 1)
+            this.$message.success(res.data.msg)
+            this.getVoucherList()
+          } else {
+            this.$message.error('删除失败!')
+          }
+        })
+      }).catch(() => {
+      })
+    },
+    // 编辑代金券
+    editBtn(index, row) {
+      this.voucherDialog = true
+      VoucherDetail(row.coupId).then(res => {
+        console.log('获取代金券详情', res.data)
+        this.form = res.data.data
+      })
+    },
+    // 保存编辑代金券
+    editvoucherBtn() {
+      editVoucher(this.form).then(res => {
+        console.log('保存修改', res)
+        if (res.data.code == 200) {
+          this.voucherDialog = false
+          this.$message.success('修改成功!')
+        } else {
+          this.$message.error('修改失败!')
+        }
+      })
+    },
     // 添加时获取名称
     handleItemChange(val) {
-      // console.log(val)
-      // if (val.length >= 2) {
-      //   let parentIndex = this.options.findIndex(item => {
-      //     return item.id == val[0]
-      //   })
-      //   let childId = this.options[parentIndex].childMenu.findIndex(item => {
-      //     return item.id == val[1]
-      //   })
-      // this.$set(this.options[parentIndex].childMenu[childId], 'childMenu', [{'id': 1, 'name': 'mam'}])
-      //   getMenuById([parentIndex, childId]).then(res => {
-      //     if (res.data.code == 200) {
-      //       this.options[parentIndex].childMenu[childId].childMenu = [{'id': 1, 'name': 'mam'}]
-      //       this.$set(this.options[parentIndex].childMenu, childId, this.options[parentIndex].childMenu[childId])
-      //       this.$set(this.options, parentIndex, this.options[parentIndex])
-      //     }
-      //   })
-      // }
+    },
+    selectRoleList () {
+      this.getVoucherList()
     }
-
   },
   // 过滤器
   filters: {
@@ -417,88 +419,14 @@ export default {
       value = value.toString()
       return value.charAt(0).toUpperCase() + value.slice(1)
     }
-  },
-  created() {
-    this.getMenuList()
-    this.getVoucherList()
-    this.addOptionMenu()
-    // getMenuById([1, 6]).then(res => {
-    //   if (res.data.code == 200) {
-    //     // this.options = res.data.data
-    //     console.log(res.data.data)
-    //   }
-    // })
   }
 }
 </script>
 
 <style scoped lang="scss">
-.main-content{
-  padding:0;
-  display: flex;
-  .left_tree{
-    width: 240px;
-    height: 100%;
-    border-right: 4px solid #F3F8FF;
-    position: relative;
-    .nav-title{
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 18px;
-      padding: 25px 20px 10px;
-    }
-    .el-menu{
-      border-right: 0;
-      span{
-        padding-left: 15px;
-      }
-    }
-    .navicon{
-      position: absolute;
-      right: 40px;
-      i{
-        color: #fff;
-        width: 20px;
-        height: 20px;
-        font-size: 12px;
-        background: #409EFF;
-        line-height: 20px;
-        padding: 0;
-        text-align: center;
-      }
-    }
-  }
-  .right_main{
-    padding: 0 30px;
-    width: 900px;
-    .main-head{
-      color:#5e6d82;
-      height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      span{
-        padding-left: 10px;
-        color:#99a9c0;
-      }
-      .search{
-        width: 200px;
-        padding:0 38px 0 16px;
-        background: #f7f7f7;
-        border:0;
-        outline: none;
-        border-radius: 15px;
-        line-height: 30px;
-      }
-      i{
-        cursor: pointer;
-        font-size: 20px;
-        position: relative;
-        top: 3px;
-        left: -35px;
-      }
-    }
-  }
+@import "../../style/project.scss";
+.main-content .right_main{
+  flex:1;
 }
 .form_box{
   display: flex;
@@ -518,8 +446,6 @@ export default {
       width: 230px;
     }
   }
-
 }
-
 
 </style>

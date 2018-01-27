@@ -63,3 +63,10 @@ export function ccGetMenu(data) {
     data
   })
 }
+// 获取代金券菜单
+export function vouMenu() {
+  return fetch({
+    url: 'apis/menu/coupon',
+    method: 'GET'
+  })
+}
