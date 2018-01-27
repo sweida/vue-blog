@@ -1,13 +1,12 @@
 <template>
   <div >
       <div class="header_title">套餐<i class="el-icon-info"></i></div>
-      <div class="main-content">
+      <div class="main-content scroll">
         <div class="left_tree scroll">
           <p class="nav-title" @click="navtitle">
             <span>{{menuList.name}}</span>
             <em class="navicon" v-if="openindex==menuList.url">
               <i class="el-icon-plus" @click="plusNav(menuList)"></i>
-              <i class="el-icon-edit" @click="editNav(menuList, menuList.name)"></i>
             </em>
           </p>
           <el-menu
@@ -22,7 +21,7 @@
                   <em class="navicon" v-if="item.url==openindex">
                     <i class="el-icon-plus" @click="plusNav(item)"></i>
                     <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
-                    <i class="el-icon-minus" @click="minusNav(item)"></i>
+                    <i class="el-icon-minus" @click="minusNav(item)" v-if="tableData==''"></i>
                   </em>
                 </template>
               </el-menu-item>
@@ -33,7 +32,6 @@
                     <em class="navicon" v-if="item.url==openindex">
                       <i class="el-icon-plus" @click="plusNav(item)"></i>
                       <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
-                      <i class="el-icon-minus" @click="minusNav(item)"></i>
                     </em>
                   </div>
                 </template>
@@ -42,7 +40,7 @@
                     <span>{{child.name}}</span>
                     <em class="navicon" v-if="child.url==openindex">
                       <i class="el-icon-edit" @click="editNav(child, child.name)"></i>
-                      <i class="el-icon-minus" @click="minusNav(child)"></i>
+                      <i class="el-icon-minus" @click="minusNav(child)" v-if="tableData==''"></i>
                     </em>
                   </el-menu-item>
                 </template>
@@ -56,7 +54,7 @@
               <input type="text" class="search" v-model="search" v-on:keyup.enter="searchBtn">
               <i class="el-icon-search" @click="searchBtn"></i>
             </div>
-            <el-button type="primary"  size="small" @click="added">新　增</el-button>
+            <el-button type="primary"  size="small" @click="addBtn">新　增</el-button>
           </div>
           <div class="main_table">
             <el-table
@@ -81,60 +79,22 @@
               <el-table-column
                 label="删除">
                 <template slot-scope="scope">
-                  <i class="el-icon-delete" @click="deleteBtn(scope.$index)"></i>
+                  <i class="el-icon-delete" @click="deleteBtn(scope.$index, scope.row)"></i>
                 </template>
               </el-table-column>
             </el-table>
-            <page :pageModel="pageModel" @selectList="selectRoleList"></page>
+            <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
           </div>
         </div>
 
       </div>
 
-      <el-dialog title="新增代金券" :visible.sync="voucherDialog" width="1000px">
-        <div class="form_box">
-          <h4>选择</h4>
-          <el-form ref="form" :model="form" label-width="120px" label-position='left'>
-            <el-form-item label="类型">
-              <el-radio-group v-model="form.type">
-                <el-radio :label="1">代金券</el-radio>
-                <el-radio :label="2">现金券</el-radio>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="是否专项">
-              <el-radio-group v-model="form.exclusive">
-                <el-radio :label="1">通用</el-radio>
-                <el-radio :label="2">专项</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-form>
-        </div>
-        <div class="form_box">
-          <h4>设置</h4>
-          <el-form ref="form" :model="form" label-width="120px" label-position='left'>
-            <el-form-item label="额度（元）">
-              <el-input size="medium" v-model="form.desc"></el-input>
-            </el-form-item>
-            <el-form-item label="数量（张）">
-              <el-input size="medium" v-model="form.desc"></el-input>
-            </el-form-item>
-            <el-form-item label="有效期（天）">
-              <el-input size="medium" v-model="form.desc"></el-input>
-            </el-form-item>
-          </el-form>
-        </div>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="voucherDialog = false" size="small">取 消</el-button>
-          <el-button type="primary" @click="voucherDialog = false" size="small">确 定</el-button>
-        </span>
-      </el-dialog>
-
   </div>
 </template>
 
 <script>
-import { getMenuMeal, getMealList } from '@/api/login'
-import { delMenu, editMenu, addMenu } from '@/api/tree'
+import { PackageList, delPackage } from '@/api/product'
+import { mealMenu, delMenu, editMenu, addMenu } from '@/api/tree'
 import page from '@/components/common/page'
 export default {
   name: 'meal',
@@ -143,54 +103,31 @@ export default {
   },
   data() {
     return {
+      openindex: '', // 点击时操作按钮显示与否
+      menuList: {},
+      search: '',
+      tableData: [],
+      MenuParam: [],
       pageModel: {
         page: 1,
         rows: 10,
         sumCount: 0
-      },
-      openindex: '', // 点击时操作按钮显示与否
-      menuList: {},
-      search: '',
-      bed: 1,
-      input: '',
-      voucherDialog: false,
-      banner: 'static/img/phone.png',
-      form: {
-        type: 1,
-        exclusive: 1,
-        region: '',
-        desc: ''
-      },
-      tableData: []
+      }
     }
   },
+  created() {
+    this.getmealMenu()
+    // this.getPackageList()
+  },
   methods: {
-    navtitle() {
-      this.openindex = this.menuList.url
-      console.log(this.openindex)
-    },
-    handleSelect(key, keyPath) {
-      this.openindex = key
-      console.log('handleSelect', key, keyPath)
-    },
-    handleOpen(key, keyPath) {
-      this.openindex = key
-      console.log('handleOpen', key, keyPath)
-    },
-    handleOpen2(item) {
-      console.log('handleOpen2', item)
-    },
-    handleClose(key, keyPath) {
-      this.openindex = ''
-      console.log('handleOpen', key, keyPath)
-    },
-    // 改变菜单时得到套餐数据
-    changeMenu(child) {
-      console.log('changeMenu', child.id)
-      // this.givePlanParam = {
-      //   parentId: child.id
-      // }
-      // this.getgivePlanList()
+    // 获取套餐菜单
+    getmealMenu() {
+      mealMenu().then(res => {
+        if (res.data.code == 200) {
+          this.menuList = res.data.data[0]
+          console.log(this.menuList)
+        }
+      })
     },
     // 新增菜单
     plusNav(item) {
@@ -206,7 +143,7 @@ export default {
         addMenu(param).then(res => {
           console.log('添加菜单', res)
           if (res.data.code == 200) {
-            this.getMealMenu()
+            this.getmealMenu()
             this.$message.success('新增菜单成功!')
           } else {
             this.$message.error('新增菜单失败!')
@@ -226,7 +163,7 @@ export default {
         delMenu(item.id).then(res => {
           console.log('删除菜单', res)
           if (res.data.code == 200) {
-            this.getMealMenu()
+            this.getmealMenu()
             this.$message.success(res.data.msg)
           } else {
             this.$message.error(res.data.msg)
@@ -245,7 +182,7 @@ export default {
         editMenu(item.id, value).then(res => {
           console.log('修改菜单', res)
           if (res.data.code == 200) {
-            this.getMealMenu()
+            this.getmealMenu()
             this.$message.success('修改菜单成功!')
           } else {
             this.$message.error('修改菜单失败!')
@@ -255,35 +192,67 @@ export default {
       }).catch(() => {
       })
     },
-    added() {
+    navtitle() {
+      this.openindex = this.menuList.url
+      console.log(this.openindex)
+    },
+    handleSelect(key, keyPath) {
+      this.openindex = key
+      console.log('handleSelect', key, keyPath)
+    },
+    handleOpen(key, keyPath) {
+      this.openindex = key
+      console.log('handleOpen', key, keyPath)
+    },
+    handleClose(key, keyPath) {
+      this.openindex = ''
+      console.log('handleOpen', key, keyPath)
+    },
+    // 改变菜单时得到套餐数据
+    changeMenu(child) {
+      console.log('changeMenu', child)
+      this.MenuParam = {
+        parentId: child.id
+      }
+      this.getPackageList()
+    },
+    // 获取套餐列表
+    getPackageList() {
+      PackageList(this.pageModel, this.MenuParam).then(res => {
+        console.log('获取套餐列表', res)
+        this.pageModel.sumCount = res.data.data.total
+        this.tableData = res.data.data.rows
+      })
+    },
+    addBtn() {
       this.$router.push('/setMeal/addSetmeal')
     },
-    selectRoleList () {
-      this.getListMeal()
+    // 删除项目
+    deleteBtn(index, row) {
+      console.log(row)
+      this.$confirm('是否删除该套餐?', '提示', {
+        type: 'warning'
+      }).then(() => {
+        delPackage(row.packageId).then(res => {
+          if (res.data.code == 200) {
+            console.log(res)
+            this.tableData.splice(index, 1)
+            this.$message.success(res.data.msg)
+            this.getPackageList()
+          } else {
+            this.$message.error('删除失败!')
+          }
+        })
+      }).catch(() => {
+      })
     },
     //搜素客户
     searchBtn() {
       console.log('搜索')
     },
-    // 得到套餐菜单
-    getMealMenu() {
-      getMenuMeal().then(res => {
-        if (res.data.code == 200) {
-          this.menuList = res.data.data[0]
-          console.log(this.menuList)
-        }
-      })
-    },
-    // 得到套餐列表
-    getListMeal() {
-      getMealList(this.pageModel, {}).then(res => {
-        this.tableData = res.data.data.rows
-      })
+    selectRoleList () {
+      this.getPackageList()
     }
-  },
-  created() {
-    this.getMealMenu()
-    // this.getListMeal()
   }
 }
 </script>

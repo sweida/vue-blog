@@ -94,20 +94,7 @@ export function editSttaf(data) {
   })
 }
 
-// 套餐菜单
-export function getMenuMeal() {
-  return fetch({
-    url: 'apis/menu/setMeal',
-    method: 'GET'
-  })
-}
-export function getMealList(pageModel, data) {
-  return fetch({
-    url: `apis/package/${pageModel.page}/${pageModel.rows}`,
-    method: 'POST',
-    data
-  })
-}
+
 // 产品菜单
 export function getMenuProduct() {
   return fetch({

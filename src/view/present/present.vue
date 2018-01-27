@@ -552,7 +552,7 @@ export default {
     // 打开编辑弹框
     editBtn(index, row) {
       this.presentDialog = true
-      givePlanDetail(row.givePlanId).then(res => {
+      givePlanDetail(row.id).then(res => {
         if (res.data.code == 200) {
           this.form = res.data.data
           let arr = res.data.data.takeMode.split(',')
@@ -560,7 +560,7 @@ export default {
             return +item
           })
         }
-        console.log('打开编辑弹框', this.form, res.data.data.takeMode, this.selectedOptions)
+        console.log('打开编辑弹框', this.form, res.data, this.selectedOptions)
       })
     },
     // 修改赠送方案

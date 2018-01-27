@@ -244,11 +244,7 @@ export default {
   }
 }
 </script>
-<style>
-.main-content .el-select .el-input {
-  width: 100px;
-}
-</style>
+
 <style scoped lang="scss">
 .main-content{
   .main-head{
@@ -288,5 +284,7 @@ export default {
     }
   }
 }
-
+.main-content .el-select .el-input {
+  width: 100px;
+}
 </style>

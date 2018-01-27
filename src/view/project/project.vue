@@ -70,7 +70,7 @@
             <el-table-column
               prop="projectName"
               label="名称"
-              width="250px">
+              width="320px">
             </el-table-column>
             <el-table-column
               prop="projectPrice"
@@ -273,6 +273,6 @@ export default {
 <style scoped lang="scss">
 @import "../../style/project.scss";
 .main-content .right_main{
-  width: 700px;
+  width: 750px;
 }
 </style>

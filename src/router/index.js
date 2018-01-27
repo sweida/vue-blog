@@ -13,10 +13,10 @@ const clubCard = resolve => require(['@/view/clubCard/clubCard'], resolve)
 const present = resolve => require(['@/view/present/present'], resolve)
 const project = resolve => require(['@/view/project/project'], resolve)
 const addProject = resolve => require(['@/view/project/addProject'], resolve)
-// const editProject = resolve => require(['@/view/project/edit'], resolve)
 const editProject = resolve => require(['@/view/project/addProject'], resolve)
 const setMeal = resolve => require(['@/view/setMeal/setMeal'], resolve)
 const addSetmeal = resolve => require(['@/view/setMeal/addSetmeal'], resolve)
+const editSetmeal = resolve => require(['@/view/setMeal/addSetmeal'], resolve)
 const phone = resolve => require(['@/view/phone/phone'], resolve)
 const setting = resolve => require(['@/view/setting/setting'], resolve)
 
@@ -52,6 +52,7 @@ export default new Router({
         { path: '/project/edit/:id', component: editProject, name: '编辑项目' },
         { path: '/setMeal', component: setMeal, name: '套餐' },
         { path: '/setMeal/addSetmeal', component: addSetmeal, name: '添加套餐' },
+        { path: '/setMeal/edit/:id', component: editSetmeal, name: '编辑套餐' },
         { path: '/phone', component: phone, name: '云电话' },
         { path: '/setting', component: setting, name: '设置' }
       ]

@@ -12,7 +12,6 @@
               <el-input size="medium" v-model="form.projectName"></el-input>
             </el-form-item>
             <el-form-item label="所属类目">
-              <!-- <el-input size="medium" v-model="form.parentId"></el-input> -->
               <el-cascader
                 placeholder="请选择类目名称"
                 @change="handleItemChange"
@@ -55,68 +54,75 @@
         </div>
         <div class="form_box">
           <h5>需知与描述</h5>
-          <vue-editor v-model="form.detail"></vue-editor>
-        </div>
-        <div class="form_box">
-          <h5>适合肤质</h5>
-          <div class="li_box">
-            <el-checkbox-group
-              v-model="checkSkin"
-              v-if="editSkin">
-              <el-checkbox v-for="skin in skinList" :label="skin" :key="skin">{{skin}}</el-checkbox>
-            </el-checkbox-group>
-            <template v-else>
-              <el-tag
-                v-for="skin in skinList"
-                :key="skin"
-                closable
-                :disable-transitions="false"
-                @close="CloseSkinTags(skin)"
-                >
-                {{skin}}
-              </el-tag>
-              <div class="edit_box" >
-                <el-input size="mini" v-model="skinInput"></el-input>
-                <el-button type="primary" size="mini" @click='addSkin'>新增</el-button>
-                <el-button size="mini" @click="skinClose">取消</el-button>
+          <div>
+            <span class="moredes" @click="moredes=!moredes">展开需知与描述 <i class="el-icon-arrow-down"></i></span>
+            <transition name="el-zoom-in-top">
+              <div v-show="moredes" class="transition-box">
+                <div><vue-editor v-model="form.detail"></vue-editor></div>
+                <div class="form_box">
+                  <h6>适合肤质</h6>
+                  <div class="li_box">
+                    <el-checkbox-group
+                      v-model="checkSkin"
+                      v-if="editSkin">
+                      <el-checkbox v-for="skin in skinList" :label="skin" :key="skin">{{skin}}</el-checkbox>
+                    </el-checkbox-group>
+                    <template v-else>
+                      <el-tag
+                        v-for="skin in skinList"
+                        :key="skin"
+                        closable
+                        :disable-transitions="false"
+                        @close="CloseSkinTags(skin)"
+                        >
+                        {{skin}}
+                      </el-tag>
+                      <div class="edit_box" >
+                        <el-input size="mini" v-model="skinInput"></el-input>
+                        <el-button type="primary" size="mini" @click='addSkin'>新增</el-button>
+                        <el-button size="mini" @click="skinClose">取消</el-button>
+                      </div>
+                    </template>
+                  </div>
+                  <div class="right_but">
+                    <el-button type="primary" size="mini" @click="skinBtn">编辑肤质</el-button>
+                    <i class="el-icon-info"></i>
+                  </div>
+                </div>
+                <div class="form_box">
+                  <h6>功效</h6>
+                  <div class="li_box">
+                    <el-checkbox-group
+                      v-model="checkEffect"
+                      v-if="editEffect">
+                      <el-checkbox v-for="effect in effectList" :label="effect" :key="effect">{{effect}}</el-checkbox>
+                    </el-checkbox-group>
+                    <template v-else>
+                      <el-tag
+                        v-for="effect in effectList"
+                        :key="effect"
+                        closable
+                        :disable-transitions="false"
+                        @close="CloseEffectTags(effect)"
+                        >
+                        {{effect}}
+                      </el-tag>
+                      <div class="edit_box" >
+                        <el-input size="mini" v-model="effectInput"></el-input>
+                        <el-button type="primary" size="mini" @click='addEffect'>新增</el-button>
+                        <el-button size="mini" @click="effectClose">取消</el-button>
+                      </div>
+                    </template>
+                  </div>
+                  <div class="right_but">
+                    <el-button type="primary" size="mini" @click="effectBtn">编辑功效</el-button>
+                    <i class="el-icon-info"></i>
+                  </div>
+                </div>
               </div>
-            </template>
+            </transition>
           </div>
-          <div class="right_but">
-            <el-button type="primary" size="mini" @click="skinBtn">编辑肤质</el-button>
-            <i class="el-icon-info"></i>
-          </div>
-        </div>
 
-        <div class="form_box">
-          <h5>功效</h5>
-          <div class="li_box">
-            <el-checkbox-group
-              v-model="checkEffect"
-              v-if="editEffect">
-              <el-checkbox v-for="effect in effectList" :label="effect" :key="effect">{{effect}}</el-checkbox>
-            </el-checkbox-group>
-            <template v-else>
-              <el-tag
-                v-for="effect in effectList"
-                :key="effect"
-                closable
-                :disable-transitions="false"
-                @close="CloseEffectTags(effect)"
-                >
-                {{effect}}
-              </el-tag>
-              <div class="edit_box" >
-                <el-input size="mini" v-model="effectInput"></el-input>
-                <el-button type="primary" size="mini" @click='addEffect'>新增</el-button>
-                <el-button size="mini" @click="effectClose">取消</el-button>
-              </div>
-            </template>
-          </div>
-          <div class="right_but">
-            <el-button type="primary" size="mini" @click="effectBtn">编辑功效</el-button>
-            <i class="el-icon-info"></i>
-          </div>
         </div>
 
         <div class="form_box">
@@ -138,8 +144,8 @@
           </div>
         </div>
 
-        <!-- <div class="form_box">
-          <h5>添加赠送+</h5>
+        <div class="form_box">
+          <h5>优惠赠送</h5>
           <div class="li_box">
             <el-tag
               v-for="(Burden,index) in form.materials_data"
@@ -155,7 +161,7 @@
             <el-button type="primary" size="mini" @click="presentBtn">添加赠送</el-button>
             <i class="el-icon-info"></i>
           </div>
-        </div> -->
+        </div>
 
         <!-- <div class="form_box">
           <h5>推送</h5>
@@ -387,7 +393,7 @@ import { VueEditor } from 'vue2-editor'
 export default {
   name: 'app',
   components: {
-     VueEditor
+    VueEditor
   },
   data() {
     return {
@@ -397,7 +403,7 @@ export default {
         value: 'id',
         label: 'name'
       },
-      content: '',    // 文章
+      moredes: false,
       skinList: [],
       checkSkin: [],
       skinInput: '',
@@ -407,9 +413,9 @@ export default {
       effectInput: '',
       editEffect: true, // 功效
       burdenDialog: false,    // 配料
-      tuisong: false,   // 推送
       imageUrl: 'static/img/phone.png',
       presentDialog: false,
+      tuisong: false,   // 推送
       textarea: '',
       selectedOptions: [],
       form: {
@@ -452,6 +458,7 @@ export default {
     }
   },
   methods: {
+
     // 获取项目产品菜单
     getmixMenu() {
       mixppMenu().then(res => {
@@ -702,49 +709,10 @@ export default {
 </style>
 
 <style scoped lang="scss">
-.main-content{
-  .left_tree{
-    width: 160px;
-    height: 100%;
-    border-right: 4px solid #F3F8FF;
-    .el-menu{
-      border-right: 0;
-    }
-  }
-  .right_main{
-    padding: 0 30px;
-    width: 700px;
-    .main-head{
-      color:#5e6d82;
-      height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      span{
-        padding-left: 10px;
-        color:#99a9c0;
-      }
-      .search{
-        width: 200px;
-        padding:0 38px 0 16px;
-        background: #f7f7f7;
-        border:0;
-        outline: none;
-        border-radius: 15px;
-        line-height: 30px;
-      }
-      i{
-        cursor: pointer;
-        font-size: 20px;
-        position: relative;
-        top: 3px;
-        left: -35px;
-      }
-    }
-  }
-}
+
 .form_box{
   display: flex;
+  position: relative;
   width: 100%;
   margin: 30px auto;
   h5{
@@ -753,9 +721,23 @@ export default {
     font-size: 16px;
     padding-top: 8px;
   }
-  .quillWrapper{
-    width: 75%;
+  h6{
+    color:#7f868e;
+    font-size: 15px;
+    position: absolute;
+    left: -80px;
   }
+  .moredes{
+    font-size: 16px;
+    color: #409EFF;
+    line-height: 34px;
+    padding-bottom: 8px;
+    display: table;
+    cursor: pointer;
+  }
+  // .quillWrapper{
+  //   width: 75%;
+  // }
   .el-form{
     width: 650px;
     .el-form-item {

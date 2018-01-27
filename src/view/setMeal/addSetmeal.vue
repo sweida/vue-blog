@@ -5,23 +5,41 @@
         <div class="form_box form_top">
           <h5>基础信息</h5>
           <el-form ref="form" :model="form" label-width="120px" label-position='left'>
-            <el-form-item label="宝贝编号">
-              <span>23532423453453422346364W</span>
-            </el-form-item>
+            <!-- <el-form-item label="套餐编号" v-if="form.projectId">
+              <span>{{form.projectId}}</span>
+            </el-form-item> -->
             <el-form-item label="套餐名称">
               <el-input size="medium" v-model="form.packageName"></el-input>
             </el-form-item>
+            <el-form-item label="所属类目">
+              <el-cascader
+                placeholder="请选择类目名称"
+                @change="handleItemChange"
+                v-model="selectedOptions"
+                change-on-select
+                :options="menuList"
+                :props="defaultProps"
+                :clearable="true">
+              </el-cascader>
+            </el-form-item>
             <el-form-item label="套餐价格">
-              <el-input size="medium" v-model="form.packagePrice"></el-input>
+              <el-input size="medium" type="number" v-model="form.packagePrice"></el-input>
             </el-form-item>
             <el-form-item label="有效天数">
-              <el-input size="medium" v-model="form.effectiveDays"></el-input>
+              <el-input size="medium" type="number" v-model="form.effectiveDays"></el-input>
             </el-form-item>
-            <!-- <el-form-item label="耗时(分钟)">
-              <el-input size="medium" v-model="form.desc"></el-input>
-            </el-form-item> -->
-            <el-form-item label="所属类目">
-              <el-input size="medium" v-model="form.desc"></el-input>
+            <el-form-item label="购买方式">
+              <el-select v-model="form.purchaseMethod" size="medium">
+                <el-option label="0" value="购买套餐">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="购买权限">
+              <el-select v-model="form.purchaseAuthority" size="medium">
+                <el-option value="0" label="所有客户可购买"></el-option>
+                <el-option value="1" label="一星经理人以上可购买"></el-option>
+                <el-option value="2" label="二星经理人以上可购买"></el-option>
+              </el-select>
             </el-form-item>
           </el-form>
           <div class="uploader_box">
@@ -37,65 +55,65 @@
             <p>建议分辨率为400*400</p>
           </div>
         </div>
+
+        <div class="form_box">
+          <h5>需知与描述</h5>
+          <div>
+            <span class="moredes" @click="moredes=!moredes">展开需知与描述 <i class="el-icon-arrow-down"></i></span>
+            <transition name="el-zoom-in-top">
+              <div v-show="moredes" class="transition-box">
+                <div><vue-editor v-model="form.detail"></vue-editor></div>
+              </div>
+            </transition>
+          </div>
+
+        </div>
+
         <div class="form_box">
           <h5>其它信息</h5>
           <el-form ref="form" :model="form" label-width="170px" label-position='left'>
             <el-form-item label="折扣信息">
               <el-radio-group v-model="form.isDiscount">
-                <el-radio :label="0">参与会员折扣</el-radio>
-                <el-radio :label="1">不参与会员折扣</el-radio>
+                <el-radio :label="'0'">不参与会员折扣</el-radio>
+                <el-radio :label="'1'">参与会员折扣</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="是否支持上面服务">
               <el-radio-group v-model="form.isDoorService">
-                <el-radio :label="0">否</el-radio>
-                <el-radio :label="1">是</el-radio>
+                <el-radio :label="'0'">否</el-radio>
+                <el-radio :label="'1'">是</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="是否销售">
               <el-radio-group v-model="form.isSale">
-                <el-radio :label="0">否</el-radio>
-                <el-radio :label="1">是</el-radio>
+                <el-radio :label="'0'">否</el-radio>
+                <el-radio :label="'1'">是</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="在ipad上显示">
               <el-radio-group v-model="form.isIpadShow">
-                <el-radio :label="0">否</el-radio>
-                <el-radio :label="1">是</el-radio>
+                <el-radio :label="'0'">否</el-radio>
+                <el-radio :label="'1'">是</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="作为ipad推荐项目">
               <el-radio-group v-model="form.isIpadRecommendProject">
-                <el-radio :label="0">否</el-radio>
-                <el-radio :label="1">是</el-radio>
+                <el-radio :label="'0'">否</el-radio>
+                <el-radio :label="'1'">是</el-radio>
               </el-radio-group>
-            </el-form-item>
-            <el-form-item label="消耗提成类型" class="radio-input">
-              <el-radio-group v-model="form.commissionType" >
-                <el-radio :label="0">消耗固定提成</el-radio>
-                <el-radio :label="1">消耗百分比提成</el-radio>
-              </el-radio-group>
-              <div class="other" v-if="form.expend==0">
-                <span>提成金额</span>
-                <el-input size="mini" v-model="form.commissionMoney"></el-input>
-              </div>
-              <div class="other" v-else>
-                <span>百分比例</span>
-                <el-input size="mini" v-model="form.commissionPercentage"></el-input>
-              </div>
             </el-form-item>
             <el-form-item label="销售提成类型" class="radio-input">
-              <el-radio-group v-model="form.commissionType" >
-                <el-radio :label="0">消耗固定提成</el-radio>
-                <el-radio :label="1">消耗百分比提成</el-radio>
+              <el-radio-group v-model="form.salesPromotionMethod" >
+                <el-radio :label="'0'">消耗固定提成</el-radio>
+                <el-radio :label="'1'">消耗百分比提成</el-radio>
               </el-radio-group>
-              <div class="other" v-if="form.market==0">
+              <div class="other" v-if="form.salesPromotionMethod=='0'">
                 <span>提成金额</span>
-                <el-input size="mini" v-model="form.commissionMoney"></el-input>
+                <el-input size="mini" v-model="form.promotionMoney"></el-input>
               </div>
               <div class="other" v-else>
                 <span>百分比例</span>
-                <el-input size="mini" v-model="form.commissionPercentage"></el-input>
+                <el-input size="mini" v-model="form.promotionPercentage"></el-input>
               </div>
             </el-form-item>
           </el-form>
@@ -104,8 +122,7 @@
         <div class="form_box setmeal_main">
           <h5>套餐明细</h5>
           <div class="contents">
-            <el-dropdown @command="
-            selectDown">
+            <el-dropdown @command="selectDown">
               <el-button type="primary" size="small">
                 添加组合
               </el-button>
@@ -253,7 +270,7 @@
             </div>
           </div>
         </div>
-        <div class="addGive">
+        <!-- <div class="addGive">
           <el-button type="primary" size="small" @click="presentDialog = true">
             添加赠送方案
           </el-button>
@@ -266,11 +283,11 @@
               :disable-transitions="false"
               @close="CloseBurdenTags(index)"
               >
-              <!-- {{Burden.materialName+Burden.materialNum+Burden.unit}} -->
+              {{Burden.materialName+Burden.materialNum+Burden.unit}}
               </el-tag>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
 
       <div class="footer">
@@ -530,6 +547,7 @@
           <el-button type="primary" @click="comformAddproduct" size="small">确 定</el-button>
         </span>
       </el-dialog>
+      <!-- 添加赠送方案 -->
       <el-dialog title="添加赠送方案" :visible.sync="presentDialog" width="1000px" class="burbox">
         <div class="tableDialog">
           <div class="tabs scroll">
@@ -622,18 +640,31 @@
 </template>
 
 <script>
-import { getMenuProduct, getMenuProject, getMenu, getMenuById } from '@/api/login'
-import { giveNav } from '@/api/tree'
+// import { getMenuProduct, getMenuProject, getMenu, getMenuById } from '@/api/login'
+import { addPackage, editPackage, PackageDetail, getPackage } from '@/api/product'
+import { mealMenu, giveNav } from '@/api/tree'
+import { VueEditor } from 'vue2-editor'
 const cityOptions = ['上海', '北京', '广州', '深圳', '上海', '北京', '广州', '深圳']
 export default {
   name: 'app',
+  components: {
+    VueEditor
+  },
   data() {
     return {
+      moredes: false,
       pageModel: {
         page: 1,
         rows: 10,
         sumCount: 0
       },
+      menuList: [],
+      defaultProps: {
+        children: 'childMenu',
+        value: 'id',
+        label: 'name'
+      },
+      selectedOptions: [],
       addProductDialog: false,
       addProjectDialog: false,
       addVoucherDialog: false,
@@ -676,22 +707,25 @@ export default {
       },
       addList: [], //添加的组合
       form: {
-        packageName: '套餐名称', // 套餐名称
-        packagePrice: '套餐价格', // 套餐价格
-        effectiveDays: '', // 有效天数
-        desc: '',
-        type: 1, // 是否必选
+        packageName: '', // 套餐名称
+        packagePrice: '', // 套餐价格
+        effectiveDays: 2000, // 有效天数
+        parentId: '',     // 父级ID
+        detail: '',
+        pictureUrl: '',
         region: '',
         market: 1,
         expend: 1,
-        isDiscount: 0,
-        isDoorService: 0,
-        isIpadShow: 0,
-        isIpadRecommendProject: 0,
-        isSale: 0, // 是否销售
-        commissionType: 0, // 消耗提成类型
-        commissionMoney: '', // 提成金额
-        commissionPercentage: '' // 百分比例
+        isSale: '1',            // 是否销售
+        isDiscount: '0',
+        isDoorService: '0',
+        isIpadShow: '0',
+        isIpadRecommendProject: '0',
+        salesPromotionMethod: '0',
+        promotionMoney: '', // 提成金额
+        promotionPercentage: '', // 百分比例
+        purchaseMethod: 0,
+        purchaseAuthority: 0
       },
       tableData: [{
         date: '2016-05-02',
@@ -714,7 +748,25 @@ export default {
       ]
     }
   },
+  created() {
+    this.getgiveNav()
+    this.getmealMenu()
+  },
   methods: {
+    // 获取项目产品菜单
+    getmealMenu() {
+      mealMenu().then(res => {
+        this.menuList = res.data.data[0].childMenu
+        console.log('获取套餐菜单', res)
+      })
+    },
+    // 选择类目获取id
+    handleItemChange(val) {
+      this.form.arrId = val.join(',')
+      this.form.parentId = val[val.length - 1]
+      this.form.projectType = val[0]
+      console.log('点击', val, this.form.arrId, this.form.parentId)
+    },
     selectRoleList() {
     },
     handleOpen(key, keyPath) {
@@ -726,31 +778,7 @@ export default {
     CloseTags(tag) {
       this.tags.splice(this.tags.indexOf(tag), 1)
     },
-    added() {
-      this.voucherDialog = true
-    },
-    //搜素客户
-    searchBtn() {
-      console.log('搜索')
-    },
-    skinBtn() {
-      this.skin = true
-    },
-    skinClose() {
-      this.skin = false
-    },
-    effectBtn() {
-      this.effect = true
-    },
-    effectClose() {
-      this.effect = false
-    },
-    burdenBtn() {
-      this.addProductDialog = true
-    },
-    presentBtn() {
-      this.presentDialog = true
-    },
+
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
     },
@@ -801,32 +829,32 @@ export default {
         this.materials_arr = res.data.data.rows
       })
     },
-    // 添加产品
-    addProduct(index) {
-      this.addIndex = index
-      getMenuProduct().then(res => {
-        this.productList = res.data.data[0]
-      })
-      this.addProductDialog = true
-    },
-    // 添加项目
-    addProject(index) {
-      this.addIndex = index
-      getMenuProject().then(res => {
-        this.projectList = res.data.data[0]
-      })
-      this.addProjectDialog = true
-    },
-    // 添加代金券
-    addVoucher(index) {
-      this.addIndex = index
-      getMenu().then(res => {
-        if (res.data.code == 200) {
-          this.menuVoucherList = res.data.data
-          this.addVoucherDialog = true
-        }
-      })
-    },
+    // // 添加产品
+    // addProduct(index) {
+    //   this.addIndex = index
+    //   getMenuProduct().then(res => {
+    //     this.productList = res.data.data[0]
+    //   })
+    //   this.addProductDialog = true
+    // },
+    // // 添加项目
+    // addProject(index) {
+    //   this.addIndex = index
+    //   getMenuProject().then(res => {
+    //     this.projectList = res.data.data[0]
+    //   })
+    //   this.addProjectDialog = true
+    // },
+    // // 添加代金券
+    // addVoucher(index) {
+    //   this.addIndex = index
+    //   getMenu().then(res => {
+    //     if (res.data.code == 200) {
+    //       this.menuVoucherList = res.data.data
+    //       this.addVoucherDialog = true
+    //     }
+    //   })
+    // },
     // 获取赠送菜单
     getgiveNav() {
       giveNav().then(res => {
@@ -846,14 +874,74 @@ export default {
       this.addList[this.addIndex].tableData = this.addList[this.addIndex].tableData.concat(this.multipleSelection)
     },
     // 确认保存添加套餐
+    // saveAddMeal() {
+    //   if (this.form.packageName == '' || this.form.packagePrice == '' || this.form.effectiveDays == '' || this.form.desc == '') {
+    //     this.$message.error('名称、价格、有效天数、所属类目不能为空')
+    //   }
+    // },
+    // 保存
     saveAddMeal() {
-      if (this.form.packageName == '' || this.form.packagePrice == '' || this.form.effectiveDays == '' || this.form.desc == '') {
-        this.$message.error('名称、价格、有效天数、所属类目不能为空')
+      let param = Object.assign({
+        enterpriseId: '001',
+        // ccProjectPushList: [],                // 推送
+        // isGive: 0,
+        ccPackageGroupVoList: [
+          // {
+          //   ccPackageGroupDetailList: [
+          //     {
+          //       enterpriseId: string,
+          //       groupId: string,
+          //       id: 0,
+          //       isMandatory: string,
+          //       price: 0,
+          //       targetId: 0
+          //     }
+          //   ],
+          //   enterpriseId: '001',
+          //   groupId: string,
+          //   groupName: string,
+          //   groupTime: string,
+          //   groupType: string,
+          //   isMandatory: string,
+          //   maxOptionalNum: 0,
+          //   packageId: string
+          // }
+        ],
+        ccPackageGiveList: [
+          {
+            enterpriseId: '001',
+            giveId: 1,
+            giveName: 'aaa',
+            giveNum: '10',
+            giveType: '1',
+            packageId: 0,
+            parentId: 17
+          },
+          {
+            enterpriseId: '001',
+            giveId: 1,
+            giveName: 'bbb',
+            giveNum: '10',
+            giveType: '1',
+            packageId: 0,
+            parentId: 17
+          }
+        ]
+      }, this.form)
+      if (this.form.packageName == '' || this.form.packagePrice == '' || this.form.arrId == '') {
+        this.$message.error('套餐名称、类目和价格不能为空')
+      } else {
+        addPackage(param).then(res => {
+          console.log('添加套餐', res)
+          if (res.data.code == 200) {
+            this.$router.push('/setMeal')
+            this.$message.success('新增成功!')
+          } else {
+            this.$message.error('新增套餐失败!')
+          }
+        })
       }
     }
-  },
-  created() {
-    this.getgiveNav()
   }
 }
 </script>
@@ -879,47 +967,6 @@ export default {
 </style>
 
 <style scoped lang="scss">
-.main-content{
-  .left_tree{
-    width: 160px;
-    height: 100%;
-    border-right: 4px solid #F3F8FF;
-    .el-menu{
-      border-right: 0;
-    }
-  }
-  .right_main{
-    padding: 0 30px;
-    width: 700px;
-    .main-head{
-      color:#5e6d82;
-      height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      span{
-        padding-left: 10px;
-        color:#99a9c0;
-      }
-      .search{
-        width: 200px;
-        padding:0 38px 0 16px;
-        background: #f7f7f7;
-        border:0;
-        outline: none;
-        border-radius: 15px;
-        line-height: 30px;
-      }
-      i{
-        cursor: pointer;
-        font-size: 20px;
-        position: relative;
-        top: 3px;
-        left: -35px;
-      }
-    }
-  }
-}
 .form_box{
   display: flex;
   width: 100%;
@@ -929,6 +976,14 @@ export default {
     color:#475669;
     font-size: 16px;
     padding-top: 8px;
+  }
+  .moredes{
+    font-size: 16px;
+    color: #409EFF;
+    line-height: 34px;
+    padding-bottom: 8px;
+    display: table;
+    cursor: pointer;
   }
   .el-form{
     width: 650px;
@@ -940,7 +995,10 @@ export default {
       width:110px;
     }
     .el-cascader {
-      width: 230px;
+      width: 260px;
+    }
+    .el-select {
+      width: 260px;
     }
   }
   .right_but{

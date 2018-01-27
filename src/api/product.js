@@ -45,6 +45,46 @@ export function delProject(projectId) {
     method: 'DELETE'
   })
 }
+
+// 添加套餐
+export function addPackage(data) {
+  return fetch({
+    url: 'apis/package',
+    method: 'post',
+    data
+  })
+}
+// 修改套餐
+export function editPackage(data) {
+  return fetch({
+    url: 'apis/package',
+    method: 'put',
+    data
+  })
+}
+// 获取套餐详细
+export function PackageDetail(packageId) {
+  return fetch({
+    url: `apis/package/${packageId}`,
+    method: 'GET'
+  })
+}
+// 套餐列表
+export function PackageList(pageModel, data) {
+  return fetch({
+    url: `apis/package/${pageModel.page}/${pageModel.rows}`,
+    method: 'post',
+    data
+  })
+}
+// 删除套餐
+export function delPackage(packageId) {
+  return fetch({
+    url: `apis/package/${packageId}`,
+    method: 'DELETE'
+  })
+}
+
 // 添加标签
 export function addTag(data) {
   return fetch({
@@ -74,36 +114,6 @@ export function getBurden(pageModel, data) {
     url: `apis/ccMaterial/${pageModel.page}/${pageModel.rows}`,
     method: 'post',
     data
-  })
-}
-// 获取赠送方案菜单
-export function giveNav(data) {
-  return fetch({
-    url: 'apis/menu/ccMaterial',
-    method: 'GET',
-    data
-  })
-}
-// 添加赠送方案菜单
-export function addgiveNav(data) {
-  return fetch({
-    url: 'apis/menu',
-    method: 'post',
-    data
-  })
-}
-// 删除赠送方案菜单
-export function delMenu(menuId) {
-  return fetch({
-    url: `apis/menu/${menuId}`,
-    method: 'DELETE'
-  })
-}
-// 修改赠送方案菜单
-export function editMenu(menuId, menuName) {
-  return fetch({
-    url: `apis/menu/${menuId}/${menuName}`,
-    method: 'put'
   })
 }
 // 添加赠送方案
