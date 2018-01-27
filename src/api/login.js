@@ -93,36 +93,7 @@ export function editSttaf(data) {
     data
   })
 }
-// 代金券
-export function getVoucher(pageModel, data) {
-  return fetch({
-    url: `apis/coupon/page/${pageModel.page}/${pageModel.rows}`,
-    method: 'post',
-    data
-  })
-}
-// 代金券菜单
-export function getMenu() {
-  return fetch({
-    url: 'apis/menu/coupon',
-    method: 'GET'
-  })
-}
-// 代金券增加时获取菜单
-export function getMenuAdd() {
-  return fetch({
-    url: 'apis/menu/coupon/item',
-    method: 'GET'
-  })
-}
-// 代金券增加时获取菜单Byid
-export function getMenuById(pageModel, data) {
-  return fetch({
-    url: `apis/menu/package/${pageModel.topId}/${pageModel.page}/${pageModel.rows}`,
-    method: 'POST',
-    data
-  })
-}
+
 // 套餐菜单
 export function getMenuMeal() {
   return fetch({

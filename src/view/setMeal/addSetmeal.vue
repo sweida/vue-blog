@@ -116,18 +116,18 @@
               </el-dropdown-menu>
             </el-dropdown>
             <div v-for="(item, index) in addList">
-              <div class="meal_box" v-if="item.type == '产品'">
+              <div class="meal_box" v-if="item.groupType == '产品'">
                 <div class="head_box">
                   <span>NO.{{index+1}}</span>
-                  <span>类型<em>{{item.type}}</em></span>
-                  <span>组合名称<el-input size="mini" v-model="item.name"></el-input></span>
+                  <span>类型<em>{{item.groupType}}</em></span>
+                  <span>组合名称<el-input size="mini" v-model="item.groupName"></el-input></span>
                   <span>是否必选
                     <el-radio-group v-model="item.isNecessary">
                       <el-radio :label="1">否</el-radio>
                       <el-radio :label="2">是</el-radio>
                     </el-radio-group>
                   </span>
-                  <span>次数<el-input size="mini" class="count" v-model="item.inputCount"></el-input></span>
+                  <span>次数<el-input size="mini" class="count" v-model="item.groupTime"></el-input></span>
                   <i class="el-icon-close" @click="delGroup(index)"></i>
                 </div>
                 <div class="set_table">
@@ -159,18 +159,18 @@
                   <div class="addbtn" @click="addProduct(index)">添加+</div>
                 </div>
               </div>
-              <div class="meal_box" v-if="item.type == '项目'">
+              <div class="meal_box" v-if="item.groupType == '项目'">
                 <div class="head_box">
                   <span>NO.{{index+1}}</span>
-                  <span>类型<em>{{item.type}}</em></span>
-                  <span>组合名称<el-input size="mini" v-model="item.name"></el-input></span>
+                  <span>类型<em>{{item.groupType}}</em></span>
+                  <span>组合名称<el-input size="mini" v-model="item.groupName"></el-input></span>
                   <span>是否必选
                     <el-radio-group v-model="item.isNecessary">
                       <el-radio :label="1">否</el-radio>
                       <el-radio :label="2">是</el-radio>
                     </el-radio-group>
                   </span>
-                  <span>次数<el-input size="mini" class="count" v-model="item.inputCount"></el-input></span>
+                  <span>次数<el-input size="mini" class="count" v-model="item.groupTime"></el-input></span>
                   <span>每次最多可选次数<el-input size="mini" class="count" v-model="item.maxCount"></el-input></span>
                   <i class="el-icon-close" @click="delGroup(index)"></i>
                 </div>
@@ -214,11 +214,11 @@
                   <div class="addbtn" @click="addProject(index)">添加+</div>
                 </div>
               </div>
-              <div class="meal_box" v-if="item.type == '代金券'">
+              <div class="meal_box" v-if="item.groupType == '代金券'">
                 <div class="head_box">
                   <span>NO.{{index+1}}</span>
-                  <span>类型<em>{{item.type}}</em></span>
-                  <span>组合名称<el-input size="mini" v-model="item.name"></el-input></span>
+                  <span>类型<em>{{item.groupType}}</em></span>
+                  <span>组合名称<el-input size="mini" v-model="item.groupName"></el-input></span>
                   <i class="el-icon-close" @click="delGroup(index)"></i>
                 </div>
                 <div class="set_table">
@@ -274,7 +274,7 @@
       </div>
 
       <div class="footer">
-        <el-button type="primary" size="medium">保　存</el-button>
+        <el-button type="primary" size="medium" @click="saveAddMeal">保　存</el-button>
       </div>
       <!-- 添加产品 -->
       <el-dialog :visible.sync="addProductDialog" title="选择产品" width="1050px" class="burbox">
@@ -655,23 +655,23 @@ export default {
       input: '',
       seatDialog: false,
       pruductParam: { //添加产品数据
-        name: '',
-        type: '产品',
+        groupName: '',
+        groupType: '产品',
         isNecessary: 1, // 是否必选
-        inputCount: '1', // 次数
+        groupTime: '1', // 次数
         tableData: []
       },
       projectParam: {
-        name: '',
-        type: '项目',
+        groupName: '',
+        groupType: '项目',
         isNecessary: 1, // 是否必选
-        inputCount: '1', // 次数
+        groupTime: '1', // 次数
         maxCount: '1', // 最多输入次数
         tableData: []
       },
       voucherParam: {
-        type: '代金券',
-        name: '',
+        groupType: '代金券',
+        groupName: '',
         tableData: []
       },
       addList: [], //添加的组合
@@ -679,9 +679,9 @@ export default {
         packageName: '套餐名称', // 套餐名称
         packagePrice: '套餐价格', // 套餐价格
         effectiveDays: '', // 有效天数
+        desc: '',
         type: 1, // 是否必选
         region: '',
-        desc: '',
         market: 1,
         expend: 1,
         isDiscount: 0,
@@ -844,6 +844,12 @@ export default {
     // 确认添加产品
     comformAddproduct() {
       this.addList[this.addIndex].tableData = this.addList[this.addIndex].tableData.concat(this.multipleSelection)
+    },
+    // 确认保存添加套餐
+    saveAddMeal() {
+      if (this.form.packageName == '' || this.form.packagePrice == '' || this.form.effectiveDays == '' || this.form.desc == '') {
+        this.$message.error('名称、价格、有效天数、所属类目不能为空')
+      }
     }
   },
   created() {

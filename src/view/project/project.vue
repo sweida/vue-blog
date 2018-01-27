@@ -8,7 +8,6 @@
             <span>{{menuLi.name}}</span>
             <em class="navicon" v-if="menuLi.url==openindex">
               <i class="el-icon-plus" @click="plusNav(menuLi)"></i>
-              <i class="el-icon-edit" @click="editNav(menuLi, menuLi.name)" v-if="projectList==''"></i>
             </em>
           </p>
           <el-menu
@@ -34,7 +33,6 @@
                     <em class="navicon" v-if="item.url==openindex">
                       <i class="el-icon-plus" @click="plusNav(item)"></i>
                       <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
-                      <!-- <i class="el-icon-minus" @click="minusNav(item)" v-if="projectList==''"></i> -->
                     </em>
                   </div>
                 </template>

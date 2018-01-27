@@ -113,64 +113,31 @@
               <template v-for="(item, index) in dialogMenu" :keys="index">
                 <el-submenu :index="item.url">
                   <template slot="title" >
-                    <div @click="dialogChangeMenu(item)">
+                    <div>
                       <span class="title">{{item.name}}</span>
                     </div>
                   </template>
                   <template v-for="(child, index1) in item.childMenu" :keys="index1">
-                    <el-menu-item :index="child.url" @click="dialogChangeMenu(child)" v-if="child.childMenu==null || child.childMenu==''">
+                    <el-menu-item :index="child.url" @click="dialogChangeMenu(child,item)" v-if="child.childMenu==null || child.childMenu==''">
                       <template slot="title">
                         <span>{{child.name}}</span>
                       </template>
                     </el-menu-item>
                     <el-submenu :index="child.url"  v-else>
-
                       <template slot="title" >
-                        <div @click="dialogChangeMenu(child)">
+                        <div @click="dialogChangeMenu(child,item)">
                           <span >{{child.name}}</span>
                         </div>
                       </template>
                       <template v-for="(son, index2) in child.childMenu" :keys="index2">
-
-                        <el-menu-item :index="son.url" @click="dialogChangeMenu(son)" v-if="son.childMenu==null || son.childMenu==''">
+                        <el-menu-item :index="son.url" @click="dialogChangeMenu(son,item)" v-if="son.childMenu==null || son.childMenu==''">
                           <template slot="title">
                             <span>{{son.name}}</span>
                           </template>
                         </el-menu-item>
-
-                        <el-submenu :index="son.url"  v-else>
-                          <template slot="title" >
-                            <div @click="dialogChangeMenu(son)">
-                              <span >{{son.name}}</span>
-                            </div>
-                          </template>
-                          <template v-for="(grandson, index3) in son.childMenu" :keys="index3">
-                            <el-menu-item :index="grandson.url" @click="dialogChangeMenu(grandson)" v-if="grandson.childMenu==null || grandson.childMenu==''">
-                              <template slot="title">
-                                <span>{{grandson.name}}</span>
-                              </template>
-                            </el-menu-item>
-                            <el-submenu :index="grandson.url"  v-else>
-                              <template slot="title" >
-                                <div @click="dialogChangeMenu(grandson)">
-                                  <span >{{grandson.name}}</span>
-                                </div>
-                              </template>
-                              <template v-for="(grandchild, index4) in grandson.childMenu" :keys="index4">
-                                <el-menu-item :index="grandchild.url" @click="dialogChangeMenu(grandchild)" >
-                                  <template slot="title">
-                                    <span>{{grandchild.name}}</span>
-                                  </template>
-                                </el-menu-item>
-                              </template>
-                            </el-submenu>
-
-                          </template>
-                        </el-submenu>
                       </template>
                     </el-submenu>
                   </template>
-
                 </el-submenu>
               </template>
             </el-menu>
@@ -178,11 +145,14 @@
           </div>
           <div class="burli1">
             <el-table
+              ref="goods"
               :data="tableList"
               stripe
               style="width:100%"
               max-height='450'
               tooltip-effect="dark"
+              @select="selectGoods"
+              @select-all="selectAllGoods"
               @selection-change="addtableList"
               >
               <el-table-column
@@ -203,7 +173,7 @@
           <!-- 已选列表 -->
           <div class="burli3">
             <el-table
-              :data="hastableList"
+              :data="checkGoods"
               stripe
               style="width: 100%;margin-bottom:20px;"
               max-height='300'
@@ -273,7 +243,7 @@
 </template>
 
 <script>
-import { addgivePlan, getgivePlan, delgivePlan, editgivePlan, givePlanDetail, getproject } from '@/api/product'
+import { addgivePlan, getgivePlan, delgivePlan, editgivePlan, givePlanDetail, getproject, getVouterDetail } from '@/api/product'
 import { giveNav, delMenu, editMenu, addMenu, ccGetMenu } from '@/api/tree'
 import page from '@/components/common/page'
 import { parseTime, clone } from '@/utils/common'
@@ -287,13 +257,14 @@ export default {
       openindex: '',
       menuList: [],
       givePlanli: [], //  赠送列表
-      MenuParam: {},    // 赠送参数
+      MenuParam: {}, // 赠送参数
       search: '',
       presentDialog: false,
-      dialogMenu: [],       // 弹框菜单
-      diologMenuParam: {},   // 弹框菜单参数
-      tableList: [],        // 弹框点击菜单获取列表
-      hastableList: [],     // 已选列表
+      dialogMenu: [], // 弹框菜单
+      diologMenuParam: {}, // 弹框菜单参数
+      tableList: [], // 弹框点击菜单获取列表
+      checkGoods: [], // 已选列表
+      checkGoodIds: [], //已选id
       form: '',
       formInfo: '',
       options: [],
@@ -481,24 +452,68 @@ export default {
       })
     },
     // 改变菜单时得到列表数据
-    dialogChangeMenu(child) {
-      console.log('changeMenu', child)
+    dialogChangeMenu(child,item) {
+      console.log('changeMenu', child,item,234)
       this.diologMenuParam = {
-        parentId: child.id
+        parentId: item.id,
+        itemId: child.id
       }
       this.getprojectList()
     },
     // 添加列表
     addtableList(val) {
-      this.hastableList = val
-      console.log(val)
+      // this.checkGoods = val
+      // console.log(val)
+    },
+    selectGoods(selection, val) {
+      console.log(selection, val,111)
+      var index = selection.indexOf(val)
+      if (index < 0) {
+        var sIndex = this.checkGoodIds.indexOf(val.id)
+        val.count = 1
+        if (sIndex > -1) {
+          this.checkGoods.splice(sIndex, 1)
+          this.checkGoodIds.splice(sIndex, 1)
+        }
+      } else {
+        this.checkGoods.push(val)
+        this.checkGoodIds.push(val.id)
+      }
+    },
+    selectAllGoods(val) {
+      if (val.length == 0) {
+        this.tableList.forEach((good) => {
+          var index = this.checkGoodIds.indexOf(good.id)
+          good.count = 1
+          this.checkGoods.splice(index, 1)
+          this.checkGoodIds.splice(index, 1)
+        })
+      } else {
+        val.forEach((good) => {
+          var index = this.checkGoodIds.indexOf(good.id)
+          if (index < 0) {
+            this.checkGoods.push(good)
+            this.checkGoodIds.push(good.id)
+          }
+        })
+      }
     },
     // 获取项目列表
     getprojectList() {
-      getproject(this.diologpageModel, this.diologMenuParam).then(res => {
+      getVouterDetail(this.diologMenuParam).then(res => {
         console.log('获取项目列表', res)
         this.diologpageModel.sumCount = res.data.data.total
         this.tableList = res.data.data.rows
+        this.tableList.forEach((good) => {
+          if (this.checkGoodIds) {
+            var index = this.checkGoodIds.indexOf(good.id)
+            if (index > -1) {
+              setTimeout(() => {
+                this.$refs.goods.toggleRowSelection(good)
+              }, 1)
+            }
+          }
+        })
       })
     },
     // 保存添加赠送
