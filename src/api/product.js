@@ -154,6 +154,14 @@ export function delgivePlan(givePlanId) {
     method: 'DELETE'
   })
 }
+// 添加赠送方案点击菜单获取具体产品
+export function addGivePlan(pageModel, parentId, data) {
+  return fetch({
+    url: `apis/menu/CouponByPage/${parentId}/${pageModel.page}/${pageModel.rows}`,
+    method: 'POST',
+    data
+  })
+}
 // 获取代金券列表
 export function getVoucher(pageModel, data) {
   return fetch({
@@ -189,6 +197,13 @@ export function delVoucher(couponId) {
 export function VoucherDetail(couponId) {
   return fetch({
     url: `apis/coupon/${couponId}`,
+    method: 'GET'
+  })
+}
+// 根据Id获取套餐信息
+export function getDetailById(packageId) {
+  return fetch({
+    url: `apis/package/${packageId}`,
     method: 'GET'
   })
 }
