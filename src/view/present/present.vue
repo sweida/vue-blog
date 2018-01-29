@@ -75,12 +75,17 @@
               <el-table-column
                 prop="createDate"
                 label="生效日期"
-                width="150px">
+                width="140px">
               </el-table-column>
               <el-table-column
                 prop="effectiveDate"
                 label="使用截止日期"
-                width="150px">
+                width="140px">
+              </el-table-column>
+              <el-table-column
+                prop="effectiveDays"
+                label="有效天数(天)"
+                width="120px">
               </el-table-column>
               <el-table-column
                 label="修改详情">
@@ -165,7 +170,7 @@
               <el-table-column
                 label="价值">
                 <template slot-scope="scope" >
-                  {{scope.row.projectPrice || scope.row.coupQuota}}
+                  ￥{{scope.row.projectPrice || scope.row.coupQuota}}
                 </template>
               </el-table-column>
               <el-table-column
@@ -176,11 +181,28 @@
           </div>
           <!-- 已选列表 -->
           <div class="burli3">
+            <!-- <h4>设置</h4> -->
+            <el-form ref="form" v-model="form" label-width="120px" label-position='left'>
+              <el-form-item label="赠送方案名称">
+                <el-input size="medium" v-model="form.givePlanName" placeholder="填写赠送方案名称"></el-input>
+              </el-form-item>
+              <el-form-item label="所属类目">
+                <el-cascader
+                  placeholder="请选择类目名称"
+                  @change="handleItemChange"
+                  v-model="selectedOptions"
+                  change-on-select
+                  :options="menuList.childMenu"
+                  :props="defaultProps"
+                  :clearable="true">
+                </el-cascader>
+              </el-form-item>
+            </el-form>
             <el-table
               :data="checkGoods"
               stripe
               style="width: 100%;margin-bottom:20px;"
-              max-height='300'
+              height='240'
               tooltip-effect="dark"
             >
               <el-table-column
@@ -201,7 +223,7 @@
               <el-table-column
                 label="价值">
                 <template slot-scope="scope" >
-                  {{scope.row.projectPrice || scope.row.coupQuota}}
+                  ￥{{scope.row.projectPrice || scope.row.coupQuota}}
                 </template>
               </el-table-column>
               <el-table-column
@@ -213,9 +235,9 @@
               </el-table-column>
             </el-table>
 
-            <h4>设置</h4>
+            <!-- <h4>设置</h4> -->
             <el-form ref="form" v-model="form" label-width="120px" label-position='left'>
-              <el-form-item label="赠送方案名称">
+              <!-- <el-form-item label="赠送方案名称">
                 <el-input size="medium" v-model="form.givePlanName" placeholder="填写赠送方案名称"></el-input>
               </el-form-item>
               <el-form-item label="所属类目">
@@ -228,6 +250,9 @@
                   :props="defaultProps"
                   :clearable="true">
                 </el-cascader>
+              </el-form-item> -->
+              <el-form-item label="有效天数">
+                <el-input type="number" size="medium" v-model="form.effectiveDays" placeholder="填写有效天数"></el-input>
               </el-form-item>
               <el-form-item label="生效日期" >
                 <el-date-picker type="date" placeholder="选择生效日期" v-model="form.createDate" size="medium" :editable="false"></el-date-picker>
@@ -409,6 +434,7 @@ export default {
     // 获取赠送列表
     getgivePlanList() {
       getgivePlan(this.pageModel, this.MenuParam).then(res => {
+        console.log(res.data)
         this.givePlanli = res.data.data.rows
         this.pageModel.sumCount = res.data.data.total
         this.givePlanli.forEach(item => {
@@ -441,8 +467,9 @@ export default {
       this.form = {
         givePlanName: '',
         createDate: new Date(),
-        effectiveDate: new Date((+new Date()) + 2000 * 24 * 3600 * 1000),
-        parentId: ''
+        effectiveDate: new Date((+new Date()) + 3651 * 24 * 3600 * 1000),
+        parentId: '',
+        takeMode: ''
       }
       this.tableList = []
       this.checkGoods = []
@@ -520,8 +547,8 @@ export default {
     },
     // 保存添加赠送
     savePlanBtn() {
-      if (this.form.givePlanName == '') {
-        this.$message.error('赠送方案名称不能为空')
+      if (this.form.givePlanName == '' || this.form.takeMode == '') {
+        this.$message.error('赠送方案名称和类目不能为空')
       } else if (this.form.effectiveDate < this.form.createDate || this.form.createDate == '' || this.form.createDate == null) {
         this.$message.error('日期有误，请重新选择日期')
       } else {
@@ -549,6 +576,7 @@ export default {
       this.getccGetMenu()
       this.presentDialog = true
       givePlanDetail(row.id).then(res => {
+        console.log(res)
         if (res.data.code == 200) {
           this.form = res.data.data
           this.checkGoods = res.data.data.ccSelectedProjectVos
@@ -561,8 +589,8 @@ export default {
     },
     // 修改赠送方案
     editPlanBtn() {
-      if (this.form.givePlanName == '') {
-        this.$message.error('方案名称不能为空')
+      if (this.form.givePlanName == '' || this.form.takeMode == '') {
+        this.$message.error('方案名称和类目不能为空')
       } else if (this.form.effectiveDate < this.form.createDate || this.form.createDate == '' || this.form.createDate == null) {
         this.$message.error('日期有误，请重新选择日期')
       } else {

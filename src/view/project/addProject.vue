@@ -1,6 +1,6 @@
 <template>
   <div >
-      <div class="header_title"><span><router-link to="/project">项目</router-link> <i class="el-icon-arrow-right"></i> 添加宝贝</span><i class="el-icon-info"></i></div>
+      <div class="header_title"><span><router-link to="/project">项目</router-link> <i class="el-icon-arrow-right"></i> {{form.projectId?"编辑项目":"添加项目"}}</span><i class="el-icon-info"></i></div>
       <div class="main-content scroll">
         <div class="form_box form_top">
           <h5>基础信息</h5>
@@ -139,7 +139,7 @@
             </el-tag>
           </div>
           <div class="right_but">
-            <el-button type="primary" size="mini" @click="burdenDialog = true">添加配料</el-button>
+            <el-button type="primary" size="mini" @click="burdenBtn">添加配料</el-button>
             <i class="el-icon-info"></i>
           </div>
         </div>
@@ -235,11 +235,11 @@
               </el-radio-group>
               <div class="other" v-if="form.commissionType=='0'">
                 <span>提成金额</span>
-                <el-input size="mini" v-model="form.commissionMoney"></el-input>
+                <el-input type="number" size="mini" v-model="form.commissionMoney"></el-input>
               </div>
               <div class="other" v-else>
                 <span>百分比例</span>
-                <el-input size="mini" v-model="form.commissionPercentage"></el-input>
+                <el-input type="number" size="mini" v-model="form.commissionPercentage"></el-input>%
               </div>
             </el-form-item>
           </el-form>
@@ -252,12 +252,47 @@
       </div>
 
       <!-- 配料弹框 -->
-      <el-dialog :visible.sync="burdenDialog" title="编辑配料" width="1050px" class="burbox">
+      <el-dialog :visible.sync="burdenDialog" title="编辑配料" width="1200px" class="burbox">
         <div class="tableDialog">
-          <div class="tabs">
-            <p>所有配料</p>
-            <p>载入配方</p>
+          <div class="tabs scroll">
+            <p class="nav-title" @click="allBurden" :class="{active:activeP}">
+              <span>所有配料</span>
+            </p>
+            <p class="nav-title" @click="navtitle">
+              <span>载入历史配方</span>
+            </p>
+            <el-menu class="el-menu-vertical-demo">
+              <template v-for="(item, index) in diolmenuList" :keys="index">
+                <el-submenu :index="item.url">
+                  <template slot="title" >
+                    <span >{{item.name}}</span>
+                  </template>
+                  <template v-for="(child, index1) in item.childMenu" :keys="index1">
+                    <el-menu-item :index="child.url" v-if="child.childMenu==null || child.childMenu==''">
+                      <div @click="changeMenu(child)">
+                        <span>{{child.name}}</span>
+                      </div>
+                    </el-menu-item>
+                    <el-submenu :index="child.url" v-else>
+                      <template slot="title" >
+                        <div @click="changeMenu(child)">
+                          <span >{{child.name}}</span>
+                        </div>
+                      </template>
+                      <template v-for="(son, index1) in child.childMenu" :keys="index1">
+                        <el-menu-item :index="son.url" v-if="son.childMenu==null || son.childMenu==''" @click="changeMenu(son)">
+                          <span>{{son.name}}</span>
+                        </el-menu-item>
+                      </template>
+                    </el-submenu>
+                  </template>
+                </el-submenu>
+              </template>
+            </el-menu>
           </div>
+          <ul class="projectbox scroll" v-if="projectList.length!=0">
+            <li class="projectli" v-for="(item) in projectList" @click="projectBur(item)" :class="{active:activeNav==item.id}">{{item.projectName}}</li>
+          </ul>
           <div class="burli1">
             <el-table
               :data="materials_arr"
@@ -385,8 +420,8 @@
 </template>
 
 <script>
-import { addproject, getproject, getTagli, addTag, delTag, getBurden, projectDetail, editproject } from '@/api/product'
-import { mixppMenu } from '@/api/tree'
+import { addproject, getproject, getTagli, addTag, delTag, getBurden, getprojectBurden, projectDetail, editproject } from '@/api/product'
+import { mixppMenu, projectMenu } from '@/api/tree'
 import page from '@/components/common/page'
 import { clone } from '@/utils/common'
 import { VueEditor } from 'vue2-editor'
@@ -413,6 +448,11 @@ export default {
       effectInput: '',
       editEffect: true, // 功效
       burdenDialog: false,    // 配料
+      diolmenuList: '',       // 配料菜单
+      projectList: '',        // 项目列表
+      activeNav: false,
+      activeP: true,
+      MenuParam: [],
       imageUrl: 'static/img/phone.png',
       presentDialog: false,
       tuisong: false,   // 推送
@@ -423,7 +463,7 @@ export default {
         arrId: '',
         projectPrice: '',
         projectType: '',
-        availabilityDay: 2000,  // 有效天数
+        availabilityDay: 3650,  // 有效天数
         consumeTime: 30,      // 耗时
         parentId: '',         // 父id
         detail: '',           // 文章
@@ -444,6 +484,11 @@ export default {
       pageModel: {
         page: 1,
         rows: 10,
+        sumCount: 0
+      },
+      pageModel2: {
+        page: 1,
+        rows: 1000,
         sumCount: 0
       }
     }
@@ -641,6 +686,51 @@ export default {
     effectClose() {
       this.editEffect = true
     },
+    // 配料弹框
+    burdenBtn() {
+      this.burdenDialog = true
+      // 获取项目产品菜单
+      projectMenu().then(res => {
+        this.diolmenuList = res.data.data
+        console.log('获取项目菜单', res)
+      })
+    },
+    // 点击所有配料
+    allBurden() {
+      this.projectList = []
+      this.activeP = true
+      this.getBurdenlist()
+    },
+    // 改变菜单时得到列表数据
+    changeMenu(child) {
+      console.log('changeMenu', child.id)
+      this.MenuParam = {
+        parentId: child.id
+      }
+      this.getprojectList()
+    },
+    // 获取项目列表
+    getprojectList() {
+      getproject(this.pageModel2, this.MenuParam).then(res => {
+        console.log('获取项目列表', res)
+        this.pageModel2.sumCount = res.data.data.total
+        this.projectList = res.data.data.rows
+      })
+    },
+    // 点击项目获取配料
+    projectBur(item) {
+      this.activeNav = item.id
+      this.activeP = false
+      let param = {
+        enterpriseId: '001',
+        projectId: item.id
+      }
+      getprojectBurden(this.pageModel, param).then(res => {
+        console.log('载入项目配料', res.data.data.rows)
+        this.pageModel2.sumCount = res.data.data.total
+        this.form.ccProjectMaterialList = res.data.data.rows
+      })
+    },
     // 获取配料列表
     getBurdenlist() {
       getBurden(this.pageModel, {}).then(res => {
@@ -660,9 +750,8 @@ export default {
     sureBurden() {
 
     },
-    // 配料弹框
-    burdenBtn() {
-      this.burdenDialog = true
+
+    navtitle() {
     },
     presentBtn() {
       this.presentDialog = true
@@ -735,9 +824,6 @@ export default {
     display: table;
     cursor: pointer;
   }
-  // .quillWrapper{
-  //   width: 75%;
-  // }
   .el-form{
     width: 650px;
     .el-form-item {
@@ -877,5 +963,33 @@ export default {
 .burli2{
   width: 400px
 }
-
+.tableDialog .tabs .nav-title{
+  background: none;
+  cursor: pointer;
+}
+.tableDialog .tabs .nav-title:nth-of-type(2){
+  margin-top: 10px;
+}
+.projectbox{
+  height: 100%;
+  border-right: 2px solid #f3f8fe;
+  padding: 30px 0;
+  box-sizing: border-box;
+}
+.projectli{
+  width: 120px;
+  padding: 0 10px;
+  box-sizing: border-box;
+  line-height: 36px;
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.projectli.active{
+  color: #409EFF;
+}
+.tableDialog .tabs .nav-title.active{
+  background: #f5f5f5;
+}
 </style>

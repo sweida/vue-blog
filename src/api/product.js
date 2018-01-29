@@ -108,10 +108,18 @@ export function getTagli(type) {
     method: 'get'
   })
 }
-// 获取配料类别
+// 获取所有配料
 export function getBurden(pageModel, data) {
   return fetch({
     url: `apis/ccMaterial/page/${pageModel.page}/${pageModel.rows}`,
+    method: 'post',
+    data
+  })
+}
+// 点击项目获取配料
+export function getprojectBurden(pageModel, data) {
+  return fetch({
+    url: `apis/ccMaterial/project/page/${pageModel.page}/${pageModel.rows}`,
     method: 'post',
     data
   })
