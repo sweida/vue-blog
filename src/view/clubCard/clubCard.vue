@@ -143,16 +143,34 @@
             style="width:100%"
             max-height='450'
             tooltip-effect="dark"
+            @expand-change="getSetMealDetails"
             >
-
+            <el-table-column type="expand">
+              <template slot-scope="scope">
+              <div v-loading="loading" >
+                <div class="item-details" style="width: 100%;height:100%;height: 50px;line-height: 50px;text-align: center;background: #f4f4f4;font-weight:bold">
+                  <div style="width: 20%;display: inline-block">类型</div>
+                  <div style="width: 20%;display: inline-block">名称</div>
+                  <div style="width: 20%;display: inline-block">价值</div>
+                  <div style="width: 20%;display: inline-block">数量</div>
+                </div>
+                <div class="item-details" style="width: 100%;height:100%;height: 30px;line-height: 30px;text-align: center">
+                  <div style="width: 20%;display: inline-block">类型</div>
+                  <div style="width: 20%;display: inline-block">名称</div>
+                  <div style="width: 20%;display: inline-block">价值</div>
+                  <div style="width: 20%;display: inline-block">数量</div>
+                </div>
+              </div>
+              </template>
+            </el-table-column>
             <el-table-column
-              prop="material_name"
-              label="配料名称"
+              prop="givePlanName"
+              label="名称"
               >
             </el-table-column>
             <el-table-column
-              prop="unit"
-              label="单位">
+              prop="effectiveDate"
+              label="有效期">
             </el-table-column>
             <el-table-column
             label="选择">
@@ -172,13 +190,13 @@
             tooltip-effect="dark"
           >
             <el-table-column
-              prop="material_name"
-              label="已添加配料名称"
+              prop="givePlanName"
+              label="名称"
               >
             </el-table-column>
             <el-table-column
-              prop="unit"
-              label="单位"
+              prop="effectiveDate"
+              label="有效期"
               >
             </el-table-column>
             <el-table-column
@@ -209,9 +227,10 @@
 
 <script>
 import { addvipCard, editvipCard, getvipCard, delvipCard, actDescInfo, editactDesc } from '@/api/setting'
+import { getgivePlan } from '@/api/product'
 import { giveNav, delMenu, editMenu, addMenu, ccGetMenu } from '@/api/tree'
 import page from '@/components/common/page'
-import { clone } from '@/utils/common'
+import { parseTime, clone } from '@/utils/common'
 export default {
   name: 'app',
   components: {
@@ -219,6 +238,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       bed: 1,
       input: '',
       burdening: false,
@@ -300,10 +320,6 @@ export default {
       console.log('handleOpen', key, keyPath)
     },
     navtitle() {
-    },
-    // 改变菜单时得到列表数据
-    changeMenu(child) {
-      console.log('changeMenu', child)
     },
     sureBurden() {
     },
@@ -424,6 +440,34 @@ export default {
     },
     selectRoleList() {
       this.getvipList()
+    },
+    // 改变菜单时得到赠送方案数据
+    changeMenu(child) {
+      console.log('changeMenu', child.id)
+      this.MenuParam = {
+        parentId: child.id
+      }
+      this.getgivePlanList()
+    },
+    // 获取赠送列表
+    getgivePlanList() {
+      getgivePlan(this.pageModel, this.MenuParam).then(res => {
+        console.log('获取赠送列表', res)
+        this.materials_arr = res.data.data.rows
+        console.log(this.materials_arr)
+        this.pageModel.sumCount = res.data.data.total
+        this.materials_arr.forEach(item => {
+          item.createDate = parseTime(item.createDate, '{y}-{m}-{d}')
+          item.effectiveDate = parseTime(item.effectiveDate, '{y}-{m}-{d}')
+        })
+      })
+    },
+    getSetMealDetails(row, allRows) {
+      console.log(row)
+      // this.loading = true
+      // setTimeout(() => {
+      //   this.loading = false
+      // }, 2000)
     }
   }
 

@@ -156,13 +156,17 @@
               @selection-change="addtableList"
               >
               <el-table-column
-                prop="projectName"
                 label="名称"
                 >
+                <template slot-scope="scope" >
+                  {{scope.row.projectName || scope.row.coupName}}
+                </template>
               </el-table-column>
               <el-table-column
-                prop="projectPrice"
                 label="价值">
+                <template slot-scope="scope" >
+                  {{scope.row.projectPrice || scope.row.coupQuota}}
+                </template>
               </el-table-column>
               <el-table-column
               type="selection"
@@ -184,24 +188,27 @@
                 label="类型"
                 >
                 <template slot-scope="scope" >
-                  {{projectType[scope.row.projectType-1]}}
+                  {{scope.row.coupType == 0 ? projectType[3] : projectType[scope.row.projectType-1]}}
                 </template>
               </el-table-column>
               <el-table-column
-                prop="projectName"
                 label="名称"
                 >
+                <template slot-scope="scope" >
+                  {{scope.row.projectName || scope.row.coupName}}
+                </template>
               </el-table-column>
               <el-table-column
-                prop="projectPrice"
-                label="价值"
-                >
+                label="价值">
+                <template slot-scope="scope" >
+                  {{scope.row.projectPrice || scope.row.coupQuota}}
+                </template>
               </el-table-column>
               <el-table-column
                 prop="number"
                 label="数量">
                 <template slot-scope="scope" >
-                  <el-input-number v-model="scope.row.number"  :min="1"></el-input-number>
+                  <el-input-number v-model="scope.row.projectNum"  :min="1"></el-input-number>
                 </template>
               </el-table-column>
             </el-table>
@@ -234,7 +241,7 @@
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="presentDialog = false" size="small">取 消</el-button>
-          <el-button type="primary" @click="savePlanBtn" size="small" v-if="!form.givePlanId">保 存</el-button>
+          <el-button type="primary" @click="savePlanBtn" size="small" v-if="!form.id">保 存</el-button>
           <el-button type="primary" @click="editPlanBtn" size="small" v-else>保存修改</el-button>
         </span>
       </el-dialog>
@@ -243,7 +250,7 @@
 </template>
 
 <script>
-import { addgivePlan, getgivePlan, delgivePlan, editgivePlan, givePlanDetail, getproject, getVouterDetail } from '@/api/product'
+import { addgivePlan, getgivePlan, delgivePlan, editgivePlan, givePlanDetail, getproject, addGivePlan, getDetailById } from '@/api/product'
 import { giveNav, delMenu, editMenu, addMenu, ccGetMenu } from '@/api/tree'
 import page from '@/components/common/page'
 import { parseTime, clone } from '@/utils/common'
@@ -254,6 +261,7 @@ export default {
   },
   data() {
     return {
+      nowDate: new Date(),
       openindex: '',
       menuList: [],
       givePlanli: [], //  赠送列表
@@ -265,7 +273,7 @@ export default {
       tableList: [], // 弹框点击菜单获取列表
       checkGoods: [], // 已选列表
       checkGoodIds: [], //已选id
-      form: '',
+      form: {},
       formInfo: '',
       options: [],
       selectedOptions: [],
@@ -390,7 +398,7 @@ export default {
       this.form.parentId = val[val.length - 1]
       console.log('点击', val, val[val.length - 1], this.form.takeMode)
     },
-    // 改变菜单时得到代金券数据
+    // 改变菜单时得到赠送方案数据
     changeMenu(child) {
       console.log('changeMenu', child.id)
       this.MenuParam = {
@@ -401,7 +409,6 @@ export default {
     // 获取赠送列表
     getgivePlanList() {
       getgivePlan(this.pageModel, this.MenuParam).then(res => {
-        console.log('获取赠送列表', res)
         this.givePlanli = res.data.data.rows
         this.pageModel.sumCount = res.data.data.total
         this.givePlanli.forEach(item => {
@@ -416,14 +423,14 @@ export default {
       this.$confirm('是否删除该赠送方案?', '提示', {
         type: 'warning'
       }).then(() => {
-        delgivePlan(row.givePlanId).then(res => {
+        delgivePlan(row.id).then(res => {
           if (res.data.code == 200) {
             console.log(res)
             this.givePlanli.splice(index, 1)
             this.$message.success(res.data.msg)
             this.getgivePlanList()
           } else {
-            this.$message.error('删除失败!')
+            this.$message.error(res.data.msg)
           }
         })
       }).catch(() => {
@@ -433,10 +440,12 @@ export default {
     added() {
       this.form = {
         givePlanName: '',
-        createDate: '',
-        effectiveDate: '',
+        createDate: new Date(),
+        effectiveDate: new Date((+new Date()) + 2000 * 24 * 3600 * 1000),
         parentId: ''
       }
+      this.tableList = []
+      this.checkGoods = []
       this.selectedOptions = []
       this.presentDialog = true
       this.getccGetMenu()
@@ -448,17 +457,11 @@ export default {
         if (res.data.code == 200) {
           this.dialogMenu = res.data.data
         }
-        console.log('获取项目、产品、套餐、优惠券菜单', res)
       })
     },
     // 改变菜单时得到列表数据
-    dialogChangeMenu(child,item) {
-      console.log('changeMenu', child,item,234)
-      this.diologMenuParam = {
-        parentId: item.id,
-        itemId: child.id
-      }
-      this.getprojectList()
+    dialogChangeMenu(child, item) {
+      this.getprojectList(child.id, item.id)
     },
     // 添加列表
     addtableList(val) {
@@ -466,11 +469,10 @@ export default {
       // console.log(val)
     },
     selectGoods(selection, val) {
-      console.log(selection, val,111)
       var index = selection.indexOf(val)
       if (index < 0) {
         var sIndex = this.checkGoodIds.indexOf(val.id)
-        val.count = 1
+        val.number = 1
         if (sIndex > -1) {
           this.checkGoods.splice(sIndex, 1)
           this.checkGoodIds.splice(sIndex, 1)
@@ -484,7 +486,7 @@ export default {
       if (val.length == 0) {
         this.tableList.forEach((good) => {
           var index = this.checkGoodIds.indexOf(good.id)
-          good.count = 1
+          good.number = 1
           this.checkGoods.splice(index, 1)
           this.checkGoodIds.splice(index, 1)
         })
@@ -499,14 +501,14 @@ export default {
       }
     },
     // 获取项目列表
-    getprojectList() {
-      getVouterDetail(this.diologMenuParam).then(res => {
+    getprojectList(childId, itemId) {
+      addGivePlan(this.pageModel, itemId, {parentId: childId}).then(res => {
         console.log('获取项目列表', res)
         this.diologpageModel.sumCount = res.data.data.total
         this.tableList = res.data.data.rows
         this.tableList.forEach((good) => {
           if (this.checkGoodIds) {
-            var index = this.checkGoodIds.indexOf(good.id)
+            var index = this.checkGoods.indexOf(good)
             if (index > -1) {
               setTimeout(() => {
                 this.$refs.goods.toggleRowSelection(good)
@@ -525,20 +527,10 @@ export default {
       } else {
         let param = Object.assign({
           enterpriseId: '001',
-          ccGivePlanSubtabulationList: [
-            {
-              giveId: '',
-              givePlanId: '',
-              givePlanSubtabulationId: '',
-              givePlanType: '',
-              name: '',
-              number: 0,
-              price: 0
-            }
-          ]
+          ccSelectedProjectVos: this.checkGoods
         }, this.form)
         addgivePlan(param).then(res => {
-          console.log('添加赠送', res)
+          this.presentDialog = false
           if (res.data.code == 200) {
             this.presentDialog = false
             this.getgivePlanList()
@@ -551,16 +543,20 @@ export default {
     },
     // 打开编辑弹框
     editBtn(index, row) {
+      this.tableList = []
+      this.checkGoods = []
+      this.selectedOptions = []
+      this.getccGetMenu()
       this.presentDialog = true
       givePlanDetail(row.id).then(res => {
         if (res.data.code == 200) {
           this.form = res.data.data
+          this.checkGoods = res.data.data.ccSelectedProjectVos
           let arr = res.data.data.takeMode.split(',')
           this.selectedOptions = arr.map((item) => {
             return +item
           })
         }
-        console.log('打开编辑弹框', this.form, res.data, this.selectedOptions)
       })
     },
     // 修改赠送方案
@@ -572,17 +568,7 @@ export default {
       } else {
         let param = Object.assign({
           enterpriseId: '001',
-          ccGivePlanSubtabulationList: [
-            {
-              giveId: '',
-              givePlanId: '',
-              givePlanSubtabulationId: '',
-              givePlanType: '',
-              name: '',
-              number: 0,
-              price: 0
-            }
-          ]
+          ccSelectedProjectVos: this.checkGoods
         }, this.form)
         editgivePlan(param).then(res => {
           console.log('添加赠送', res)
