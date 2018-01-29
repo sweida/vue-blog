@@ -204,14 +204,14 @@
                 <el-radio :label="'1'">参与会员折扣</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="是否支持上面服务">
-              <el-radio-group v-model="form.isDoorService">
+            <el-form-item label="是否销售">
+              <el-radio-group v-model="form.isSale">
                 <el-radio :label="'0'">否</el-radio>
                 <el-radio :label="'1'">是</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="是否销售">
-              <el-radio-group v-model="form.isSale">
+            <el-form-item label="是否支持上面服务">
+              <el-radio-group v-model="form.isDoorService">
                 <el-radio :label="'0'">否</el-radio>
                 <el-radio :label="'1'">是</el-radio>
               </el-radio-group>
@@ -430,7 +430,7 @@ export default {
         ccProjectMaterialList: [],   // 配料
         // isMateriel: 0,        // 是否有配料
         isSale: '1',            // 是否销售
-        isDiscount: '0',
+        isDiscount: '1',
         isDoorService: '0',
         isIpadShow: '0',
         isIpadRecommendProject: '0',

@@ -1,13 +1,13 @@
 <template>
   <div >
-      <div class="header_title"><span><router-link to="/setMeal">套餐</router-link> <i class="el-icon-arrow-right"></i> 添加套餐</span><i class="el-icon-info"></i></div>
+      <div class="header_title"><span><router-link to="/setMeal">套餐</router-link> <i class="el-icon-arrow-right"></i> {{form.packageId?"编辑套餐":"添加套餐"}}</span><i class="el-icon-info"></i></div>
       <div class="main-content scroll">
         <div class="form_box form_top">
           <h5>基础信息</h5>
           <el-form ref="form" :model="form" label-width="120px" label-position='left'>
-            <!-- <el-form-item label="套餐编号" v-if="form.projectId">
-              <span>{{form.projectId}}</span>
-            </el-form-item> -->
+            <el-form-item label="套餐编号" v-if="form.packageId">
+              <span>{{form.packageId}}</span>
+            </el-form-item>
             <el-form-item label="套餐名称">
               <el-input size="medium" v-model="form.packageName"></el-input>
             </el-form-item>
@@ -30,13 +30,13 @@
             </el-form-item>
             <el-form-item label="购买方式">
               <el-select v-model="form.purchaseMethod" size="medium">
-                <el-option label="0" value="购买套餐">
+                <el-option value="0" label="购买套餐">
                 </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="购买权限">
               <el-select v-model="form.purchaseAuthority" size="medium">
-                <el-option value="0" label="所有客户可购买"></el-option>
+                <el-option value="0" label="所有客户均可购买"></el-option>
                 <el-option value="1" label="一星经理人以上可购买"></el-option>
                 <el-option value="2" label="二星经理人以上可购买"></el-option>
               </el-select>
@@ -73,19 +73,13 @@
           <h5>其它信息</h5>
           <el-form ref="form" :model="form" label-width="170px" label-position='left'>
             <el-form-item label="折扣信息">
-              <el-radio-group v-model="form.isDiscount">
+              <el-radio-group v-model="form.isDiscounts">
                 <el-radio :label="'0'">不参与会员折扣</el-radio>
                 <el-radio :label="'1'">参与会员折扣</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="是否支持上面服务">
               <el-radio-group v-model="form.isDoorService">
-                <el-radio :label="'0'">否</el-radio>
-                <el-radio :label="'1'">是</el-radio>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="是否销售">
-              <el-radio-group v-model="form.isSale">
                 <el-radio :label="'0'">否</el-radio>
                 <el-radio :label="'1'">是</el-radio>
               </el-radio-group>
@@ -97,7 +91,7 @@
               </el-radio-group>
             </el-form-item>
             <el-form-item label="作为ipad推荐项目">
-              <el-radio-group v-model="form.isIpadRecommendProject">
+              <el-radio-group v-model="form.isIpadRecommend">
                 <el-radio :label="'0'">否</el-radio>
                 <el-radio :label="'1'">是</el-radio>
               </el-radio-group>
@@ -109,11 +103,11 @@
               </el-radio-group>
               <div class="other" v-if="form.salesPromotionMethod=='0'">
                 <span>提成金额</span>
-                <el-input size="mini" v-model="form.promotionMoney"></el-input>
+                <el-input type="number" size="mini" v-model="form.promotionMoney"></el-input>
               </div>
               <div class="other" v-else>
                 <span>百分比例</span>
-                <el-input size="mini" v-model="form.promotionPercentage"></el-input>
+                <el-input type="number" size="mini" v-model="form.promotionPercentage"></el-input>%
               </div>
             </el-form-item>
           </el-form>
@@ -291,7 +285,8 @@
       </div>
 
       <div class="footer">
-        <el-button type="primary" size="medium" @click="saveAddMeal">保　存</el-button>
+        <el-button type="primary" size="medium" @click="editBtn" v-if="form.packageId">保存修改</el-button>
+        <el-button type="primary" size="medium" @click="saveBtn" v-else>保　存</el-button>
       </div>
       <!-- 添加产品 -->
       <el-dialog :visible.sync="addProductDialog" title="选择产品" width="1050px" class="burbox">
@@ -716,16 +711,15 @@ export default {
         region: '',
         market: 1,
         expend: 1,
-        isSale: '1',            // 是否销售
-        isDiscount: '0',
+        isDiscounts: '1',
         isDoorService: '0',
         isIpadShow: '0',
-        isIpadRecommendProject: '0',
+        isIpadRecommend: '0',
         salesPromotionMethod: '0',
         promotionMoney: '', // 提成金额
         promotionPercentage: '', // 百分比例
-        purchaseMethod: 0,
-        purchaseAuthority: 0
+        purchaseMethod: '0',
+        purchaseAuthority: '0'
       },
       tableData: [{
         date: '2016-05-02',
@@ -751,8 +745,23 @@ export default {
   created() {
     this.getgiveNav()
     this.getmealMenu()
+    // this.getPackageDetail()
+    if (this.$route.params.id != undefined) {
+      this.getPackageDetail()
+    }
   },
   methods: {
+    // 获取套餐详情
+    getPackageDetail() {
+      PackageDetail(this.$route.params.id).then(res => {
+        this.form = res.data.data
+        let arr = res.data.data.arrId.split(',')
+        this.selectedOptions = arr.map((item) => {
+          return +item
+        })
+        console.log('套餐详情', res, this.$route.params.id, this.form)
+      })
+    },
     // 获取项目产品菜单
     getmealMenu() {
       mealMenu().then(res => {
@@ -778,7 +787,6 @@ export default {
     CloseTags(tag) {
       this.tags.splice(this.tags.indexOf(tag), 1)
     },
-
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
     },
@@ -819,16 +827,16 @@ export default {
         this.addList.push(this.voucherParam)
       }
     },
-    // 改变菜单时得到项目数据
-    changeMenu(child, parent, item) {
-      this.pageModel.topId = 2
-      let param = {
-        'parentId': child.id
-      }
-      getMenuById(this.pageModel, param).then(res => {
-        this.materials_arr = res.data.data.rows
-      })
-    },
+    // // 改变菜单时得到项目数据
+    // changeMenu(child, parent, item) {
+    //   this.pageModel.topId = 2
+    //   let param = {
+    //     'parentId': child.id
+    //   }
+    //   getMenuById(this.pageModel, param).then(res => {
+    //     this.materials_arr = res.data.data.rows
+    //   })
+    // },
     // // 添加产品
     // addProduct(index) {
     //   this.addIndex = index
@@ -880,7 +888,7 @@ export default {
     //   }
     // },
     // 保存
-    saveAddMeal() {
+    saveBtn() {
       let param = Object.assign({
         enterpriseId: '001',
         // ccProjectPushList: [],                // 推送
@@ -941,7 +949,19 @@ export default {
           }
         })
       }
-    }
+    },
+    // 保存修改
+    editBtn() {
+      editPackage(this.form).then(res => {
+        console.log('保存修改', res)
+        if (res.data.code == 200) {
+          this.$router.push('/setMeal')
+          this.$message.success('修改成功!')
+        } else {
+          this.$message.error('新增失败!')
+        }
+      })
+    },
   }
 }
 </script>

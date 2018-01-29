@@ -219,6 +219,15 @@ i,em{
   background:#c5ced7;
   border-radius:10px;
 }
+// 弹框滚动条
+.el-dialog__wrapper::-webkit-scrollbar{
+  width:7px;
+  height:7px;
+}
+.el-dialog__wrapper::-webkit-scrollbar-thumb{
+  background:#c5ced7;
+  border-radius:10px;
+}
 /*****全局滚动条样式 ******/
 /* 弹框样式 */
 .el-dialog__header{

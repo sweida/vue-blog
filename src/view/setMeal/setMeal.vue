@@ -67,13 +67,20 @@
               <el-table-column
                 prop="packageName"
                 label="名称"
-                width="150px">
+                >
               </el-table-column>
               <el-table-column
-                label="修改"
+                prop="packagePrice"
+                label="价格"
                 >
                 <template slot-scope="scope">
-                  <i class="el-icon-edit" @click="edit(scope.$index)"></i>
+                  ￥{{scope.row.packagePrice}}
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="修改">
+                <template slot-scope="scope">
+                  <i class="el-icon-edit" @click="editBtn(scope.$index, scope.row)"></i>
                 </template>
               </el-table-column>
               <el-table-column
@@ -246,6 +253,11 @@ export default {
       }).catch(() => {
       })
     },
+    // 编辑按钮
+    editBtn(index, row) {
+      console.log(row.packageId)
+      this.$router.push('setMeal/edit/' + row.packageId)
+    },
     //搜素客户
     searchBtn() {
       console.log('搜索')
@@ -258,87 +270,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.main-content{
-  padding:0;
-  display: flex;
-  .left_tree{
-    width: 240px;
-    height: 100%;
-    border-right: 4px solid #F3F8FF;
-    position: relative;
-    .nav-title{
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 18px;
-      padding: 25px 20px 10px;
-    }
-    .el-menu{
-      border-right: 0;
-      span{
-        padding-left: 15px;
-      }
-    }
-    .navicon{
-      position: absolute;
-      right: 40px;
-      i{
-        color: #fff;
-        width: 20px;
-        height: 20px;
-        font-size: 12px;
-        background: #409EFF;
-        line-height: 20px;
-        padding: 0;
-        text-align: center;
-      }
-    }
-  }
-  .right_main{
-    padding: 0 30px;
-    width: 900px;
-    .main-head{
-      color:#5e6d82;
-      height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      span{
-        padding-left: 10px;
-        color:#99a9c0;
-      }
-      .search{
-        width: 200px;
-        padding:0 38px 0 16px;
-        background: #f7f7f7;
-        border:0;
-        outline: none;
-        border-radius: 15px;
-        line-height: 30px;
-      }
-      i{
-        cursor: pointer;
-        font-size: 20px;
-        position: relative;
-        top: 3px;
-        left: -35px;
-      }
-    }
-  }
-}
-.text_edit{
-  width: 140px;
-}
-
-.el-form{
-  .el-form-item {
-    margin-bottom: 8px;
-  }
-  .el-input{
-    width: 217px;
-  }
-}
-.main_table{
-  margin-bottom: 20px;
+@import "../../style/project.scss";
+.main-content .right_main{
+  width: 750px;
 }
 
 </style>

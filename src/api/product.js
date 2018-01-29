@@ -72,7 +72,7 @@ export function PackageDetail(packageId) {
 // 套餐列表
 export function PackageList(pageModel, data) {
   return fetch({
-    url: `apis/package/${pageModel.page}/${pageModel.rows}`,
+    url: `apis/package/page/${pageModel.page}/${pageModel.rows}`,
     method: 'post',
     data
   })
