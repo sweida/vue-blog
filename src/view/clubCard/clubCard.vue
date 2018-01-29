@@ -138,27 +138,33 @@
         </div>
         <div class="burli1">
           <el-table
+            ref="goods"
             :data="materials_arr"
             stripe
             style="width:100%"
             max-height='450'
             tooltip-effect="dark"
+            @select="selectGoods"
+            @select-all="selectAllGoods"
+            @selection-change="addtableList"
             @expand-change="getSetMealDetails"
             >
             <el-table-column type="expand">
               <template slot-scope="scope">
               <div v-loading="loading" >
-                <div class="item-details" style="width: 100%;height:100%;height: 50px;line-height: 50px;text-align: center;background: #f4f4f4;font-weight:bold">
-                  <div style="width: 20%;display: inline-block">类型</div>
-                  <div style="width: 20%;display: inline-block">名称</div>
-                  <div style="width: 20%;display: inline-block">价值</div>
-                  <div style="width: 20%;display: inline-block">数量</div>
-                </div>
-                <div class="item-details" style="width: 100%;height:100%;height: 30px;line-height: 30px;text-align: center">
-                  <div style="width: 20%;display: inline-block">类型</div>
-                  <div style="width: 20%;display: inline-block">名称</div>
-                  <div style="width: 20%;display: inline-block">价值</div>
-                  <div style="width: 20%;display: inline-block">数量</div>
+                <div  v-if="!loading">
+                  <div class="item-details" style="width: 100%;height:100%;height: 50px;line-height: 50px;text-align: center;background: #f4f4f4;font-weight:bold">
+                    <div style="width: 10%;display: inline-block">类型</div>
+                    <div style="width: 40%;display: inline-block">名称</div>
+                    <div style="width: 20%;display: inline-block">价值</div>
+                    <div style="width: 10%;display: inline-block">数量</div>
+                  </div>
+                  <div class="item-details" v-for="item in scope.row.ccSelectedProjectVos" style="width: 100%;height:100%;height: 30px;line-height: 30px;text-align: center">
+                    <div style="width: 10%;display: inline-block">{{item.coupType == 0 ? projectType[3] : projectType[item.projectType-1]}}</div>
+                    <div style="width: 40%;display: inline-block">{{item.projectName}}</div>
+                    <div style="width: 20%;display: inline-block">{{item.projectPrice}}</div>
+                    <div style="width: 10%;display: inline-block">{{item.projectNum}}</div>
+                  </div>
                 </div>
               </div>
               </template>
@@ -173,10 +179,9 @@
               label="有效期">
             </el-table-column>
             <el-table-column
-            label="选择">
-              <template slot-scope="scope" >
-                <el-button type="primary" @click="SelMaterials(scope.row)" size="small">添加</el-button>
-              </template>
+            type="selection"
+            label="选择"
+            width="80">
             </el-table-column>
           </el-table>
         </div>
@@ -186,7 +191,7 @@
             :data="materials_data"
             stripe
             style="width: 400px;margin-bottom:20px;"
-            max-height='200'
+            max-height='400'
             tooltip-effect="dark"
           >
             <el-table-column
@@ -206,12 +211,12 @@
                 <el-input-number v-model="scope.row.material_amount"  :min="1"></el-input-number>
               </template>
             </el-table-column>
-            <el-table-column
+            <!-- <el-table-column
             label="操作">
               <template slot-scope="scope" >
-                <el-button type="danger" @click="delSelect(scope.$index)" size="small"><i class="el-icon-delete"></i></el-button>
+                <el-button type="danger" size="mini" @click="delSelect(scope.$index)" ><i class="el-icon-delete"></i></el-button>
               </template>
-            </el-table-column>
+            </el-table-column> -->
           </el-table>
 
         </div>
@@ -227,7 +232,7 @@
 
 <script>
 import { addvipCard, editvipCard, getvipCard, delvipCard, actDescInfo, editactDesc } from '@/api/setting'
-import { getgivePlan } from '@/api/product'
+import { getgivePlan, givePlanDetail } from '@/api/product'
 import { giveNav, delMenu, editMenu, addMenu, ccGetMenu } from '@/api/tree'
 import page from '@/components/common/page'
 import { parseTime, clone } from '@/utils/common'
@@ -246,7 +251,9 @@ export default {
       banner: 'static/img/phone.png',
       change: true,
       menuList: '',
+      projectType: ['项目', '产品', '套餐', '优惠券'],
       materials_data: [],
+      checkGoodIds: [],
       materials_arr: [],
       pageModel: {
         page: 1,
@@ -281,6 +288,44 @@ export default {
     this.getgiveNav()
   },
   methods: {
+    // 添加列表
+    addtableList(val) {
+      // this.materials_data = val
+    },
+    selectGoods(selection, val) {
+      var index = selection.indexOf(val)
+      if (index < 0) {
+        var sIndex = this.checkGoodIds.indexOf(val.id)
+        if (sIndex > -1) {
+          this.materials_data.splice(sIndex, 1)
+          this.checkGoodIds.splice(sIndex, 1)
+        }
+      } else {
+        this.materials_data.push(val)
+        this.checkGoodIds.push(val.id)
+      }
+    },
+    selectAllGoods(val) {
+      if (val.length == 0) {
+        this.materials_arr.forEach((good) => {
+          var index = this.checkGoodIds.indexOf(good.id)
+          this.materials_data.splice(index, 1)
+          this.checkGoodIds.splice(index, 1)
+        })
+      } else {
+        val.forEach((good) => {
+          var index = this.checkGoodIds.indexOf(good.id)
+          if (index < 0) {
+            this.materials_data.push(good)
+            this.checkGoodIds.push(good.id)
+          }
+        })
+      }
+    },
+    // 删除已选
+    delSelect(index) {
+      this.materials_data.splice(index, 1)
+    },
     subText() {
       let param = {
         actDesc: this.actDesc,
@@ -459,11 +504,28 @@ export default {
         this.materials_arr.forEach(item => {
           item.createDate = parseTime(item.createDate, '{y}-{m}-{d}')
           item.effectiveDate = parseTime(item.effectiveDate, '{y}-{m}-{d}')
+          if (this.checkGoodIds) {
+            var index = this.materials_data.findIndex(val => {
+              return val.id == item.id
+            })
+            if (index > -1) {
+              setTimeout(() => {
+                this.$refs.goods.toggleRowSelection(item)
+              }, 1)
+            }
+          }
         })
       })
     },
     getSetMealDetails(row, allRows) {
-      console.log(row)
+      this.loading = true
+      givePlanDetail(row.id).then(res => {
+        if (res.data.code == 200) {
+          this.loading = false
+          row.ccSelectedProjectVos = res.data.data.ccSelectedProjectVos
+          console.log(this.materials_arr, res.data.data.ccSelectedProjectVos)
+        }
+      })
       // this.loading = true
       // setTimeout(() => {
       //   this.loading = false
