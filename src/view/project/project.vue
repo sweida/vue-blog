@@ -205,9 +205,6 @@ export default {
       this.openindex = key
       console.log('handleOpen', key, keyPath)
     },
-    handleOpen2(item) {
-      console.log('handleOpen2', item)
-    },
     handleClose(key, keyPath) {
       this.openindex = ''
       console.log('handleOpen', key, keyPath)
