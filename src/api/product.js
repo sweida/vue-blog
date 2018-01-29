@@ -111,7 +111,7 @@ export function getTagli(type) {
 // 获取配料类别
 export function getBurden(pageModel, data) {
   return fetch({
-    url: `apis/ccMaterial/${pageModel.page}/${pageModel.rows}`,
+    url: `apis/ccMaterial/page/${pageModel.page}/${pageModel.rows}`,
     method: 'post',
     data
   })
