@@ -128,6 +128,13 @@ export function editvipCard(data) {
     data
   })
 }
+// 会员卡详细信息
+export function getCardDetail(id) {
+  return fetch({
+    url: `apis/vipStructure/${id}`,
+    method: 'GET'
+  })
+}
 // 添加活动说明
 export function actDesc(data) {
   return fetch({

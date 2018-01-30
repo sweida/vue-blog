@@ -35,20 +35,20 @@
               <p @click="addpresent">添加赠送+</p>
               <div>
                 <el-tag
-                  v-for="tag in tags"
-                  :key="tag.name"
+                  v-for="(item,index) in materials_data"
+                  :key="materials_data.givePlanName"
                   closable
                   :disable-transitions="false"
                   @close="handleTagsClose(tag)"
                   >
-                  {{tag.name}}
+                  {{item.givePlanName || item.giftName}}(*{{item.giftNum}})
                 </el-tag>
               </div>
             </div>
           </div>
           <el-button type="primary" size="small" @click="vipinputBtn" v-if="change">确认新增</el-button>
           <template v-else>
-            <el-button type="primary" size="small" @click="sureChange" >保　存</el-button>
+            <el-button type="primary" size="small" @click="sureChange">保　存</el-button>
             <el-button  size="small" @click="cancel">取　消</el-button>
           </template>
           <el-table
@@ -205,10 +205,10 @@
               >
             </el-table-column>
             <el-table-column
-              prop="material_amount"
+              prop="giftNum"
               label="数量">
               <template slot-scope="scope" >
-                <el-input-number v-model="scope.row.material_amount"  :min="1"></el-input-number>
+                <el-input-number v-model="scope.row.giftNum"  :min='1'></el-input-number>
               </template>
             </el-table-column>
             <!-- <el-table-column
@@ -231,7 +231,7 @@
 </template>
 
 <script>
-import { addvipCard, editvipCard, getvipCard, delvipCard, actDescInfo, editactDesc } from '@/api/setting'
+import { addvipCard, editvipCard, getvipCard, delvipCard, actDescInfo, editactDesc, getCardDetail } from '@/api/setting'
 import { getgivePlan, givePlanDetail } from '@/api/product'
 import { giveNav, delMenu, editMenu, addMenu, ccGetMenu } from '@/api/tree'
 import page from '@/components/common/page'
@@ -271,14 +271,7 @@ export default {
       },
       vipTypeId: '',
       vipcardList: [],
-      ccVipGiftList: [],
-      tags: [
-        {name: '标签一'},
-        {name: '标签二'},
-        {name: '标签三'},
-        {name: '标签四'},
-        {name: '标签五'}
-      ]
+      ccVipGiftList: []
     }
   },
   created() {
@@ -367,6 +360,7 @@ export default {
     navtitle() {
     },
     sureBurden() {
+      this.burdening = false
     },
     getactDescList() {
       actDescInfo(1).then(res => {
@@ -379,22 +373,20 @@ export default {
       if (this.vipinput.vipTypeName == '' || this.vipinput.startingPointSum == '') {
         this.$message.error('会员卡信息不能为空')
       } else {
+        console.log(this.materials_data)
+        let GiftList = []
+        this.materials_data.forEach((item, index) => {
+          GiftList[index] = {}
+          GiftList[index].giftName = item.givePlanName || item.giftName
+          GiftList[index].giftNum = item.giftNum
+          GiftList[index].giftId = item.id || item.giftId
+        })
+
         let param = Object.assign({
           enterpriseId: '001',
           // hasGift: 1, // 是否有礼品赠送 0是 1否
           // isDelete: 0,
-          ccVipGiftList: [
-            {
-              giftMoney: 222,
-              giftName: '白白',
-              giftNum: 2
-            },
-            {
-              giftMoney: 333,
-              giftName: '小白白',
-              giftNum: 3
-            }
-          ]
+          ccVipGiftList: GiftList
         }, this.vipinput)
         addvipCard(param).then(res => {
           console.log('添加会员卡', param, this.vipCard, res)
@@ -431,10 +423,16 @@ export default {
 
     // 编辑会员卡 vipTypeId
     editvipBtn(index, row) {
-      console.log(row)
       this.change = false
-      this.vipinput = clone(this.vipcardList[index])
       this.vipTypeId = row.vipTypeId
+      getCardDetail(row.vipTypeId).then(res => {
+        console.log(res)
+        this.vipinput = res.data.data
+        this.materials_data = res.data.data.ccVipGiftList
+      })
+      // this.change = false
+      // this.vipinput = clone(this.vipcardList[index])
+      // this.vipTypeId = row.vipTypeId
     },
     // 保存修改
     sureChange() {
