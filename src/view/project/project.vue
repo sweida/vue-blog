@@ -18,12 +18,14 @@
             <template v-for="(item, index) in menuLi.childMenu" :keys="index">
               <el-menu-item :index="item.url" v-if="item.childMenu==null || item.childMenu==''" @click="changeMenu(item)">
                 <template slot="title">
-                  <span>{{item.name}}</span>
-                  <em class="navicon" v-if="item.url==openindex">
-                    <i class="el-icon-plus" @click="plusNav(item)"></i>
-                    <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
-                    <i class="el-icon-minus" @click="minusNav(item)" v-if="projectList==''"></i>
-                  </em>
+                  <div @click="changeMenu(item)">
+                    <span>{{item.name}}</span>
+                    <em class="navicon" v-if="item.url==openindex">
+                      <i class="el-icon-plus" @click="plusNav(item)"></i>
+                      <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
+                      <i class="el-icon-minus" @click="minusNav(item)" v-if="projectList==''"></i>
+                    </em>
+                  </div>
                 </template>
               </el-menu-item>
               <el-submenu :index="item.url"  v-else>

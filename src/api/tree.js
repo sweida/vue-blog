@@ -62,11 +62,18 @@ export function mealMenu() {
     method: 'GET'
   })
 }
-
 // 获取项目、产品、套餐、代金券方案的菜单
 export function ccGetMenu(data) {
   return fetch({
     url: 'apis/menu/ccGetMenu',
+    method: 'GET',
+    data
+  })
+}
+// 获取项目、产品、套餐的菜单
+export function ccCouponMenu(data) {
+  return fetch({
+    url: 'apis/menu/ccCouponMenu',
     method: 'GET',
     data
   })

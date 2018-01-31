@@ -63,32 +63,26 @@
                 width="150px">
               </el-table-column>
               <el-table-column
-                prop="post"
-                label="类型">
-              </el-table-column>
-              <el-table-column
                 prop="coupName"
                 label="名称"
-                >
-              </el-table-column>
-              <el-table-column
-                prop="coupPrice"
-                label="价格"
+                width="200px"
                 >
               </el-table-column>
               <el-table-column
                 prop="coupQuota"
-                label="代金券额度"
+                label="代金券额度">
+                <template slot-scope="scope">
+                  ￥{{scope.row.coupQuota}}
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="coupNum"
+                label="总数量"
                 >
               </el-table-column>
               <el-table-column
                 prop="coupValidfate"
                 label="有效期(天)"
-                >
-              </el-table-column>
-              <el-table-column
-                prop="coupNum"
-                label="总数量"
                 >
               </el-table-column>
               <el-table-column
@@ -117,42 +111,52 @@
 
       </div>
 
+      <!-- 弹框 -->
       <el-dialog title="新增代金券" :visible.sync="voucherDialog" width="1000px">
         <div class="form_box">
           <h4>选择</h4>
           <el-form ref="form" :model="form" label-width="120px" label-position='left'>
-            <el-form-item label="类型">
-              <el-radio-group v-model="form.type">
-                <el-radio :label="1">代金券</el-radio>
-                <el-radio :label="2">现金券</el-radio>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="是否专项">
-              <el-radio-group v-model="form.exclusive">
-                <el-radio :label="1">通用</el-radio>
-                <el-radio :label="2">专项</el-radio>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="名称" v-if="form.exclusive==2">
+            <el-form-item label="所属类目">
               <el-cascader
-                placeholder="可搜索名称"
+                placeholder="请选择类目"
                 @change="handleItemChange"
+                v-model="selectedOptions"
                 change-on-select
-                :options="options"
+                :options="menuList.childMenu"
                 :props="defaultProps"
                 :clearable="true"
-                filterable>
+                :disabled="form.coupId!=''"
+                >
               </el-cascader>
             </el-form-item>
-            <el-form-item label="" v-if="form.exclusive==2">
-              <el-select v-model="value" placeholder="请选择">
-                <el-option
-                  v-for="item in optionsDetail"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
+
+            <template v-if="menuType==18 || menuType==20" >
+              <el-form-item label="专项类目">
+                <el-cascader
+                  placeholder="请选择专项类目"
+                  @change="delhandleItemChange"
+                  v-model="delselectedOptions"
+                  change-on-select
+                  :options="delmenuList"
+                  :props="defaultProps"
+                  :disabled="form.coupId!=''"
+                  >
+                </el-cascader>
+              </el-form-item>
+              <el-form-item label="专项名称">
+                <el-select v-model="selectGoods" placeholder="选择专项名称" :disabled="form.coupId!=''"
+                  @change="aaaa">
+                  <el-option
+                    v-for="item in goodsList"
+                    :key="item.projectName"
+                    :label="(item.projectName || item.packageName) + '　　￥' + (item.projectPrice || item.packagePrice)"
+                    :value="item.projectId || item.packageId">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </template>
+            <el-form-item label="名称" v-else>
+              <el-input size="medium" v-model="form.coupName"></el-input>
             </el-form-item>
           </el-form>
         </div>
@@ -160,13 +164,13 @@
           <h4>设置</h4>
           <el-form ref="form" :model="form" label-width="120px" label-position='left'>
             <el-form-item label="额度（元）">
-              <el-input size="medium" v-model="form.coupQuota"></el-input>
+              <el-input type="number" size="medium" v-model="form.coupQuota"></el-input>
             </el-form-item>
             <el-form-item label="数量（张）">
-              <el-input size="medium" v-model="form.coupNum"></el-input>
+              <el-input type="number" size="medium" v-model="form.coupNum"></el-input>
             </el-form-item>
             <el-form-item label="有效期（天）">
-              <el-input size="medium" v-model="form.coupValidfate"></el-input>
+              <el-input type="number" size="medium" v-model="form.coupValidfate"></el-input>
             </el-form-item>
           </el-form>
         </div>
@@ -181,8 +185,8 @@
 </template>
 
 <script>
-import { getVoucher, addVoucher, editVoucher, delVoucher, VoucherDetail } from '@/api/product'
-import { vouMenu, delMenu, editMenu, addMenu } from '@/api/tree'
+import { getVoucher, addVoucher, editVoucher, delVoucher, VoucherDetail, getVouterDetail } from '@/api/product'
+import { vouMenu, delMenu, editMenu, addMenu, ccCouponMenu } from '@/api/tree'
 import { clone } from '@/utils/common'
 import page from '../../components/common/page'
 export default {
@@ -199,6 +203,7 @@ export default {
         rows: 10,
         sumCount: 0
       },
+      aa: {},
       openindex: '',      // 点击菜单显示操作按钮
       voucherParam: {},   //代金券参数
       menuList: [],
@@ -207,28 +212,38 @@ export default {
       voucherDialog: false,
       banner: 'static/img/phone.png',
       MenuParam: {},
-      form: {
-        type: 1,
-        exclusive: 1,
-        arrId: '',
-        coupId: '',
-        // coupName: '',      // 名称
-        coupNum: '',       // 数量
-        coupPrice: '500',  // 项目价格
-        coupQuota: '',
-        coupType: 0,
-        coupValidfate: '',   // 有效天
-        parentId: 18,
-        topParent: 0
-      },
-      tableData: [],
-      options: [],
+      menuType: 18,
+      delmenuList: [],
+      selectedOptions: [18],
+      delselectedOptions: [],
+      goodsList: [],
+      selectGoods: '',
+      tongGoods: '',
       defaultProps: {
         children: 'childMenu',
         value: 'id',
         label: 'name'
-      }
-
+      },
+      deldefaultProps: {
+        children: 'childMenu',
+        value: 'id',
+        label: 'name'
+      },
+      form: {
+        // type: 1,
+        // exclusive: 1,
+        // arrId: '',
+        // coupId: '',
+        // // coupName: '',      // 名称
+        // coupNum: '',       // 数量
+        // coupQuota: '',
+        // coupType: 0,
+        // coupValidfate: '',   // 有效天
+        // parentId: 18,
+        // topParent: 0
+      },
+      tableData: [],
+      options: []
     }
   },
   created() {
@@ -339,28 +354,88 @@ export default {
         }
       })
     },
-    // 新增按钮
+    // 新增按钮 弹框 清空输入框
     addBtn() {
+      this.form = {
+        arrId: '',
+        arrTypeId: '',
+        coupId: '',
+        coupNum: '',       // 数量
+        coupQuota: '',
+        coupValidfate: '',   // 有效天
+        parentId: 18
+      }
+      this.menuType = 18
+      this.selectedOptions = [18]
+      this.delselectedOptions = []
+      this.selectGoods = ''
       this.voucherDialog = true
+      this.getccCouponMenu()
     },
     //搜素客户
     searchBtn() {
       console.log('搜索')
       // this.getVoucherList()
     },
+    // 获取项目、产品、套餐菜单
+    getccCouponMenu() {
+      ccCouponMenu().then(res => {
+        if (res.data.code == 200) {
+          this.delmenuList = res.data.data
+          console.log('获取项目、产品、套餐菜单', res)
+        }
+      })
+    },
+    // 添加时获取名称
+    handleItemChange(val) {
+      this.menuType = val[0]
+      this.selectGoods = ''
+      this.form.arrId = val.join(',')
+      this.form.parentId = val[val.length - 1]
+      console.log('点击', val, val[val.length - 1])
+    },
+    // 点击项目时获取列表
+    delhandleItemChange(val) {
+      let parentId = val[0]
+      let itemId = val[val.length - 1]
+      this.form.arrTypeId = val.join(',')
+      console.log('点击', val, val[val.length - 1], this.delselectedOptions, 'coupType', this.form.arrTypeId)
+      getVouterDetail(parentId, itemId).then(res => {
+        console.log('获取项目', res)
+        this.goodsList = res.data.data
+        this.selectGoods = ''
+      })
+    },
+    aaaa() {
+      console.log(this.selectGoods)
+    },
     // 保存新增
     addvoucherBtn() {
       let param = Object.assign({
         enterpriseId: '001',
-        coupName: '代金券',
+        targetId: this.selectGoods,
         organId: 1
-        // coupType: 0
       }, this.form)
+      // if (this.menuType == 18) {
+      //   if (this.selectGoods == '') {
+      //     param.coupName = '-专项代金券'
+      //   } else {
+      //     param.coupName = this.selectGoods + '-专项代金券'
+      //   }
+      // } else if (this.menuType == 20) {
+      //   if (this.selectGoods == '') {
+      //     param.coupName = 'bbbbb'
+      //   } else {
+      //     param.coupName = this.selectGoods + '-专项现金券'
+      //   }
+      // }
+      console.log('添加项目', param)
       addVoucher(param).then(res => {
-        console.log('添加项目', res)
+        console.log('新增代金券', res)
         if (res.data.code == 200) {
           this.$message.success('新增成功!')
           this.voucherDialog = false
+          this.getVoucherList()
         } else {
           this.$message.error('新增失败!')
         }
@@ -372,7 +447,7 @@ export default {
       this.$confirm('是否删除该项目?', '提示', {
         type: 'warning'
       }).then(() => {
-        delVoucher(row.coupId).then(res => {
+        delVoucher(row.id).then(res => {
           if (res.data.code == 200) {
             console.log(res)
             this.tableData.splice(index, 1)
@@ -385,12 +460,21 @@ export default {
       }).catch(() => {
       })
     },
-    // 编辑代金券
+    // 编辑按钮
     editBtn(index, row) {
       this.voucherDialog = true
-      VoucherDetail(row.coupId).then(res => {
-        console.log('获取代金券详情', res.data)
+      VoucherDetail(row.id).then(res => {
+        console.log('获取代金券详情', res.data, this.menuType)
         this.form = res.data.data
+        let arr = res.data.data.arrId.split(',')
+        this.selectedOptions = arr.map((item) => {
+          return +item
+        })
+        this.menuType = arr[0]
+        let add = res.data.data.arrTypeId.split(',')
+        this.delselectedOptions = add.map((item) => {
+          return +item
+        })
       })
     },
     // 保存编辑代金券
@@ -398,15 +482,13 @@ export default {
       editVoucher(this.form).then(res => {
         console.log('保存修改', res)
         if (res.data.code == 200) {
+          this.getVoucherList()
           this.voucherDialog = false
           this.$message.success('修改成功!')
         } else {
           this.$message.error('修改失败!')
         }
       })
-    },
-    // 添加时获取名称
-    handleItemChange(val) {
     },
     selectRoleList () {
       this.getVoucherList()
@@ -422,6 +504,15 @@ export default {
   }
 }
 </script>
+
+<style>
+.form_box .el-input.is-disabled .el-input__inner{
+  background-color:#f9f9f9;
+}
+.form_box .el-cascader.is-disabled .el-cascader__label, .form_box .el-input.is-disabled .el-input__inner {
+  color: #606266;
+}
+</style>
 
 <style scoped lang="scss">
 @import "../../style/project.scss";

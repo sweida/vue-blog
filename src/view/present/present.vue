@@ -234,23 +234,7 @@
                 </template>
               </el-table-column>
             </el-table>
-
-            <!-- <h4>设置</h4> -->
             <el-form ref="form" v-model="form" label-width="120px" label-position='left'>
-              <!-- <el-form-item label="赠送方案名称">
-                <el-input size="medium" v-model="form.givePlanName" placeholder="填写赠送方案名称"></el-input>
-              </el-form-item>
-              <el-form-item label="所属类目">
-                <el-cascader
-                  placeholder="请选择类目名称"
-                  @change="handleItemChange"
-                  v-model="selectedOptions"
-                  change-on-select
-                  :options="menuList.childMenu"
-                  :props="defaultProps"
-                  :clearable="true">
-                </el-cascader>
-              </el-form-item> -->
               <el-form-item label="有效天数">
                 <el-input type="number" size="medium" v-model="form.effectiveDays" placeholder="填写有效天数"></el-input>
               </el-form-item>

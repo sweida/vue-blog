@@ -1,9 +1,9 @@
 import fetch from '@/utils/fetch'
 import qs from 'qs'
 // 获取代金券具体产品
-export function getVouterDetail(data) {
+export function getVouterDetail(parentId, itemId) {
   return fetch({
-    url: `apis/menu/couponNav/${data.parentId}/${data.itemId}`,
+    url: `apis/menu/couponNav/${parentId}/${itemId}`,
     method: 'GET'
   })
 }
