@@ -25,8 +25,8 @@ export function getCurtureCompany(data) {
 // 店面
 export function getShop() {
   return fetch({
-    url: 'apis/organ',
-    method: 'post'
+    url: 'apis/organ/all',
+    method: 'get'
   })
 }
 export function changeShop(data) {
@@ -85,15 +85,11 @@ export function delSttaf(userId) {
     method: 'DELETE'
   })
 }
-export function toLogin(data) {
+export function editSttaf(data) {
   return fetch({
-    url: 'apis/authentication/form',
-    method: 'post',
-    data: qs.stringify(data),
-    auth: {
-      username: 'article',
-      password: 'articleSecret'
-    }
+    url: 'apis/user',
+    method: 'PUT',
+    data
   })
 }
 // 添加会员卡

@@ -357,7 +357,7 @@ export default {
     // 新增按钮 弹框 清空输入框
     addBtn() {
       this.form = {
-        arrId: '',
+        arrId: '18',
         arrTypeId: '',
         coupId: '',
         coupNum: '',       // 数量
@@ -368,6 +368,7 @@ export default {
       this.menuType = 18
       this.selectedOptions = [18]
       this.delselectedOptions = []
+      this.goodsList = ''
       this.selectGoods = ''
       this.voucherDialog = true
       this.getccCouponMenu()
@@ -392,14 +393,14 @@ export default {
       this.selectGoods = ''
       this.form.arrId = val.join(',')
       this.form.parentId = val[val.length - 1]
-      console.log('点击', val, val[val.length - 1])
+      console.log('点击第一行', val, val[val.length - 1], 'menuType', this.menuType, 'arrId', this.form.arrId)
     },
     // 点击项目时获取列表
     delhandleItemChange(val) {
       let parentId = val[0]
       let itemId = val[val.length - 1]
       this.form.arrTypeId = val.join(',')
-      console.log('点击', val, val[val.length - 1], this.delselectedOptions, 'coupType', this.form.arrTypeId)
+      console.log('点击第二行', val, val[val.length - 1], this.delselectedOptions, 'coupType', this.form.arrTypeId)
       getVouterDetail(parentId, itemId).then(res => {
         console.log('获取项目', res)
         this.goodsList = res.data.data
@@ -416,19 +417,6 @@ export default {
         targetId: this.selectGoods,
         organId: 1
       }, this.form)
-      // if (this.menuType == 18) {
-      //   if (this.selectGoods == '') {
-      //     param.coupName = '-专项代金券'
-      //   } else {
-      //     param.coupName = this.selectGoods + '-专项代金券'
-      //   }
-      // } else if (this.menuType == 20) {
-      //   if (this.selectGoods == '') {
-      //     param.coupName = 'bbbbb'
-      //   } else {
-      //     param.coupName = this.selectGoods + '-专项现金券'
-      //   }
-      // }
       console.log('添加项目', param)
       addVoucher(param).then(res => {
         console.log('新增代金券', res)
@@ -464,17 +452,19 @@ export default {
     editBtn(index, row) {
       this.voucherDialog = true
       VoucherDetail(row.id).then(res => {
-        console.log('获取代金券详情', res.data, this.menuType)
         this.form = res.data.data
+        let coupName = res.data.data.coupName
+        this.selectGoods = coupName.substring(0, coupName.length - 5) + '　　￥' + res.data.data.coupPrice
         let arr = res.data.data.arrId.split(',')
         this.selectedOptions = arr.map((item) => {
           return +item
         })
-        this.menuType = arr[0]
+        this.menuType = parseInt(arr[0])
         let add = res.data.data.arrTypeId.split(',')
         this.delselectedOptions = add.map((item) => {
           return +item
         })
+        console.log('获取代金券详情', res.data, 'menuType', this.menuType)
       })
     },
     // 保存编辑代金券

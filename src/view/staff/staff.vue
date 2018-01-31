@@ -4,7 +4,7 @@
     <div class="main-content scroll">
       <div class="main-head">
         <div>
-          <el-input placeholder="请输入内容" v-model="inputContent" class="input-with-select" @keyup.enter.native="searchBtn" :clearable="true">
+          <el-input placeholder="请输入搜索内容" v-model="inputContent" class="input-with-select" @keyup.enter.native="searchBtn" :clearable="true">
             <el-select v-model="selectInput" slot="prepend" placeholder="请选择">
               <el-option label="姓名" value="userName"></el-option>
               <el-option label="手机号" value="mobilePhoneNum"></el-option>
@@ -107,8 +107,8 @@
   </div>
 </template>
 <script>
-import { getJob, getSttaf, delSttaf, addSttaf, editSttaf } from '../../api/login'
-import page from '../../components/common/page'
+import { getJob, getSttaf, delSttaf, addSttaf, editSttaf } from '@/api/setting'
+import page from '@/components/common/page'
 export default {
   name: 'app',
   components: {
@@ -284,7 +284,7 @@ export default {
     }
   }
 }
-.main-content .el-select .el-input {
-  width: 100px;
+.input-with-select .el-select{
+  width:100px;
 }
 </style>
