@@ -39,9 +39,9 @@
                   :key="materials_data.givePlanName"
                   closable
                   :disable-transitions="false"
-                  @close="handleTagsClose(tag)"
+                  @close="handleTagsClose(item)"
                   >
-                  {{item.givePlanName || item.giftName}}(*{{item.giftNum}})
+                  {{(item.givePlanName || item.giftName)+'(*'+item.giftNum+')'}}
                 </el-tag>
               </div>
             </div>
@@ -49,7 +49,7 @@
           <el-button type="primary" size="small" @click="vipinputBtn" v-if="change">确认新增</el-button>
           <template v-else>
             <el-button type="primary" size="small" @click="sureChange">保　存</el-button>
-            <el-button  size="small" @click="cancel">取　消</el-button>
+            <el-button  size="small" @click="cancelSave">取　消</el-button>
           </template>
           <el-table
             :data="vipcardList"
@@ -107,7 +107,7 @@
     <el-dialog :visible.sync="burdening" title="添加赠送" width="1050px" class="burbox">
       <div class="tableDialog">
         <div class="tabs">
-          <p class="nav-title" @click="navtitle">
+          <p class="nav-title">
             <span>{{menuList.name}}</span>
           </p>
           <el-menu
@@ -175,8 +175,8 @@
               >
             </el-table-column>
             <el-table-column
-              prop="effectiveDate"
-              label="有效期">
+              prop="effectiveDays"
+              label="有效天数">
             </el-table-column>
             <el-table-column
             type="selection"
@@ -195,13 +195,15 @@
             tooltip-effect="dark"
           >
             <el-table-column
-              prop="givePlanName"
               label="名称"
               >
+              <template slot-scope="scope">
+                {{scope.row.givePlanName||scope.row.giftName}}
+              </template>
             </el-table-column>
             <el-table-column
-              prop="effectiveDate"
-              label="有效期"
+              prop="effectiveDays"
+              label="有效天数"
               >
             </el-table-column>
             <el-table-column
@@ -211,14 +213,7 @@
                 <el-input-number v-model="scope.row.giftNum"  :min='1'></el-input-number>
               </template>
             </el-table-column>
-            <!-- <el-table-column
-            label="操作">
-              <template slot-scope="scope" >
-                <el-button type="danger" size="mini" @click="delSelect(scope.$index)" ><i class="el-icon-delete"></i></el-button>
-              </template>
-            </el-table-column> -->
           </el-table>
-
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -250,7 +245,7 @@ export default {
       actDesc: '',
       banner: 'static/img/phone.png',
       change: true,
-      menuList: '',
+      menuList: {},
       projectType: ['项目', '产品', '套餐', '优惠券'],
       materials_data: [],
       checkGoodIds: [],
@@ -271,7 +266,7 @@ export default {
       },
       vipTypeId: '',
       vipcardList: [],
-      ccVipGiftList: []
+      ccVipGiftVoList: []
     }
   },
   created() {
@@ -333,7 +328,7 @@ export default {
       })
     },
     handleTagsClose(tag) {
-      this.tags.splice(this.tags.indexOf(tag), 1)
+      this.materials_data.splice(this.materials_data.indexOf(tag), 1)
     },
     // 弹框
     addpresent() {
@@ -345,7 +340,6 @@ export default {
         if (res.data.code == 200) {
           this.menuList = res.data.data[0]
         }
-        console.log('获取赠送菜单', res, this.menuList)
       })
     },
     handleSelect(key, keyPath) {
@@ -356,8 +350,6 @@ export default {
     },
     handleClose(key, keyPath) {
       console.log('handleOpen', key, keyPath)
-    },
-    navtitle() {
     },
     sureBurden() {
       this.burdening = false
@@ -381,12 +373,11 @@ export default {
           GiftList[index].giftNum = item.giftNum
           GiftList[index].giftId = item.id || item.giftId
         })
-
         let param = Object.assign({
           enterpriseId: '001',
           // hasGift: 1, // 是否有礼品赠送 0是 1否
           // isDelete: 0,
-          ccVipGiftList: GiftList
+          ccVipGiftVoList: GiftList
         }, this.vipinput)
         addvipCard(param).then(res => {
           console.log('添加会员卡', param, this.vipCard, res)
@@ -428,32 +419,37 @@ export default {
       getCardDetail(row.vipTypeId).then(res => {
         console.log(res)
         this.vipinput = res.data.data
-        this.materials_data = res.data.data.ccVipGiftList
+        this.materials_data = res.data.data.ccVipGiftVoList
       })
       // this.change = false
       // this.vipinput = clone(this.vipcardList[index])
       // this.vipTypeId = row.vipTypeId
+    },
+    // 取消保存
+    cancelSave() {
+      this.change = true
+      this.vipinput = clone(this.vipCard)
+      this.burdening = false
+      this.materials_data = []
+      this.checkGoodIds = []
+      this.materials_arr = []
     },
     // 保存修改
     sureChange() {
       if (this.vipinput.vipTypeName == '' || this.vipinput.startingPointSum == '') {
         this.$message.error('会员卡信息不能为空')
       } else {
+        let GiftList = []
+        this.materials_data.forEach((item, index) => {
+          GiftList[index] = {}
+          GiftList[index].giftName = item.givePlanName || item.giftName
+          GiftList[index].giftNum = item.giftNum
+          GiftList[index].giftId = item.id || item.giftId
+        })
         let param = Object.assign({
           enterpriseId: '001',
           vipTypeId: this.vipTypeId,
-          ccVipGiftList: [
-            {
-              giftMoney: 222,
-              giftName: '白白',
-              giftNum: 2
-            },
-            {
-              giftMoney: 333,
-              giftName: '小白白',
-              giftNum: 3
-            }
-          ]
+          ccVipGiftVoList: GiftList
         }, this.vipinput)
         editvipCard(param).then(res => {
           console.log('编辑会员卡', param, this.vipCard, res)
@@ -470,13 +466,9 @@ export default {
         })
       }
     },
-    cancel() {
-      this.change = true
-      this.vipinput = clone(this.vipCard)
-    },
+    // 获取会员卡列表
     getvipList() {
       getvipCard(this.pageModel, {}).then(res => {
-        console.log('获取会员卡列表', res)
         this.vipcardList = res.data.data.rows
         this.pageModel.sumCount = res.data.data.total
       })
@@ -486,7 +478,6 @@ export default {
     },
     // 改变菜单时得到赠送方案数据
     changeMenu(child) {
-      console.log('changeMenu', child.id)
       this.MenuParam = {
         parentId: child.id
       }
@@ -495,7 +486,6 @@ export default {
     // 获取赠送列表
     getgivePlanList() {
       getgivePlan(this.pageModel, this.MenuParam).then(res => {
-        console.log('获取赠送列表', res)
         this.materials_arr = res.data.data.rows
         console.log(this.materials_arr)
         this.pageModel.sumCount = res.data.data.total
@@ -521,16 +511,10 @@ export default {
         if (res.data.code == 200) {
           this.loading = false
           row.ccSelectedProjectVos = res.data.data.ccSelectedProjectVos
-          console.log(this.materials_arr, res.data.data.ccSelectedProjectVos)
         }
       })
-      // this.loading = true
-      // setTimeout(() => {
-      //   this.loading = false
-      // }, 2000)
     }
   }
-
 }
 </script>
 

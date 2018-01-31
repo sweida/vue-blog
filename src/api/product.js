@@ -215,3 +215,11 @@ export function getDetailById(packageId) {
     method: 'GET'
   })
 }
+// 子菜单具体产品
+export function getProductById(pageModel, data) {
+  return fetch({
+    url: `apis/menu/package/${pageModel.topId}/${pageModel.page}/${pageModel.rows}`,
+    method: 'POST',
+    data
+  })
+}

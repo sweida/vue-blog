@@ -143,7 +143,7 @@
                 </div>
                 <div class="set_table">
                   <el-table
-                    :data="item.tableData"
+                    :data="item.ccPackageGroupDetailList"
                     stripe
                     style="width: 100%"
                     max-height="600"
@@ -163,7 +163,7 @@
                     <el-table-column
                       label="删除">
                       <template slot-scope="scope">
-                        <i class="el-icon-delete" @click="deleteBtn(scope.$index,item.tableData)"></i>
+                        <i class="el-icon-delete" @click="deleteBtn(scope.$index,item.ccPackageGroupDetailList)"></i>
                       </template>
                     </el-table-column>
                   </el-table>
@@ -187,7 +187,7 @@
                 </div>
                 <div class="set_table">
                   <el-table
-                    :data="item.tableData"
+                    :data="item.ccPackageGroupDetailList"
                     stripe
                     style="width: 100%"
                     max-height="600"
@@ -218,7 +218,7 @@
                     <el-table-column
                       label="删除">
                       <template slot-scope="scope">
-                        <i class="el-icon-delete" @click="deleteBtn(scope.$index,item.tableData)"></i>
+                        <i class="el-icon-delete" @click="deleteBtn(scope.$index,item.ccPackageGroupDetailList)"></i>
                       </template>
                     </el-table-column>
                   </el-table>
@@ -234,27 +234,25 @@
                 </div>
                 <div class="set_table">
                   <el-table
-                    :data="item.tableData"
+                    :data="item.ccPackageGroupDetailList"
                     stripe
                     style="width: 100%"
                     max-height="600"
                     tooltip-effect="dark"
                     >
                     <el-table-column
-                      prop="projectName"
+                      prop="coupName"
                       label="名称">
                     </el-table-column>
                     <el-table-column
                       width="100px"
+                      prop="coupQuota"
                       label="代金券金额（元）">
-                      <template slot-scope="scope">
-                        <el-input size="mini" class="count" v-model="scope.row.projectPrice"></el-input>
-                      </template>
                     </el-table-column>
                     <el-table-column
                       label="删除">
                       <template slot-scope="scope">
-                        <i class="el-icon-delete" @click="deleteBtn(scope.$index,item.tableData)"></i>
+                        <i class="el-icon-delete" @click="deleteBtn(scope.$index,item.ccPackageGroupDetailList)"></i>
                       </template>
                     </el-table-column>
                   </el-table>
@@ -264,24 +262,24 @@
             </div>
           </div>
         </div>
-        <!-- <div class="addGive">
-          <el-button type="primary" size="small" @click="presentDialog = true">
+        <div class="addGive">
+          <el-button type="primary" size="small" @click="addGiveList">
             添加赠送方案
           </el-button>
           <div class="form_box">
             <div class="li_box">
               <el-tag
-              v-for="tag in tags"
-              :key="tag.name"
+              :key="item.id"
+              v-for="(item, index) in hasAddList"
               closable
               :disable-transitions="false"
               @close="CloseBurdenTags(index)"
               >
-              {{Burden.materialName+Burden.materialNum+Burden.unit}}
+              {{(item.givePlanName || item.giftName)+'(*'+item.giftNum+')'}}
               </el-tag>
             </div>
           </div>
-        </div> -->
+        </div>
       </div>
 
       <div class="footer">
@@ -300,7 +298,7 @@
                  <span>{{productList.name}}</span>
                </template>
                <template v-for="(child, index1) in productList.childMenu" :keys="index1">
-                 <el-menu-item :index="productList.url+child.url" v-if="child.childMenu == null" @click="changeMenu(child)">
+                 <el-menu-item :index="productList.url+child.url" v-if="child.childMenu == null" @click="changeMenu(child,productList.id)">
                    <span>{{child.name}}</span>
                  </el-menu-item>
                  <el-submenu :index="productList.url+child.url" v-else>
@@ -308,7 +306,7 @@
                      <span>{{child.name}}</span>
                    </template>
                    <template v-for="(child2, index2) in child.childMenu" :keys="index1">
-                     <el-menu-item :index="productList.url+child.url+child2.url" @click="changeMenu(child2, item)">{{child2.name}}</el-menu-item>
+                     <el-menu-item :index="productList.url+child.url+child2.url" @click="changeMenu(child2, productList.id)">{{child2.name}}</el-menu-item>
                    </template>
                  </el-submenu>
                </template>
@@ -383,7 +381,7 @@
                  <span>{{projectList.name}}</span>
                </template>
                <template v-for="(child, index1) in projectList.childMenu" :keys="index1">
-                 <el-menu-item :index="projectList.url+child.url" v-if="child.childMenu == null" @click="changeMenu(child)">
+                 <el-menu-item :index="projectList.url+child.url" v-if="child.childMenu == null" @click="changeMenu(child, projectList.id)">
                    <span>{{child.name}}</span>
                  </el-menu-item>
                  <el-submenu :index="projectList.url+child.url" v-else>
@@ -391,7 +389,7 @@
                      <span>{{child.name}}</span>
                    </template>
                    <template v-for="(child2, index2) in child.childMenu" :keys="index1">
-                     <el-menu-item :index="projectList.url+child.url+child2.url" @click="changeMenu(child2, item)">{{child2.name}}</el-menu-item>
+                     <el-menu-item :index="projectList.url+child.url+child2.url" @click="changeMenu(child2, projectList.id)">{{child2.name}}</el-menu-item>
                    </template>
                  </el-submenu>
                </template>
@@ -460,7 +458,7 @@
           <div class="tabs scroll">
             <el-menu
             ><template v-for="(item, index) in menuVoucherList" :keys="index">
-              <el-menu-item :index="item.url" v-if="item.childMenu==null" @click="changeMenu(item)">
+              <el-menu-item :index="item.url" v-if="item.childMenu==null" @click="changeMenu(item, item.id)">
                 <template slot="title">
                   <span>{{item.name}}</span>
                 </template>
@@ -470,7 +468,7 @@
                   <span>{{item.name}}</span>
                 </template>
                 <template v-for="(child, index1) in item.childMenu" :keys="index1">
-                  <el-menu-item :index="item.url+child.url" v-if="child.childMenu==null" @click="changeMenu(child)">
+                  <el-menu-item :index="item.url+child.url" v-if="child.childMenu==null" @click="changeMenu(child, item.id)">
                     <span>{{child.name}}</span>
                   </el-menu-item>
                   <el-submenu :index="item.url+child.url" v-else>
@@ -478,7 +476,7 @@
                       <span>{{child.name}}</span>
                     </template>
                     <template v-for="(child2, index2) in child.childMenu" :keys="index1">
-                      <el-menu-item :index="item.url+child.url+child2.url" @click="changeMenu(child2, item)">{{child2.name}}</el-menu-item>
+                      <el-menu-item :index="item.url+child.url+child2.url" @click="changeMenu(child2, item.id)">{{child2.name}}</el-menu-item>
                     </template>
                   </el-submenu>
                 </template>
@@ -506,12 +504,12 @@
                 width="50">
               </el-table-column>
               <el-table-column
-                prop="projectName"
+                prop="coupName"
                 label="名称"
                 >
               </el-table-column>
               <el-table-column
-                prop="projectPrice"
+                prop="coupQuota"
                 label="价值">
               </el-table-column>
             </el-table>
@@ -527,12 +525,12 @@
               tooltip-effect="dark"
               >
               <el-table-column
-                prop="projectName"
+                prop="coupName"
                 label="名称"
                 >
               </el-table-column>
               <el-table-column
-                prop="projectPrice"
+                prop="coupQuota"
                 label="价值">
               </el-table-column>
             </el-table>
@@ -543,7 +541,8 @@
         </span>
       </el-dialog>
       <!-- 添加赠送方案 -->
-      <el-dialog title="添加赠送方案" :visible.sync="presentDialog" width="1000px" class="burbox">
+      <addGive ref="addGiveChild" :burdening="presentDialog" @saveGive="saveGive" @cancelGive="cancelGive"></addGive>
+      <!-- <el-dialog title="添加赠送方案" :visible.sync="presentDialog" width="1000px" class="burbox">
         <div class="tableDialog">
           <div class="tabs scroll">
             <el-menu
@@ -606,7 +605,9 @@
             </el-table>
             <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
           </div>
-          <!-- 选择产品 -->
+
+
+
           <div class="burli2">
             <el-table
               :data="multipleSelection"
@@ -630,20 +631,22 @@
         <span slot="footer" class="dialog-footer">
           <el-button type="primary" @click="comformAddproduct" size="small">确 定</el-button>
         </span>
-      </el-dialog>
+      </el-dialog> -->
   </div>
 </template>
 
 <script>
 // import { getMenuProduct, getMenuProject, getMenu, getMenuById } from '@/api/login'
-import { addPackage, editPackage, PackageDetail, getPackage } from '@/api/product'
-import { mealMenu, giveNav } from '@/api/tree'
+import { addPackage, editPackage, PackageDetail, getPackage, getProductById } from '@/api/product'
+import { mealMenu, giveNav, productMenu, projectMenu, vouMenu } from '@/api/tree'
 import { VueEditor } from 'vue2-editor'
+import addGive from '@/components/common/addGive'
 const cityOptions = ['上海', '北京', '广州', '深圳', '上海', '北京', '广州', '深圳']
 export default {
   name: 'app',
   components: {
-    VueEditor
+    VueEditor,
+    addGive
   },
   data() {
     return {
@@ -667,7 +670,7 @@ export default {
       addIndex: -1, // 添加时改变index用于记录下标向数组添加数据
       materials_arr: [],
       multipleSelection: [],
-      materials_data: [],
+      hasAddList: [], //已选赠送
       productList: {}, // 产品菜单
       projectList: {}, // 项目菜单
       menuVoucherList: {}, // 代金券菜单
@@ -685,7 +688,7 @@ export default {
         groupType: '产品',
         isNecessary: 1, // 是否必选
         groupTime: '1', // 次数
-        tableData: []
+        ccPackageGroupDetailList: []
       },
       projectParam: {
         groupName: '',
@@ -693,12 +696,12 @@ export default {
         isNecessary: 1, // 是否必选
         groupTime: '1', // 次数
         maxCount: '1', // 最多输入次数
-        tableData: []
+        ccPackageGroupDetailList: []
       },
       voucherParam: {
         groupType: '代金券',
         groupName: '',
-        tableData: []
+        ccPackageGroupDetailList: []
       },
       addList: [], //添加的组合
       form: {
@@ -721,25 +724,14 @@ export default {
         purchaseMethod: '0',
         purchaseAuthority: '0'
       },
-      tableData: [{
+      ccPackageGroupDetailList: [{
         date: '2016-05-02',
         name: '王狮传奇南山总店',
         phone: '13798661922',
         address: '上海市普陀区金沙江路 1518 弄',
         value2: ''
       }],
-      tags: [
-        {name: '标签一'},
-        {name: '标签二'},
-        {name: '标签三'},
-        {name: '标签四'},
-        {name: '标签五'},
-        {name: '标签一'},
-        {name: '标签二'},
-        {name: '标签三'},
-        {name: '标签四'},
-        {name: '标签五'}
-      ]
+      tags: ['标签一', '标签二', '标签三']
     }
   },
   created() {
@@ -827,42 +819,46 @@ export default {
         this.addList.push(this.voucherParam)
       }
     },
-    // // 改变菜单时得到项目数据
-    // changeMenu(child, parent, item) {
-    //   this.pageModel.topId = 2
-    //   let param = {
-    //     'parentId': child.id
-    //   }
-    //   getMenuById(this.pageModel, param).then(res => {
-    //     this.materials_arr = res.data.data.rows
-    //   })
-    // },
-    // // 添加产品
-    // addProduct(index) {
-    //   this.addIndex = index
-    //   getMenuProduct().then(res => {
-    //     this.productList = res.data.data[0]
-    //   })
-    //   this.addProductDialog = true
-    // },
-    // // 添加项目
-    // addProject(index) {
-    //   this.addIndex = index
-    //   getMenuProject().then(res => {
-    //     this.projectList = res.data.data[0]
-    //   })
-    //   this.addProjectDialog = true
-    // },
-    // // 添加代金券
-    // addVoucher(index) {
-    //   this.addIndex = index
-    //   getMenu().then(res => {
-    //     if (res.data.code == 200) {
-    //       this.menuVoucherList = res.data.data
-    //       this.addVoucherDialog = true
-    //     }
-    //   })
-    // },
+    // 改变菜单时得到数据
+    changeMenu(child, parentId) {
+      console.log(child, parentId, 333)
+      this.pageModel.topId = parentId
+      let param = {
+        'parentId': child.id
+      }
+      getProductById(this.pageModel, param).then(res => {
+        this.materials_arr = res.data.data.rows
+        console.log(res.data.data.rows, 21)
+      })
+    },
+    // 添加产品
+    addProduct(index) {
+      this.addIndex = index
+      productMenu().then(res => {
+        console.log(res,232)
+        this.productList = res.data.data[0]
+      })
+      this.addProductDialog = true
+    },
+    // 添加项目
+    addProject(index) {
+      this.addIndex = index
+      projectMenu().then(res => {
+        this.projectList = res.data.data[0]
+      })
+      this.addProjectDialog = true
+    },
+    // 添加代金券
+    addVoucher(index) {
+      this.addIndex = index
+      vouMenu().then(res => {
+        if (res.data.code == 200) {
+          console.log(res,11)
+          this.menuVoucherList = res.data.data
+          this.addVoucherDialog = true
+        }
+      })
+    },
     // 获取赠送菜单
     getgiveNav() {
       giveNav().then(res => {
@@ -876,10 +872,12 @@ export default {
     delGroup(index) {
       this.addList.splice(index, 1)
     },
-    CloseBurdenTags() {},
+    CloseBurdenTags(index) {
+      this.hasAddList.splice(index, 1)
+    },
     // 确认添加产品
     comformAddproduct() {
-      this.addList[this.addIndex].tableData = this.addList[this.addIndex].tableData.concat(this.multipleSelection)
+      this.addList[this.addIndex].ccPackageGroupDetailList = this.addList[this.addIndex].ccPackageGroupDetailList.concat(this.multipleSelection)
     },
     // 确认保存添加套餐
     // saveAddMeal() {
@@ -891,50 +889,52 @@ export default {
     saveBtn() {
       let param = Object.assign({
         enterpriseId: '001',
+        ccPackageGroupVoList: this.addList,
         // ccProjectPushList: [],                // 推送
         // isGive: 0,
-        ccPackageGroupVoList: [
-          // {
-          //   ccPackageGroupDetailList: [
-          //     {
-          //       enterpriseId: string,
-          //       groupId: string,
-          //       id: 0,
-          //       isMandatory: string,
-          //       price: 0,
-          //       targetId: 0
-          //     }
-          //   ],
-          //   enterpriseId: '001',
-          //   groupId: string,
-          //   groupName: string,
-          //   groupTime: string,
-          //   groupType: string,
-          //   isMandatory: string,
-          //   maxOptionalNum: 0,
-          //   packageId: string
-          // }
-        ],
-        ccPackageGiveList: [
-          {
-            enterpriseId: '001',
-            giveId: 1,
-            giveName: 'aaa',
-            giveNum: '10',
-            giveType: '1',
-            packageId: 0,
-            parentId: 17
-          },
-          {
-            enterpriseId: '001',
-            giveId: 1,
-            giveName: 'bbb',
-            giveNum: '10',
-            giveType: '1',
-            packageId: 0,
-            parentId: 17
-          }
-        ]
+        // ccPackageGroupVoList: [
+        //   {
+        //     ccPackageGroupDetailList: [
+        //       {
+        //         enterpriseId: string,
+        //         groupId: string,
+        //         id: 0,
+        //         isMandatory: string,
+        //         price: 0,
+        //         targetId: 0
+        //       }
+        //     ],
+        //     enterpriseId: '001',
+        //     groupId: string,
+        //     groupName: string,
+        //     groupTime: string,
+        //     groupType: string,
+        //     isMandatory: string,
+        //     maxOptionalNum: 0,
+        //     packageId: string
+        //   }
+        // ],
+        ccPackageGiveList: this.hasAddList
+        // ccPackageGiveList: [
+        //   {
+        //     enterpriseId: '001',
+        //     giveId: 1,
+        //     giveName: 'aaa',
+        //     giveNum: '10',
+        //     giveType: '1',
+        //     packageId: 0,
+        //     parentId: 17
+        //   },
+        //   {
+        //     enterpriseId: '001',
+        //     giveId: 1,
+        //     giveName: 'bbb',
+        //     giveNum: '10',
+        //     giveType: '1',
+        //     packageId: 0,
+        //     parentId: 17
+        //   }
+        // ]
       }, this.form)
       if (this.form.packageName == '' || this.form.packagePrice == '' || this.form.arrId == '') {
         this.$message.error('套餐名称、类目和价格不能为空')
@@ -962,6 +962,22 @@ export default {
         }
       })
     },
+    // 添加赠送方案按钮
+    addGiveList() {
+      this.$refs.addGiveChild.materials_data = []
+      this.$refs.addGiveChild.materials_arr = []
+      this.$refs.addGiveChild.checkGoodIds = []
+      this.presentDialog = true
+    },
+    // 监听保存
+    saveGive(val) {
+      this.hasAddList = val
+      this.presentDialog = false
+    },
+    // 监听取消保存
+    cancelGive() {
+      this.presentDialog = false
+    }
   }
 }
 </script>
