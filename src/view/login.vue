@@ -6,11 +6,8 @@
         <div>
           <label for="name">账号</label><input v-model="param.mobile_phone_num" type="text" id="name" placeholder="请输入账号" auto-complete="off">
         </div>
-        <div v-if="show">
-          <label for="password">密码</label><input v-model="param.staff_pass" type="password" id="password" placeholder="请输入密码" auto-complete="off"><i class="seepassword" @click="show=!show"></i>
-        </div>
-        <div v-else>
-          <label for="password">密码</label><input v-model="param.staff_pass" type="text" id="password" placeholder="请输入密码" auto-complete="off"><i class="el-icon-view" @click="show=!show"></i>
+        <div>
+          <label for="password">密码</label><input v-model="param.staff_pass" :type="show ? 'password' : 'text'" id="password" placeholder="请输入密码" auto-complete="off"><i :class="show ?'seepassword' : 'el-icon-view'" @click="show=!show"></i>
         </div>
       </div>
       <el-checkbox v-model="checked" checked class="remember" >记住密码</el-checkbox>

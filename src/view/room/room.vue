@@ -1,69 +1,68 @@
 <template>
   <div >
-      <div class="header_title">房间</div>
-      <div class="main-content scroll">
-        <div class="main-head">
-          <div>
-            <label for="">会所名称</label>
-            <span>{{organName}}</span>
-          </div>
-          <div>
-            <label for="">房间名</label>
-            <el-input v-model="roomName" placeholder="请输入房间名" size="medium"></el-input>
-          </div>
-          <div>
-            <label for="">床位数</label>
-            <el-select v-model="bedsAmount" size="medium">
-              <el-option
-                v-for="item in 10"
-                :key="item.value"
-                :label="item"
-                :value="item">
-              </el-option>
-            </el-select>
-          </div>
-          <el-button type="primary" size="medium" @click="addBtn">新　增</el-button>
+    <div class="header_title">房间</div>
+    <div class="main-content scroll">
+      <div class="main-head">
+        <div>
+          <label for="">会所名称</label>
+          <span>{{organName}}</span>
         </div>
-        <div class="room_table">
-          <el-table
-            :data="tableData"
-            stripe
-            style="width: 100%"
-            max-height="600"
-            tooltip-effect="dark"
-            v-loading="loading"
-            >
-            <el-table-column
-              label="会所">
-              <template slot-scope="scope">
-                <span>{{organName}}</span>
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="roomName"
-              label="房名">
-            </el-table-column>
-            <el-table-column
-              prop="bedsAmount"
-              label="床位数"
-              >
-            </el-table-column>
-            <el-table-column
-              label="操作">
-              <template slot-scope="scope">
-                <i class="el-icon-delete" @click="deleteBtn(scope.$index,scope.row)"></i>
-              </template>
-            </el-table-column>
-          </el-table>
-          <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
+        <div>
+          <label for="">房间名</label>
+          <el-input v-model="roomName" placeholder="请输入房间名" size="medium"></el-input>
         </div>
+        <div>
+          <label for="">床位数</label>
+          <el-select v-model="bedsAmount" size="medium">
+            <el-option
+              v-for="item in 10"
+              :key="item.value"
+              :label="item"
+              :value="item">
+            </el-option>
+          </el-select>
+        </div>
+        <el-button type="primary" size="medium" @click="addBtn">新　增</el-button>
       </div>
+      <div class="room_table">
+        <el-table
+          :data="tableData"
+          stripe
+          style="width: 100%"
+          max-height="600"
+          tooltip-effect="dark"
+          v-loading="loading"
+          >
+          <el-table-column
+            label="会所">
+            <template slot-scope="scope">
+              <span>{{organName}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="roomName"
+            label="房名">
+          </el-table-column>
+          <el-table-column
+            prop="bedsAmount"
+            label="床位数"
+            >
+          </el-table-column>
+          <el-table-column
+            label="操作">
+            <template slot-scope="scope">
+              <i class="el-icon-delete" @click="deleteBtn(scope.$index,scope.row)"></i>
+            </template>
+          </el-table-column>
+        </el-table>
+        <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import { getRoom, addRoom, delRoom } from '@/api/setting'
-import tableCommon from '@/utils/tableCommon'
 import page from '@/components/common/page'
 export default {
   name: 'app',
@@ -83,9 +82,6 @@ export default {
       },
       tableData: []
     }
-  },
-  computed: {
-
   },
   methods: {
     addBtn() {
@@ -170,5 +166,9 @@ export default {
   .el-select{
     width: 100px;
   }
+  .el-table{
+    margin-bottom: 25px;
+  }
 }
+
 </style>

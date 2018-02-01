@@ -45,7 +45,7 @@
             label="修改"
             >
             <template slot-scope="scope">
-              <i class="el-icon-edit" @click="edit(scope.row)"></i>
+              <i class="el-icon-edit" @click="editBtn(scope.row)"></i>
             </template>
           </el-table-column>
           <el-table-column
@@ -55,7 +55,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <page :pageModel="pageModel" @selectList="selectRoleList"></page>
+        <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
       </div>
     </div>
 
@@ -80,16 +80,17 @@
             </el-select>
           </el-form-item>
           <el-form-item label="会所">
-            <el-input  size="mini" placeholder="王狮传奇南山总店" :readonly="true"></el-input>
-            <!-- <el-select v-model="organId" placeholder="请选择会所" size="mini">
+            <!-- <el-input  size="mini" placeholder="王狮传奇南山总店" :readonly="true"></el-input> -->
+            <el-select v-model="organId" placeholder="请选择会所" size="mini">
               <el-option label="王狮传奇南山总店" value="1"></el-option>
-            </el-select> -->
+            </el-select>
           </el-form-item>
-          <el-form-item label="直接添加" v-if="addShow">
+          <!-- <el-form-item label="直接添加" v-if="addShow">
             <el-radio-group v-model="newstaff.direct_add">
               <el-radio :label="1">是</el-radio>
+              <el-radio :label="'0'">否</el-radio>
             </el-radio-group>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="登录移动端">
             <el-radio-group v-model="newstaff.loginStatus">
               <el-radio :label="'0'">允许</el-radio>
@@ -100,8 +101,8 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false" size="small">取 消</el-button>
-        <el-button type="primary" @click="confirmAdd" v-if="addShow" size="small">确 定</el-button>
-        <el-button type="primary" @click="confirmEdit" v-else size="small">确 定</el-button>
+        <el-button type="primary" @click="confirmAdd" size="small" v-if="!newstaff.userId">确 定</el-button>
+        <el-button type="primary" @click="confirmEdit" size="small" v-else>保存修改</el-button>
       </span>
     </el-dialog>
   </div>
@@ -120,8 +121,9 @@ export default {
       inputContent: '',
       selectInput: 'userName',
       search: '',
+      organId: '1',
       dialogVisible: false,
-      img: 'static/img/phone.png',
+      img: 'static/img/staff.jpg',
       pageModel: {
         page: 1,
         rows: 10,
@@ -129,8 +131,6 @@ export default {
       },
       jobList: [], // 员工职位
       tableData: [],
-      organId: '',
-      addShow: true, //添加时直接添加show
       newstaff: {
         ccRole: {
           id: ''
@@ -158,49 +158,26 @@ export default {
     selectRoleList () {
       this.getSttafList()
     },
+    // 获取职位
+    getJoblist() {
+      getJob().then(res => {
+        // console.log('getJob', res)
+        this.jobList = res.data.data
+      })
+    },
     added() {
-      this.addShow = true
+      this.getJoblist()
       this.dialogVisible = true
       this.newstaff = {
         ccRole: {
           id: ''
         },
+        userId: '',
         userName: '',
         mobilePhoneNum: '',
         direct_add: 1,
         loginStatus: '0'
       }
-    },
-    // 员工编辑与确认
-    edit(row) {
-      this.addShow = false
-      this.dialogVisible = true
-      this.newstaff = row
-    },
-    confirmEdit() {
-      editSttaf(this.newstaff).then(res => {
-        if (res.data.code == 200) {
-          this.getSttafList()
-          this.$message.success(res.data.msg)
-          this.dialogVisible = false
-        } else {
-          this.$message.error(res.data.msg)
-        }
-      })
-    },
-    // 删除员工
-    deleteBtn(index, row) {
-      this.$confirm('是否删除该员工?', '提示', {
-        type: 'warning'
-      }).then(() => {
-        delSttaf(row.userId).then(res => {
-          if (res.status == 200) {
-            this.getSttafList()
-            this.$message.success('删除成功!')
-          }
-        })
-      }).catch(() => {
-      })
     },
     // 新增员工
     confirmAdd() {
@@ -220,6 +197,38 @@ export default {
         }
       })
     },
+    // 删除员工
+    deleteBtn(index, row) {
+      this.$confirm('是否删除该员工?', '提示', {
+        type: 'warning'
+      }).then(() => {
+        delSttaf(row.userId).then(res => {
+          if (res.status == 200) {
+            this.getSttafList()
+            this.$message.success('删除成功!')
+          }
+        })
+      }).catch(() => {
+      })
+    },
+    // 编辑按钮
+    editBtn(row) {
+      this.dialogVisible = true
+      this.newstaff = row
+      this.getJoblist()
+    },
+    // 保存编辑
+    confirmEdit() {
+      editSttaf(this.newstaff).then(res => {
+        if (res.data.code == 200) {
+          this.getSttafList()
+          this.$message.success(res.data.msg)
+          this.dialogVisible = false
+        } else {
+          this.$message.error(res.data.msg)
+        }
+      })
+    },
     // 搜素客户
     searchBtn() {
       this.getSttafList()
@@ -230,6 +239,7 @@ export default {
       let param = {}
       param[this.selectInput] = this.inputContent
       getSttaf(this.pageModel, param).then(res => {
+        // console.log('获取员工列表', res)
         this.loading = false
         this.pageModel.sumCount = res.data.data.total
         this.tableData = res.data.data.rows
@@ -237,9 +247,6 @@ export default {
     }
   },
   created() {
-    getJob().then(res => {
-      this.jobList = res.data.data
-    })
     this.getSttafList()
   }
 }
@@ -282,6 +289,9 @@ export default {
       padding:5px 0;
       font-size: 20px;
     }
+  }
+  .el-table{
+    margin-bottom: 25px;
   }
 }
 .input-with-select .el-select{

@@ -275,7 +275,7 @@
               :disable-transitions="false"
               @close="CloseBurdenTags(index)"
               >
-              {{(item.givePlanName || item.giftName)+'(*'+item.giftNum+')'}}
+              {{(item.givePlanName || item.giftName)+'（*'+item.giftNum+'）'}}
               </el-tag>
             </div>
           </div>
@@ -283,6 +283,7 @@
       </div>
 
       <div class="footer">
+        <el-button size="medium" onclick="history.back()">取　消</el-button>
         <el-button type="primary" size="medium" @click="editBtn" v-if="form.packageId">保存修改</el-button>
         <el-button type="primary" size="medium" @click="saveBtn" v-else>保　存</el-button>
       </div>
@@ -707,7 +708,7 @@ export default {
       form: {
         packageName: '', // 套餐名称
         packagePrice: '', // 套餐价格
-        effectiveDays: 2000, // 有效天数
+        effectiveDays: 3560, // 有效天数
         parentId: '',     // 父级ID
         detail: '',
         pictureUrl: '',
@@ -1083,6 +1084,7 @@ export default {
 }
 .li_box{
   width: 800px;
+  min-height: 52px;
   border:1px solid #C0CCDA;
   .el-tag{
     margin: 10px 0px 10px 20px;

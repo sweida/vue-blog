@@ -153,17 +153,17 @@
               <template slot-scope="scope">
               <div v-loading="loading" >
                 <div  v-if="!loading">
-                  <div class="item-details" style="width: 100%;height:100%;height: 50px;line-height: 50px;text-align: center;background: #f4f4f4;font-weight:bold">
-                    <div style="width: 10%;display: inline-block">类型</div>
-                    <div style="width: 40%;display: inline-block">名称</div>
-                    <div style="width: 20%;display: inline-block">价值</div>
-                    <div style="width: 10%;display: inline-block">数量</div>
+                  <div class="item-detail">
+                    <li>类型</li>
+                    <li>名称</li>
+                    <li>价值</li>
+                    <li>数量</li>
                   </div>
-                  <div class="item-details" v-for="item in scope.row.ccSelectedProjectVos" style="width: 100%;height:100%;height: 30px;line-height: 30px;text-align: center">
-                    <div style="width: 10%;display: inline-block">{{item.coupType == 0 ? projectType[3] : projectType[item.projectType-1]}}</div>
-                    <div style="width: 40%;display: inline-block">{{item.projectName}}</div>
-                    <div style="width: 20%;display: inline-block">{{item.projectPrice}}</div>
-                    <div style="width: 10%;display: inline-block">{{item.projectNum}}</div>
+                  <div class="item-detail" v-for="item in scope.row.ccSelectedProjectVos">
+                    <li>{{item.coupType == 0 ? projectType[3] : projectType[item.projectType-1]}}</li>
+                    <li>{{item.projectName}}</li>
+                    <li>{{item.projectPrice}}</li>
+                    <li>{{item.projectNum}}</li>
                   </div>
                 </div>
               </div>
@@ -604,5 +604,16 @@ export default {
 .el-table{
   margin-bottom: 25px;
 }
-
+.item-detail{
+  width: 100%;
+  line-height: 32px;
+  text-align: center;
+  display: flex;
+  justify-content: space-around;
+}
+.item-detail:first-child{
+  line-height: 36px;
+  background: #f4f4f4;
+  font-weight:bold;
+}
 </style>

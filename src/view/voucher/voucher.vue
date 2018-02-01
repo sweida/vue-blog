@@ -144,13 +144,12 @@
                 </el-cascader>
               </el-form-item>
               <el-form-item label="专项名称">
-                <el-select v-model="selectGoods" placeholder="选择专项名称" :disabled="form.coupId!=''"
-                  @change="aaaa">
+                <el-select v-model="selectGoods" placeholder="选择专项名称" :disabled="form.coupId!=''">
                   <el-option
                     v-for="item in goodsList"
                     :key="item.projectName"
                     :label="(item.projectName || item.packageName) + '　　￥' + (item.projectPrice || item.packagePrice)"
-                    :value="item.projectId || item.packageId">
+                    :value="item.id || item.id">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -248,6 +247,7 @@ export default {
   },
   created() {
     this.getvouMenu()
+    this.getccCouponMenu()
     // this.getVoucherList()
     // this.addOptionMenu()
   },
@@ -371,7 +371,6 @@ export default {
       this.goodsList = ''
       this.selectGoods = ''
       this.voucherDialog = true
-      this.getccCouponMenu()
     },
     //搜素客户
     searchBtn() {
@@ -407,9 +406,6 @@ export default {
         this.selectGoods = ''
       })
     },
-    aaaa() {
-      console.log(this.selectGoods)
-    },
     // 保存新增
     addvoucherBtn() {
       let param = Object.assign({
@@ -417,7 +413,7 @@ export default {
         targetId: this.selectGoods,
         organId: 1
       }, this.form)
-      console.log('添加项目', param)
+      // console.log('添加项目', param)
       addVoucher(param).then(res => {
         console.log('新增代金券', res)
         if (res.data.code == 200) {
@@ -464,7 +460,7 @@ export default {
         this.delselectedOptions = add.map((item) => {
           return +item
         })
-        console.log('获取代金券详情', res.data, 'menuType', this.menuType)
+        console.log('获取代金券详情', res.data, 'menuType', this.menuType, 'del', this.delselectedOptions)
       })
     },
     // 保存编辑代金券
@@ -523,7 +519,7 @@ export default {
     .el-radio{
       color:#1F2D3D;
     }
-    .el-cascader {
+    .el-cascader, .el-select {
       width: 230px;
     }
   }

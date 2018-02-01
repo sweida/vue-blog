@@ -58,13 +58,14 @@ export function getRoom(pageModel, data) {
     data
   })
 }
-// 员工
+// 获取角色
 export function getJob() {
   return fetch({
     url: 'apis/role/all',
     method: 'GET'
   })
 }
+// 员工列表
 export function getSttaf(pageModel, data) {
   return fetch({
     url: `apis/user/page/${pageModel.page}/${pageModel.rows}`,
@@ -72,6 +73,7 @@ export function getSttaf(pageModel, data) {
     data
   })
 }
+// 新增员工
 export function addSttaf(data) {
   return fetch({
     url: 'apis/user',
@@ -79,10 +81,18 @@ export function addSttaf(data) {
     data
   })
 }
+// 删除员工
 export function delSttaf(userId) {
   return fetch({
     url: `apis/user/${userId}`,
     method: 'DELETE'
+  })
+}
+// 查询员工
+export function sttafDetail(userId) {
+  return fetch({
+    url: `apis/user/${userId}`,
+    method: 'get'
   })
 }
 export function editSttaf(data) {

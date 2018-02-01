@@ -258,7 +258,7 @@
             <p class="nav-title" @click="allBurden" :class="{active:activeP}">
               <span>所有配料</span>
             </p>
-            <p class="nav-title" @click="navtitle">
+            <p class="nav-title">
               <span>载入历史配方</span>
             </p>
             <el-menu class="el-menu-vertical-demo">
@@ -560,8 +560,10 @@ export default {
           }
         ]
       }, this.form)
-      if (this.form.projectName == '' || this.form.projectPrice == '' || this.form.arrId == '') {
+      if (this.form.projectName == '' || this.form.projectPrice == '') {
         this.$message.error('项目名称、类目和价格不能为空')
+      } else if (this.form.arrId.length < 2) {
+        this.$message.error('请选择一个分类')
       } else {
         addproject(param).then(res => {
           console.log('添加项目', res)
@@ -576,17 +578,23 @@ export default {
     },
     // 保存修改
     editBtn() {
-      this.form.fitSkin = this.checkSkin.join(',')
-      this.form.effect = this.checkEffect.join(',')
-      editproject(this.form).then(res => {
-        console.log('保存修改', res)
-        if (res.data.code == 200) {
-          this.$router.push('/project')
-          this.$message.success('修改成功!')
-        } else {
-          this.$message.error('新增失败!')
-        }
-      })
+      if (this.form.projectName == '' || this.form.projectPrice == '') {
+        this.$message.error('项目名称、类目和价格不能为空')
+      } else if (this.form.arrId.length < 2) {
+        this.$message.error('请选择一个分类')
+      } else {
+        this.form.fitSkin = this.checkSkin.join(',')
+        this.form.effect = this.checkEffect.join(',')
+        editproject(this.form).then(res => {
+          console.log('保存修改', res)
+          if (res.data.code == 200) {
+            this.$router.push('/project')
+            this.$message.success('修改成功!')
+          } else {
+            this.$message.error('新增失败!')
+          }
+        })
+      }
     },
     // 获取肤质
     getTagskin() {
@@ -746,12 +754,6 @@ export default {
     // 删除配料tag
     CloseBurdenTags(index) {
       this.form.ccProjectMaterialList.splice(index, 1)
-    },
-    sureBurden() {
-
-    },
-
-    navtitle() {
     },
     presentBtn() {
       this.presentDialog = true
