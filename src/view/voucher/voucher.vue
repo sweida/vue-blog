@@ -105,7 +105,7 @@
                 </template>
               </el-table-column>
             </el-table>
-            <page :pageModel="pageModel" @selectList="selectRoleList"></page>
+            <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
           </div>
         </div>
 

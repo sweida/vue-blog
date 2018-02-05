@@ -101,7 +101,7 @@ export default {
   data() {
     return {
       setting: {
-        bookingStarttime: '08:30',
+        bookingStarttime: '08:00',
         bookingEndtime: '10:30',
         roomDefaultKeepTime: '30', //房间默认保留时间
         cusPreSwitch: '1', //客户预约开关
@@ -127,16 +127,22 @@ export default {
     // 得到设置数据
     getSetting('001').then(res => {
       this.setting = res.data.data
-      console.log(this.setting)
+      let timeli = res.data.data
+      this.setting.bookingStarttime = res.data.data.bookingStarttime.substring(0, 5)
+      this.setting.bookingEndtime = res.data.data.bookingEndtime.substring(0, 5)
+      // console.log(this.setting)
     })
   },
   methods: {
     saveBtn() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
+          this.setting.bookingStarttime = this.setting.bookingStarttime + ':00'
+          this.setting.bookingEndtime = this.setting.bookingEndtime + ':00'
           editSetting(this.setting).then(res => {
             if (res.data.code == 200) {
               this.$message.success(res.data.msg)
+              this.getSetting()
             } else {
               this.$message.error(res.data.msg)
             }

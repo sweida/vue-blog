@@ -23,6 +23,11 @@
   .el-table--enable-row-hover .el-table__body .current-row:hover>td{
     background-color: #f1f1f1;
   }
+  .cell{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 .el-table--fit{
   border-left:1px solid #ebeef5;

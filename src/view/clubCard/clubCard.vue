@@ -60,11 +60,13 @@
             >
             <el-table-column
               prop="vipTypeName"
-              label="会员卡级别">
+              label="会员卡级别"
+              sortable>
             </el-table-column>
             <el-table-column
               prop="startingPointSum"
-              label="起点金额">
+              label="起点金额"
+              sortable>
             </el-table-column>
             <el-table-column
               prop="discountProject"
@@ -150,23 +152,23 @@
             @expand-change="getSetMealDetails"
             >
             <el-table-column type="expand">
-              <template slot-scope="scope">
-              <div v-loading="loading" >
-                <div  v-if="!loading">
-                  <div class="item-detail">
-                    <li>类型</li>
-                    <li>名称</li>
-                    <li>价值</li>
-                    <li>数量</li>
+              <template slot-scope="scope" v-loading="loading">
+
+                  <div  v-if="!loading">
+                    <div class="item-detail">
+                      <li>类型</li>
+                      <li>名称</li>
+                      <li>价值</li>
+                      <li>数量</li>
+                    </div>
+                    <div class="item-detail" v-for="item in scope.row.ccSelectedProjectVos">
+                      <li>{{item.coupType == 0 ? projectType[3] : projectType[item.projectType-1]}}</li>
+                      <li>{{item.projectName}}</li>
+                      <li>{{item.projectPrice}}</li>
+                      <li>{{item.projectNum}}</li>
+                    </div>
                   </div>
-                  <div class="item-detail" v-for="item in scope.row.ccSelectedProjectVos">
-                    <li>{{item.coupType == 0 ? projectType[3] : projectType[item.projectType-1]}}</li>
-                    <li>{{item.projectName}}</li>
-                    <li>{{item.projectPrice}}</li>
-                    <li>{{item.projectNum}}</li>
-                  </div>
-                </div>
-              </div>
+
               </template>
             </el-table-column>
             <el-table-column
@@ -189,11 +191,29 @@
         <div class="burli2">
           <el-table
             :data="materials_data"
-            stripe
             style="width: 400px;margin-bottom:20px;"
             max-height='400'
             tooltip-effect="dark"
+            @expand-change="getSetMealDetails"
           >
+            <el-table-column type="expand">
+              <template slot-scope="scope" v-loading="loading">
+                <div  v-if="!loading">
+                  <div class="item-detail">
+                    <li>类型</li>
+                    <li>名称</li>
+                    <li>价值</li>
+                    <li>数量</li>
+                  </div>
+                  <div class="item-detail" v-for="item in scope.row.ccSelectedProjectVos">
+                    <li>{{item.coupType == 0 ? projectType[3] : projectType[item.projectType-1]}}</li>
+                    <li>{{item.projectName}}</li>
+                    <li>{{item.projectPrice}}</li>
+                    <li>{{item.projectNum}}</li>
+                  </div>
+                </div>
+              </template>
+            </el-table-column>
             <el-table-column
               label="名称"
               >
@@ -218,7 +238,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="burdening = false" size="small">取 消</el-button>
-        <el-button type="primary" @click="sureBurden" size="small">保存配料</el-button>
+        <el-button type="primary" @click="sureBurden" size="small">保 存</el-button>
       </span>
     </el-dialog>
 
@@ -352,6 +372,7 @@ export default {
       console.log('handleOpen', key, keyPath)
     },
     sureBurden() {
+      console.log(this.materials_data)
       this.burdening = false
     },
     getactDescList() {
@@ -383,6 +404,7 @@ export default {
           console.log('添加会员卡', param, this.vipCard, res)
           if (res.data.code == 200) {
             this.vipcardList.unshift(param)
+            this.materials_data = []
             this.getvipList()
             this.$message.success('新增成功!')
           } else {
@@ -417,9 +439,11 @@ export default {
       this.change = false
       this.vipTypeId = row.vipTypeId
       getCardDetail(row.vipTypeId).then(res => {
-        console.log(res)
+        console.log(res, res.data.data.ccVipGiftVoList)
         this.vipinput = res.data.data
-        this.materials_data = res.data.data.ccVipGiftVoList
+        if (res.data.data.ccVipGiftVoList.length != 0) {
+          this.materials_data = res.data.data.ccVipGiftVoList
+        }
       })
       // this.change = false
       // this.vipinput = clone(this.vipcardList[index])
@@ -452,11 +476,12 @@ export default {
           ccVipGiftVoList: GiftList
         }, this.vipinput)
         editvipCard(param).then(res => {
-          console.log('编辑会员卡', param, this.vipCard, res)
+          console.log('编辑会员卡', param, this.vipCard, res, '赠送', GiftList, param.ccVipGiftVoList )
           if (res.data.code == 200) {
             this.vipcardList.unshift(param)
             this.getvipList()
             this.$message.success('修改成功!')
+            this.materials_data = []
             this.change = true
             this.vipTypeId = ''
           } else {
@@ -489,20 +514,24 @@ export default {
         this.materials_arr = res.data.data.rows
         console.log(this.materials_arr)
         this.pageModel.sumCount = res.data.data.total
-        this.materials_arr.forEach(item => {
-          item.createDate = parseTime(item.createDate, '{y}-{m}-{d}')
-          item.effectiveDate = parseTime(item.effectiveDate, '{y}-{m}-{d}')
-          if (this.checkGoodIds) {
-            var index = this.materials_data.findIndex(val => {
-              return val.id == item.id
-            })
-            if (index > -1) {
-              setTimeout(() => {
-                this.$refs.goods.toggleRowSelection(item)
-              }, 1)
+        if (this.materials_arr.length != 0) {
+          this.materials_arr.forEach(item => {
+            item.createDate = parseTime(item.createDate, '{y}-{m}-{d}')
+            item.effectiveDate = parseTime(item.effectiveDate, '{y}-{m}-{d}')
+            if (this.checkGoodIds) {
+              var index = this.materials_data.findIndex(val => {
+                return val.id == item.id
+              })
+              if (index > -1) {
+                setTimeout(() => {
+                  this.$refs.goods.toggleRowSelection(item)
+                }, 1)
+              }
             }
-          }
-        })
+          })
+        } else {
+          this.materials_arr = []
+        }
       })
     },
     getSetMealDetails(row, allRows) {
@@ -610,6 +639,13 @@ export default {
   text-align: center;
   display: flex;
   justify-content: space-around;
+  li{
+    flex:1;
+    text-align: center;
+  }
+  li:nth-of-type(2){
+    flex:2;
+  }
 }
 .item-detail:first-child{
   line-height: 36px;

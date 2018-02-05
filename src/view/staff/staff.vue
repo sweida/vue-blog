@@ -25,11 +25,13 @@
           >
           <el-table-column
             prop="userName"
-            label="员工">
+            label="员工"
+            sortable>
           </el-table-column>
           <el-table-column
             prop="ccRole.rolename"
-            label="职位">
+            label="职位"
+            sortable>
           </el-table-column>
           <el-table-column
             prop="mobilePhoneNum"
@@ -151,6 +153,13 @@ export default {
         'ccRole.id': [
           { required: true, message: '请选择职位', trigger: 'change' }
         ]
+      }
+    }
+  },
+  watch: {
+    inputContent() {
+      if (this.inputContent == '') {
+        this.getSttafList()
       }
     }
   },

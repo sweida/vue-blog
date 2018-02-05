@@ -41,7 +41,8 @@
           </el-table-column>
           <el-table-column
             prop="roomName"
-            label="房名">
+            label="房名"
+            sortable>
           </el-table-column>
           <el-table-column
             prop="bedsAmount"
