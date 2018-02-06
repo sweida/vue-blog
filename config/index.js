@@ -30,11 +30,7 @@ module.exports = {
     showEslintErrorsInOverlay: false,
     proxyTable: {
       '/apis': {
-<<<<<<< HEAD
-        target: 'http://192.168.1.205:9000/setup',
-=======
-        target: 'http://192.168.1.203:9000/setup',
->>>>>>> 4610ed61424280bf58d1de0e07f99765154f5722
+        target: 'http://192.168.1.207:9000/setup',
         changeOrigin: true,
         pathRewrite: {
           '^/apis': '/'
