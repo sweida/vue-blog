@@ -32,7 +32,7 @@
                       <span>{{child.name}}</span>
                       <em class="navicon" v-if="child.url==openindex">
                         <i class="el-icon-edit" @click="editNav(child, child.name)"></i>
-                        <i class="el-icon-minus" @click="minusNav(child)"></i>
+                        <i class="el-icon-minus" @click="minusNav(child)" v-if="tableData==''"></i>
                       </em>
                     </template>
                   </el-menu-item>

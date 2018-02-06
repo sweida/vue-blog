@@ -127,18 +127,13 @@
               </el-dropdown-menu>
             </el-dropdown>
             <div v-for="(item, index) in addList">
+              <!-- 产品框 -->
               <div class="meal_box" v-if="item.groupType == '产品'">
                 <div class="head_box">
                   <span>NO.{{index+1}}</span>
                   <span>类型<em>{{item.groupType}}</em></span>
                   <span>组合名称<el-input size="mini" v-model="item.groupName"></el-input></span>
-                  <span>是否必选
-                    <el-radio-group v-model="item.isNecessary">
-                      <el-radio :label="1">否</el-radio>
-                      <el-radio :label="2">是</el-radio>
-                    </el-radio-group>
-                  </span>
-                  <span>次数<el-input size="mini" class="count" v-model="item.groupTime"></el-input></span>
+                  <span>总次数<el-input size="mini" class="count" type="number" v-model="item.groupTime"></el-input></span>
                   <i class="el-icon-close" @click="delGroup(index)"></i>
                 </div>
                 <div class="set_table">
@@ -170,19 +165,15 @@
                   <div class="addbtn" @click="addProduct(index)">添加+</div>
                 </div>
               </div>
+
+              <!-- 项目框 -->
               <div class="meal_box" v-if="item.groupType == '项目'">
                 <div class="head_box">
                   <span>NO.{{index+1}}</span>
                   <span>类型<em>{{item.groupType}}</em></span>
                   <span>组合名称<el-input size="mini" v-model="item.groupName"></el-input></span>
-                  <span>是否必选
-                    <el-radio-group v-model="item.isNecessary">
-                      <el-radio :label="1">否</el-radio>
-                      <el-radio :label="2">是</el-radio>
-                    </el-radio-group>
-                  </span>
-                  <span>次数<el-input size="mini" class="count" v-model="item.groupTime"></el-input></span>
-                  <span>每次最多可选次数<el-input size="mini" class="count" v-model="item.maxCount"></el-input></span>
+                  <span>总使用次数<el-input size="mini" class="count" type="number" v-model="item.groupTime"></el-input></span>
+                  <span>每次最多可选次数<el-input size="mini" class="count" type="number" v-model="item.maxCount"></el-input></span>
                   <i class="el-icon-close" @click="delGroup(index)"></i>
                 </div>
                 <div class="set_table">
@@ -225,6 +216,8 @@
                   <div class="addbtn" @click="addProject(index)">添加+</div>
                 </div>
               </div>
+
+              <!-- 代金券框 -->
               <div class="meal_box" v-if="item.groupType == '代金券'">
                 <div class="head_box">
                   <span>NO.{{index+1}}</span>
@@ -290,29 +283,23 @@
       <!-- 添加产品 -->
       <el-dialog :visible.sync="addProductDialog" title="选择产品" width="1050px" class="burbox">
         <div class="tableDialog">
-          <div class="tabs">
-            <el-menu
-            default-active="productList.url"
-            >
-             <el-submenu :index="'productList.url'">
-               <template slot="title">
-                 <span>{{productList.name}}</span>
-               </template>
-               <template v-for="(child, index1) in productList.childMenu" :keys="index1">
-                 <el-menu-item :index="productList.url+child.url" v-if="child.childMenu == null" @click="changeMenu(child,productList.id)">
-                   <span>{{child.name}}</span>
-                 </el-menu-item>
-                 <el-submenu :index="productList.url+child.url" v-else>
-                   <template slot="title">
-                     <span>{{child.name}}</span>
-                   </template>
-                   <template v-for="(child2, index2) in child.childMenu" :keys="index1">
-                     <el-menu-item :index="productList.url+child.url+child2.url" @click="changeMenu(child2, productList.id)">{{child2.name}}</el-menu-item>
-                   </template>
-                 </el-submenu>
-               </template>
-             </el-submenu>
-          </el-menu>
+          <div class="tabs scroll">
+            <h3>{{productList.name}}</h3>
+            <el-menu>
+              <template v-for="(child, index1) in productList.childMenu">
+                <el-menu-item :index="productList.url+child.url" v-if="child.childMenu == null" @click="changeMenu(child, productList.id)">
+                  <span>{{child.name}}</span>
+                </el-menu-item>
+                <el-submenu :index="productList.url+child.url" v-else>
+                <template slot="title">
+                  <span>{{child.name}}</span>
+                </template>
+                <template v-for="(child2, index2) in child.childMenu" :keys="index1">
+                  <el-menu-item :index="productList.url+child.url+child2.url" @click="changeMenu(child2, productList.id)">{{child2.name}}</el-menu-item>
+                </template>
+                </el-submenu>
+              </template>
+            </el-menu>
           </div>
           <div class="burli1">
             <el-table
@@ -373,29 +360,23 @@
       <!-- 添加项目 -->
       <el-dialog :visible.sync="addProjectDialog" title="选择项目" width="1050px" class="burbox">
         <div class="tableDialog">
-          <div class="tabs">
-            <el-menu
-            default-active="projectList.url"
-            >
-             <el-submenu :index="'projectList.url'">
-               <template slot="title">
-                 <span>{{projectList.name}}</span>
-               </template>
-               <template v-for="(child, index1) in projectList.childMenu" :keys="index1">
-                 <el-menu-item :index="projectList.url+child.url" v-if="child.childMenu == null" @click="changeMenu(child, projectList.id)">
-                   <span>{{child.name}}</span>
-                 </el-menu-item>
-                 <el-submenu :index="projectList.url+child.url" v-else>
-                   <template slot="title">
-                     <span>{{child.name}}</span>
-                   </template>
-                   <template v-for="(child2, index2) in child.childMenu" :keys="index1">
-                     <el-menu-item :index="projectList.url+child.url+child2.url" @click="changeMenu(child2, projectList.id)">{{child2.name}}</el-menu-item>
-                   </template>
-                 </el-submenu>
-               </template>
-             </el-submenu>
-          </el-menu>
+          <div class="tabs scroll">
+            <h3>{{projectList.name}}</h3>
+            <el-menu>
+              <template v-for="(child, index1) in projectList.childMenu">
+                <el-menu-item :index="projectList.url+child.url" v-if="child.childMenu == null" @click="changeMenu(child, projectList.id)">
+                  <span>{{child.name}}</span>
+                </el-menu-item>
+                <el-submenu :index="projectList.url+child.url" v-else>
+                <template slot="title">
+                  <span>{{child.name}}</span>
+                </template>
+                <template v-for="(child2, index2) in child.childMenu" :keys="index1">
+                  <el-menu-item :index="projectList.url+child.url+child2.url" @click="changeMenu(child2, projectList.id)">{{child2.name}}</el-menu-item>
+                </template>
+                </el-submenu>
+              </template>
+            </el-menu>
           </div>
           <div class="burli1">
             <el-table
@@ -428,7 +409,7 @@
             </el-table>
             <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
           </div>
-          <!-- 选择产品 -->
+          <!-- 添加项目 -->
           <div class="burli2">
             <el-table
               :data="multipleSelection"
@@ -457,8 +438,8 @@
       <el-dialog :visible.sync="addVoucherDialog" title="选择代金券" width="1050px" class="burbox">
         <div class="tableDialog">
           <div class="tabs scroll">
-            <el-menu
-            ><template v-for="(item, index) in menuVoucherList" :keys="index">
+            <el-menu>
+              <template v-for="(item, index) in menuVoucherList" :keys="index">
               <el-menu-item :index="item.url" v-if="item.childMenu==null" @click="changeMenu(item, item.id)">
                 <template slot="title">
                   <span>{{item.name}}</span>
@@ -516,7 +497,7 @@
             </el-table>
             <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
           </div>
-          <!-- 选择产品 -->
+          <!-- 添加代金券 -->
           <div class="burli2">
             <el-table
               :data="multipleSelection"
@@ -879,6 +860,9 @@ export default {
     // 确认添加产品
     comformAddproduct() {
       this.addList[this.addIndex].ccPackageGroupDetailList = this.addList[this.addIndex].ccPackageGroupDetailList.concat(this.multipleSelection)
+      this.addProductDialog = false
+      this.addProjectDialog = false
+      this.addVoucherDialog = false
     },
     // 确认保存添加套餐
     // saveAddMeal() {
@@ -1186,5 +1170,8 @@ export default {
     }
   }
 }
-
+.tableDialog .tabs h3{
+  padding: 15px 15px 5px;
+  color: #333;
+}
 </style>

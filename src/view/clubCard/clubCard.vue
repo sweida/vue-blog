@@ -103,57 +103,55 @@
           <textarea name="" id="" cols="30" rows="10" class="scroll" v-model="actDesc"></textarea>
           <el-button type="primary" size="small" @click="subText">提　交</el-button>
         </div>
-
       </div>
 
-    <el-dialog :visible.sync="burdening" title="添加赠送" width="1050px" class="burbox">
-      <div class="tableDialog">
-        <div class="tabs">
-          <p class="nav-title">
-            <span>{{menuList.name}}</span>
-          </p>
-          <el-menu
-            class="el-menu-vertical-demo"
-            @open="handleOpen"
-            @close="handleClose"
-            @select="handleSelect">
-            <template v-for="(item, index) in menuList.childMenu" :keys="index">
-              <el-menu-item :index="item.url" v-if="item.childMenu==null || item.childMenu==''" @click="changeMenu(item)">
-                <template slot="title">
-                  <span>{{item.name}}</span>
-                </template>
-              </el-menu-item>
-              <el-submenu :index="item.url"  v-else>
-                <template slot="title" >
-                  <div @click="changeMenu(item)">
-                    <span >{{item.name}}</span>
-                  </div>
-                </template>
-                <template v-for="(child, index1) in item.childMenu" :keys="index1">
-                  <el-menu-item :index="child.url" @click="changeMenu(child)">
-                    <span>{{child.name}}</span>
-                  </el-menu-item>
-                </template>
-              </el-submenu>
-            </template>
-          </el-menu>
-        </div>
-        <div class="burli1">
-          <el-table
-            ref="goods"
-            :data="materials_arr"
-            stripe
-            style="width:100%"
-            max-height='450'
-            tooltip-effect="dark"
-            @select="selectGoods"
-            @select-all="selectAllGoods"
-            @selection-change="addtableList"
-            @expand-change="getSetMealDetails"
-            >
-            <el-table-column type="expand">
-              <template slot-scope="scope" v-loading="loading">
-
+      <el-dialog :visible.sync="burdening" title="添加赠送" width="1050px" class="burbox">
+        <div class="tableDialog">
+          <div class="tabs">
+            <p class="nav-title">
+              <span>{{menuList.name}}</span>
+            </p>
+            <el-menu
+              class="el-menu-vertical-demo"
+              @open="handleOpen"
+              @close="handleClose"
+              @select="handleSelect">
+              <template v-for="(item, index) in menuList.childMenu" :keys="index">
+                <el-menu-item :index="item.url" v-if="item.childMenu==null || item.childMenu==''" @click="changeMenu(item)">
+                  <template slot="title">
+                    <span>{{item.name}}</span>
+                  </template>
+                </el-menu-item>
+                <el-submenu :index="item.url"  v-else>
+                  <template slot="title" >
+                    <div @click="changeMenu(item)">
+                      <span >{{item.name}}</span>
+                    </div>
+                  </template>
+                  <template v-for="(child, index1) in item.childMenu" :keys="index1">
+                    <el-menu-item :index="child.url" @click="changeMenu(child)">
+                      <span>{{child.name}}</span>
+                    </el-menu-item>
+                  </template>
+                </el-submenu>
+              </template>
+            </el-menu>
+          </div>
+          <div class="burli1">
+            <el-table
+              ref="goods"
+              :data="materials_arr"
+              stripe
+              style="width:100%"
+              max-height='450'
+              tooltip-effect="dark"
+              @select="selectGoods"
+              @select-all="selectAllGoods"
+              @selection-change="addtableList"
+              @expand-change="getSetMealDetails"
+              >
+              <el-table-column type="expand">
+                <template slot-scope="scope" v-loading="loading">
                   <div  v-if="!loading">
                     <div class="item-detail">
                       <li>类型</li>
@@ -168,79 +166,76 @@
                       <li>{{item.projectNum}}</li>
                     </div>
                   </div>
-
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="givePlanName"
-              label="名称"
-              >
-            </el-table-column>
-            <el-table-column
-              prop="effectiveDays"
-              label="有效天数">
-            </el-table-column>
-            <el-table-column
-            type="selection"
-            label="选择"
-            width="80">
-            </el-table-column>
-          </el-table>
-        </div>
-        <!-- 默认配料 -->
-        <div class="burli2">
-          <el-table
-            :data="materials_data"
-            style="width: 400px;margin-bottom:20px;"
-            max-height='400'
-            tooltip-effect="dark"
-            @expand-change="getSetMealDetails"
-          >
-            <el-table-column type="expand">
-              <template slot-scope="scope" v-loading="loading">
-                <div  v-if="!loading">
-                  <div class="item-detail">
-                    <li>类型</li>
-                    <li>名称</li>
-                    <li>价值</li>
-                    <li>数量</li>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="givePlanName"
+                label="名称"
+                >
+              </el-table-column>
+              <el-table-column
+                prop="effectiveDays"
+                label="有效天数">
+              </el-table-column>
+              <el-table-column
+              type="selection"
+              label="选择"
+              width="80">
+              </el-table-column>
+            </el-table>
+          </div>
+          <!-- 默认赠送 -->
+          <div class="burli2">
+            <el-table
+              :data="materials_data"
+              style="width: 100%;"
+              max-height='450'
+              tooltip-effect="dark"
+              @expand-change="getSetMealDetails"
+            >
+              <el-table-column type="expand">
+                <template slot-scope="scope" v-loading="loading">
+                  <div  v-if="!loading">
+                    <div class="item-detail">
+                      <li>类型</li>
+                      <li>名称</li>
+                      <li>价值</li>
+                      <li>数量</li>
+                    </div>
+                    <div class="item-detail" v-for="item in scope.row.ccSelectedProjectVos">
+                      <li>{{item.coupType == 0 ? projectType[3] : projectType[item.projectType-1]}}</li>
+                      <li>{{item.projectName}}</li>
+                      <li>{{item.projectPrice}}</li>
+                      <li>{{item.projectNum}}</li>
+                    </div>
                   </div>
-                  <div class="item-detail" v-for="item in scope.row.ccSelectedProjectVos">
-                    <li>{{item.coupType == 0 ? projectType[3] : projectType[item.projectType-1]}}</li>
-                    <li>{{item.projectName}}</li>
-                    <li>{{item.projectPrice}}</li>
-                    <li>{{item.projectNum}}</li>
-                  </div>
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column
-              label="名称"
-              >
-              <template slot-scope="scope">
-                {{scope.row.givePlanName||scope.row.giftName}}
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="effectiveDays"
-              label="有效天数"
-              >
-            </el-table-column>
-            <el-table-column
-              prop="giftNum"
-              label="数量">
-              <template slot-scope="scope" >
-                <el-input-number v-model="scope.row.giftNum"  :min='1'></el-input-number>
-              </template>
-            </el-table-column>
-          </el-table>
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="名称">
+                <template slot-scope="scope">
+                  {{scope.row.givePlanName||scope.row.giftName}}
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="effectiveDays"
+                label="有效天数">
+              </el-table-column>
+              <el-table-column
+                prop="giftNum"
+                label="数量">
+                <template slot-scope="scope" >
+                  <el-input-number v-model="scope.row.giftNum"  :min='1'></el-input-number>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
         </div>
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="burdening = false" size="small">取 消</el-button>
-        <el-button type="primary" @click="sureBurden" size="small">保 存</el-button>
-      </span>
-    </el-dialog>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="burdening = false" size="small">取 消</el-button>
+          <el-button type="primary" @click="sureBurden" size="small">保 存</el-button>
+        </span>
+      </el-dialog>
 
   </div>
 </template>
@@ -390,14 +385,13 @@ export default {
         let GiftList = []
         this.materials_data.forEach((item, index) => {
           GiftList[index] = {}
+          GiftList[index].effectiveDays = item.effectiveDays
           GiftList[index].giftName = item.givePlanName || item.giftName
           GiftList[index].giftNum = item.giftNum
           GiftList[index].giftId = item.id || item.giftId
         })
         let param = Object.assign({
           enterpriseId: '001',
-          // hasGift: 1, // 是否有礼品赠送 0是 1否
-          // isDelete: 0,
           ccVipGiftVoList: GiftList
         }, this.vipinput)
         addvipCard(param).then(res => {
@@ -445,9 +439,6 @@ export default {
           this.materials_data = res.data.data.ccVipGiftVoList
         }
       })
-      // this.change = false
-      // this.vipinput = clone(this.vipcardList[index])
-      // this.vipTypeId = row.vipTypeId
     },
     // 取消保存
     cancelSave() {
@@ -472,11 +463,12 @@ export default {
         })
         let param = Object.assign({
           enterpriseId: '001',
-          vipTypeId: this.vipTypeId,
-          ccVipGiftVoList: GiftList
+          vipTypeId: this.vipTypeId
         }, this.vipinput)
+        param.ccVipGiftVoList = GiftList
+        console.log('bbbb', param)
         editvipCard(param).then(res => {
-          console.log('编辑会员卡', param, this.vipCard, res, '赠送', GiftList, param.ccVipGiftVoList )
+          console.log('编辑会员卡', param, this.vipCard, res, '赠送', GiftList, param.ccVipGiftVoList)
           if (res.data.code == 200) {
             this.vipcardList.unshift(param)
             this.getvipList()
@@ -494,6 +486,7 @@ export default {
     // 获取会员卡列表
     getvipList() {
       getvipCard(this.pageModel, {}).then(res => {
+        // console.log('会员列表', res)
         this.vipcardList = res.data.data.rows
         this.pageModel.sumCount = res.data.data.total
       })
@@ -534,9 +527,11 @@ export default {
         }
       })
     },
+    // 赠送方案详情
     getSetMealDetails(row, allRows) {
       this.loading = true
-      givePlanDetail(row.id).then(res => {
+      givePlanDetail(row.id || row.giftId).then(res => {
+        // console.log('赠送方案详情', res)
         if (res.data.code == 200) {
           this.loading = false
           row.ccSelectedProjectVos = res.data.data.ccSelectedProjectVos
@@ -547,9 +542,6 @@ export default {
 }
 </script>
 
-<style>
-
-</style>
 <style scoped lang="scss">
 .main-content{
   display: flex;
@@ -652,4 +644,5 @@ export default {
   background: #f4f4f4;
   font-weight:bold;
 }
+
 </style>
