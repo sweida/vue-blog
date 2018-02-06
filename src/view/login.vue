@@ -25,7 +25,7 @@
         checked: true,
         param: {
           username: '13000000000',
-          password: '123452'
+          password: '123450'
         }
       }
     },
