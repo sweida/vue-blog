@@ -665,26 +665,6 @@ export default {
       bed: 1,
       input: '',
       seatDialog: false,
-      pruductParam: { //添加产品数据
-        groupName: '',
-        groupType: '产品',
-        isNecessary: 1, // 是否必选
-        groupTime: '1', // 次数
-        ccPackageGroupDetailList: []
-      },
-      projectParam: {
-        groupName: '',
-        groupType: '项目',
-        isNecessary: 1, // 是否必选
-        groupTime: '1', // 次数
-        maxCount: '1', // 最多输入次数
-        ccPackageGroupDetailList: []
-      },
-      voucherParam: {
-        groupType: '代金券',
-        groupName: '',
-        ccPackageGroupDetailList: []
-      },
       addList: [], //添加的组合
       form: {
         packageName: '', // 套餐名称
@@ -794,11 +774,30 @@ export default {
 
     selectDown(command) {
       if (command == 'a') {
-        this.addList.push(this.projectParam)
+        this.addList.push({
+          groupName: '',
+          groupType: '项目',
+          isNecessary: 1, // 是否必选
+          groupTime: '1', // 次数
+          maxCount: '1', // 最多输入次数
+          ccPackageGroupDetailList: []
+        })
       } else if (command == 'b') {
-        this.addList.push(this.pruductParam)
+        this.addList.push(
+          { //添加产品数据
+            groupName: '',
+            groupType: '产品',
+            isNecessary: 1, // 是否必选
+            groupTime: '1', // 次数
+            ccPackageGroupDetailList: []
+          }
+        )
       } else {
-        this.addList.push(this.voucherParam)
+        this.addList.push({
+          groupType: '代金券',
+          groupName: '',
+          ccPackageGroupDetailList: []
+        })
       }
     },
     // 改变菜单时得到数据
@@ -815,6 +814,8 @@ export default {
     },
     // 添加产品
     addProduct(index) {
+      this.materials_arr = []
+      this.multipleSelection = []
       this.addIndex = index
       productMenu().then(res => {
         console.log(res,232)
@@ -824,6 +825,8 @@ export default {
     },
     // 添加项目
     addProject(index) {
+      this.materials_arr = []
+      this.multipleSelection = []
       this.addIndex = index
       projectMenu().then(res => {
         this.projectList = res.data.data[0]
@@ -832,6 +835,8 @@ export default {
     },
     // 添加代金券
     addVoucher(index) {
+      this.materials_arr = []
+      this.multipleSelection = []
       this.addIndex = index
       vouMenu().then(res => {
         if (res.data.code == 200) {
