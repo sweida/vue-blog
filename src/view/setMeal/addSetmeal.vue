@@ -133,7 +133,7 @@
                   <span>NO.{{index+1}}</span>
                   <span>类型<em>产品</em></span>
                   <span>组合名称<el-input size="mini" v-model="item.groupName"></el-input></span>
-                  <span>总次数<el-input size="mini" class="count" type="number" v-model="item.groupTime"></el-input></span>
+                  <!-- <span>总次数<el-input size="mini" class="count" type="number" v-model="item.groupTime"></el-input></span> -->
                   <i class="el-icon-close" @click="delGroup(index)"></i>
                 </div>
                 <div class="set_table">

@@ -25,7 +25,8 @@
           {name: '项目', url: '/project'},
           {name: '套餐', url: '/setMeal'},
           {name: '云电话', url: '/phone'},
-          {name: '设置', url: '/setting'}
+          {name: '设置', url: '/setting'},
+          {name: '菜单管理', url: '/menuManage'}
         ]
       }
     },
