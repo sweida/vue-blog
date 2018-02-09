@@ -39,9 +39,9 @@ service.interceptors.response.use(
         }
       })
       return res
-    } else if(res.status==500){
+    } else if (res.status == 500) {
       Message({
-        message: "服务器错误",
+        message: '服务器错误',
         type: 'error',
         duration: 2000,
         onClose() {
@@ -49,7 +49,7 @@ service.interceptors.response.use(
           router.push('/')
         }
       })
-    }else{
+    } else {
       return res
     }
   },

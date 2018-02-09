@@ -58,30 +58,30 @@
               tooltip-effect="dark"
               >
               <el-table-column
-                prop="name"
+                prop="id"
                 label="编号"
                 width="150px">
               </el-table-column>
               <el-table-column
-                prop="coupName"
+                prop="projectName"
                 label="名称"
                 width="200px"
                 >
               </el-table-column>
               <el-table-column
-                prop="coupQuota"
+                prop="projectPrice"
                 label="代金券额度">
                 <template slot-scope="scope">
-                  ￥{{scope.row.coupQuota}}
+                  ￥{{scope.row.projectPrice}}
                 </template>
               </el-table-column>
               <el-table-column
-                prop="coupNum"
+                prop="projectNum"
                 label="总数量"
                 >
               </el-table-column>
               <el-table-column
-                prop="coupValidfate"
+                prop="effectiveDays"
                 label="有效期(天)"
                 >
               </el-table-column>
@@ -450,7 +450,7 @@ export default {
       VoucherDetail(row.id).then(res => {
         this.form = res.data.data
         let coupName = res.data.data.coupName
-        this.selectGoods = coupName.substring(0, coupName.length - 5) + '　　￥' + res.data.data.coupPrice
+        this.selectGoods = coupName + '　　￥' + res.data.data.coupPrice
         let arr = res.data.data.arrId.split(',')
         this.selectedOptions = arr.map((item) => {
           return +item
