@@ -18,6 +18,7 @@
           {name: '企业和会所', url: '/home'},
           {name: '房间', url: '/room'},
           {name: '职位权限', url: '/scope'},
+          {name: '菜单管理', url: '/menu'},
           {name: '员工管理', url: '/staff'},
           {name: '优惠券', url: '/voucher'},
           {name: '会员卡', url: '/clubCard'},
@@ -25,8 +26,7 @@
           {name: '项目', url: '/project'},
           {name: '套餐', url: '/setMeal'},
           {name: '云电话', url: '/phone'},
-          {name: '设置', url: '/setting'},
-          {name: '菜单管理', url: '/menuManage'}
+          {name: '设置', url: '/setting'}
         ]
       }
     },

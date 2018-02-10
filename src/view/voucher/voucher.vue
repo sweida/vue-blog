@@ -455,6 +455,7 @@ export default {
         this.selectedOptions = arr.map((item) => {
           return +item
         })
+        debugger
         this.menuType = parseInt(arr[0])
         let add = res.data.data.arrTypeId.split(',')
         this.delselectedOptions = add.map((item) => {
