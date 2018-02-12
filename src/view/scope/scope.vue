@@ -151,13 +151,13 @@
             message: '请输入角色名称',
             trigger: 'blur'
           },
-            {
-              min: 3,
-              max: 5,
-              message: '长度在 3 到 5 个字符',
-              trigger: 'change,blur'
-            }
-          ],
+          {
+            min: 1,
+            max: 10,
+            message: '长度在 1 到 10 个字符',
+            trigger: 'change,blur'
+          }
+          ]
         },
         menu: [],//树形菜单数据
         auths: [],//选择的按钮权限

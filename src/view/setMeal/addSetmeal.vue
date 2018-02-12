@@ -279,8 +279,8 @@
 
       <div class="footer">
         <el-button size="medium" onclick="history.back()">取　消</el-button>
-        <el-button type="primary" size="medium" @click="editBtn" v-if="form.packageId">保存修改</el-button>
-        <el-button type="primary" size="medium" @click="saveBtn" v-else>保　存</el-button>
+        <el-button type="primary" size="medium" @click="mealCommon(editBtn)" v-if="form.packageId">保存修改</el-button>
+        <el-button type="primary" size="medium" @click="mealCommon(saveBtn)" v-else>保　存</el-button>
       </div>
       <!-- 添加产品 -->
       <el-dialog :visible.sync="addProductDialog" title="选择产品" width="1050px" class="burbox">
@@ -631,14 +631,10 @@ export default {
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
     },
-    addseatBtn() {
-      this.seatDialog = true
-    },
     // 删除已添加
     deleteBtn(index, item) {
       item.splice(index, 1)
     },
-    sureBurden() {},
     beforeAvatarUpload(file) {
       const isJPG = file.type === 'image/jpeg'
       const isLt2M = file.size / 1024 / 1024 < 2
@@ -738,6 +734,7 @@ export default {
     delGroup(index) {
       this.ccPackageGroupVoList.splice(index, 1)
     },
+    // 删除赠送
     CloseBurdenTags(index) {
       this.ccPackageGiveList.splice(index, 1)
     },
@@ -749,7 +746,30 @@ export default {
       this.addVoucherDialog = false
     },
     // 保存
-    saveBtn() {
+    saveBtn(param) {
+      addPackage(param).then(res => {
+        if (res.data.code == 200) {
+          this.$router.push('/setMeal')
+          this.$message.success('新增成功!')
+        } else {
+          this.$message.error('新增套餐失败!')
+        }
+      })
+    },
+    // 保存修改
+    editBtn(param) {
+      editPackage(param).then(res => {
+        console.log('保存修改', res)
+        if (res.data.code == 200) {
+          this.$router.push('/setMeal')
+          this.$message.success('修改成功!')
+        } else {
+          this.$message.error('新增失败!')
+        }
+      })
+    },
+    // 保存、修改套餐公用
+    mealCommon(method) {
       let param = Object.assign({
         enterpriseId: '001',
         ccPackageGroupVoList: this.ccPackageGroupVoList,
@@ -757,7 +777,9 @@ export default {
       }, this.form)
       if (this.form.packageName == '' || this.form.packagePrice == '' || this.form.arrId == '') {
         this.$message.error('套餐名称、类目和价格不能为空')
-      } else if (this.ccPackageGroupVoList.length > 0) {
+      } else if (this.ccPackageGroupVoList.length == 0) {
+        this.$message.error('还未添加组合')
+      } else {
         let hasName = this.ccPackageGroupVoList.every(item => {
           return item.groupName != ''
         })
@@ -775,40 +797,21 @@ export default {
             return true
           }
         })
+        let GroupList = this.ccPackageGroupVoList.every(item => {
+          return item.ccPackageGroupDetailList.length != 0
+        })
         if (hasName == false) {
           this.$message.error('组合名称不能为空')
         } else if (hasCount == false) {
           this.$message.error('总使用次数不能为空')
         } else if (hasMaxCount == false) {
           this.$message.error('每次最多可选次数次数不能为空')
+        } else if (GroupList == false) {
+          this.$message.error('组合不能为空')
         } else {
-          addPackage(param).then(res => {
-            if (res.data.code == 200) {
-              this.$router.push('/setMeal')
-              this.$message.success('新增成功!')
-            } else {
-              this.$message.error('新增套餐失败!')
-            }
-          })
+          method(param)
         }
       }
-    },
-    // 保存修改
-    editBtn() {
-      let param = Object.assign({
-        enterpriseId: '001',
-        ccPackageGroupVoList: this.ccPackageGroupVoList,
-        ccPackageGiveList: this.ccPackageGiveList
-      }, this.form)
-      editPackage(param).then(res => {
-        console.log('保存修改', res)
-        if (res.data.code == 200) {
-          this.$router.push('/setMeal')
-          this.$message.success('修改成功!')
-        } else {
-          this.$message.error('新增失败!')
-        }
-      })
     },
     // 添加赠送方案按钮
     addGiveList() {

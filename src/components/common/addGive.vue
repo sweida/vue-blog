@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="burdening" title="添加赠送" width="1050px" class="burbox" :show-close="false" :close-on-click-modal="false">
+  <el-dialog :visible="burdening" title="添加赠送" width="1050px" class="burbox" @close="cancelSave">
     <div class="tableDialog">
       <div class="tabs">
         <p class="nav-title">

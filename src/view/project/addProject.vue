@@ -148,17 +148,17 @@
           <h5>优惠赠送</h5>
           <div class="li_box">
             <el-tag
-              v-for="(Burden,index) in form.materials_data"
-              :key="Burden.materialName"
-              closable
-              :disable-transitions="false"
-              @close="CloseBurdenTags(index)"
-              >
-              {{Burden.materialName+Burden.materialNum+Burden.unit}}
+            :key="item.id"
+            v-for="(item, index) in ccPackageGiveList"
+            closable
+            :disable-transitions="false"
+            @close="CloseGiveTags(index)"
+            >
+            {{(item.givePlanName || item.giftName)+'（*'+item.giftNum+'）'}}
             </el-tag>
           </div>
           <div class="right_but">
-            <el-button type="primary" size="mini" @click="presentBtn">添加赠送</el-button>
+            <el-button type="primary" size="mini" @click="addGiveList">添加赠送</el-button>
             <i class="el-icon-info"></i>
           </div>
         </div>
@@ -350,85 +350,23 @@
           <el-button type="primary" @click="burdenDialog = false" size="small">确 定</el-button>
         </span>
       </el-dialog>
-
-      <!-- 赠送弹框 -->
-      <el-dialog title="新增赠送" :visible.sync="presentDialog" width="1000px" class="burbox">
-        <div class="tableDialog">
-          <div class="tabs">
-            <p>所有配料</p>
-            <p>载入配方</p>
-          </div>
-          <div class="burli1">
-            <el-table
-              :data="materials_arr"
-              stripe
-              style="width:100%"
-              max-height='450'
-              tooltip-effect="dark"
-              @selection-change="addMaterials"
-              >
-              <el-table-column
-                prop="materialName"
-                label="配料名称"
-                >
-              </el-table-column>
-              <el-table-column
-                prop="unit"
-                label="单位">
-              </el-table-column>
-              <el-table-column
-              type="selection"
-              width="80">
-              </el-table-column>
-            </el-table>
-            <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
-          </div>
-          <!-- 默认配料 -->
-          <div class="burli2">
-            <el-table
-              :data="form.materials_data"
-              stripe
-              max-height='200'
-              tooltip-effect="dark"
-            >
-              <el-table-column
-                prop="materialName"
-                label="已添加配料"
-                >
-              </el-table-column>
-              <el-table-column
-                prop="unit"
-                label="单位"
-                >
-              </el-table-column>
-              <el-table-column
-                prop="materialNum"
-                label="数量">
-                <template slot-scope="scope" >
-                  <el-input-number v-model="scope.row.materialNum" :min="1"></el-input-number>
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
-        </div>
-        <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="presentDialog = false" size="small">确 定</el-button>
-        </span>
-      </el-dialog>
-
+      <!-- 添加赠送方案 -->
+       <addGive ref="addGiveChild" :burdening="presentDialog" @saveGive="saveGive" @cancelGive="cancelGive"></addGive>
   </div>
 </template>
 
 <script>
 import { addproject, getproject, getTagli, addTag, delTag, getBurden, getprojectBurden, projectDetail, editproject } from '@/api/product'
 import { mixppMenu, projectMenu } from '@/api/tree'
+import addGive from '@/components/common/addGive'
 import page from '@/components/common/page'
 import { clone } from '@/utils/common'
 import { VueEditor } from 'vue2-editor'
 export default {
   name: 'app',
   components: {
-    VueEditor
+    VueEditor,
+    addGive
   },
   data() {
     return {
@@ -458,6 +396,7 @@ export default {
       tuisong: false,   // 推送
       textarea: '',
       selectedOptions: [],
+      ccPackageGiveList: [], //已选赠送
       form: {
         projectName: '',
         arrId: '',
@@ -755,8 +694,26 @@ export default {
     CloseBurdenTags(index) {
       this.form.ccProjectMaterialList.splice(index, 1)
     },
-    presentBtn() {
+    // 添加赠送
+    // 添加赠送方案按钮
+    addGiveList() {
+      this.$refs.addGiveChild.materials_data = []
+      this.$refs.addGiveChild.materials_arr = []
+      this.$refs.addGiveChild.checkGoodIds = []
       this.presentDialog = true
+    },
+    // 删除赠送
+    CloseGiveTags(index) {
+      this.ccPackageGiveList.splice(index, 1)
+    },
+    // 监听保存
+    saveGive(val) {
+      this.ccPackageGiveList = val
+      this.presentDialog = false
+    },
+    // 监听取消保存
+    cancelGive() {
+      this.presentDialog = false
     },
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
