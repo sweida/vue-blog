@@ -44,7 +44,7 @@
                     <span class="admin-name">{{admin.name}}
                     </span>
                   </template>
-									<el-menu-item index="/message">客户</el-menu-item>
+									<el-menu-item @click="url('http://customer.wscq518.com')">客户</el-menu-item>
 									<el-menu-item index="/message">后台</el-menu-item>
 									<el-menu-item index="/password">推广</el-menu-item>
                   <el-menu-item index="/message">账号信息</el-menu-item>
@@ -81,6 +81,9 @@ export default {
 			}).catch(() => {
 			});
 		},
+		url(val) {
+			window.location = val
+		}
   }
 
 }

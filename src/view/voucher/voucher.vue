@@ -60,11 +60,13 @@
               <el-table-column
                 prop="id"
                 label="编号"
+                :show-overflow-tooltip="true"
                 width="150px">
               </el-table-column>
               <el-table-column
                 prop="projectName"
                 label="名称"
+                :show-overflow-tooltip="true"
                 width="200px"
                 >
               </el-table-column>
