@@ -19,7 +19,7 @@ const addSetmeal = resolve => require(['@/view/setMeal/addSetmeal'], resolve)
 const editSetmeal = resolve => require(['@/view/setMeal/addSetmeal'], resolve)
 const phone = resolve => require(['@/view/phone/phone'], resolve)
 const setting = resolve => require(['@/view/setting/setting'], resolve)
-const menuManage = resolve => require(['@/view/menuManage/menuManage'], resolve)
+const menu = resolve => require(['@/view/menuManage/menu'], resolve)
 
 Vue.use(Router)
 export default new Router({
@@ -56,7 +56,7 @@ export default new Router({
         { path: '/setMeal/edit/:id', component: editSetmeal, name: '编辑套餐' },
         { path: '/phone', component: phone, name: '云电话' },
         { path: '/setting', component: setting, name: '设置' },
-        { path: '/menuManage', component: menuManage, name: '菜单管理' }
+        { path: '/menu', component: menu, name: '菜单管理' }
       ]
     }
   ]
