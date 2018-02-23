@@ -1,5 +1,5 @@
 <template>
-  <div >
+  <div>
     <div class="header_title">职位权限</div>
     <div class="main-content scroll">
       <div class="main-head">
@@ -31,7 +31,8 @@
           </el-table-column>
           <el-table-column label="删除" width="65" align="center">
             <template slot-scope="scope">
-              <el-tag :type="scope.row.deleted | tagFilter(statusMap)">{{scope.row.deleted | statusFilter(statusDisplay)}}
+              <el-tag :type="scope.row.deleted | tagFilter(statusMap)">{{scope.row.deleted |
+                statusFilter(statusDisplay)}}
               </el-tag>
             </template>
           </el-table-column>
@@ -40,8 +41,10 @@
             <template slot-scope="scope">
               <el-button-group>
                 <el-button size="mini" @click="editRole(scope.row)">编辑</el-button>
-                <el-button size="mini" type="danger" v-if="scope.row.deleted==0" @click="delRole(scope.row)">删除</el-button>
-                <el-button size="mini" type="primary" v-if="scope.row.deleted==1" @click="enableRole(scope.row)">启用</el-button>
+                <el-button size="mini" type="danger" v-if="scope.row.deleted==0" @click="delRole(scope.row)">删除
+                </el-button>
+                <el-button size="mini" type="primary" v-if="scope.row.deleted==1" @click="enableRole(scope.row)">启用
+                </el-button>
               </el-button-group>
             </template>
           </el-table-column>
@@ -84,7 +87,7 @@
                        :check-strictly="false"
                        :render-content="renderContent"
                        @check-change="permissionCheckChange"
-                       class="role-tree">
+                       class="role-tree scroll">
               </el-tree>
             </div>
           </el-form-item>
@@ -111,11 +114,15 @@
     editRole
   } from '@/api/role';
 
-  import {getAllMenu, getRoleMenuById} from '@/api/menu';
-  import { delModel,enableModel } from '@/utils/common';
+  import {getAllMenu, getRoleMenuById} from '@/api/menu'
+  import {delModel, enableModel} from '@/utils/common'
+  import page from '@/components/common/page'
 
   export default {
     name: "roleList",
+    components: {
+      page
+    },
     data() {
       return {
         loading: false,//表格加载
@@ -144,13 +151,13 @@
             message: '请输入角色名称',
             trigger: 'blur'
           },
-            {
-              min: 3,
-              max: 5,
-              message: '长度在 3 到 5 个字符',
-              trigger: 'change,blur'
-            }
-          ],
+          {
+            min: 1,
+            max: 10,
+            message: '长度在 1 到 10 个字符',
+            trigger: 'change,blur'
+          }
+          ]
         },
         menu: [],//树形菜单数据
         auths: [],//选择的按钮权限
@@ -258,7 +265,8 @@
               });
             }
           });
-        },()=>{});
+        }, () => {
+        });
       },
       //批量删除角色
       delsRole() {
@@ -289,7 +297,8 @@
               });
             }
           });
-        },()=>{});
+        }, () => {
+        });
       },
       //启用角色
       enableRole(row) {
@@ -312,7 +321,8 @@
               });
             }
           });
-        },()=>{});
+        }, () => {
+        });
       },
       //批量启用角色
       enableSRole() {
@@ -343,7 +353,8 @@
               });
             }
           });
-        },()=>{});
+        }, () => {
+        });
       },
       handleSelectionChange(val) {
         this.multipleSelection = val;
@@ -403,10 +414,11 @@
         })
       },
       roleEdDialogClose() {
-        this.menu=[];
-        this.role.id='';
+        this.menu = [];
+        this.role.id = '';
         this.$refs['role'].resetFields();
-        this.role.menus=[];
+        this.role.menus = [];
+        this.auths = [];
         this.$refs.menuTree.setCheckedKeys([]);
         this.selectRoleList();
       },
@@ -467,7 +479,7 @@
       permissionCheckChange(data, isChecked) {
         if (!this.authType) {
           let node = this.$refs.menuTree.store.getNode(data.id);
-          if (node.isLeaf) {
+          if (node.data.parent) {
             if (node.data.authNodeList) {
               node.data.authNodeList.forEach((node) => {
                 node.checked = isChecked;
@@ -563,31 +575,48 @@
   }
 </script>
 
+<style>
+  .role-auth {
+    float: right;
+    margin-left: 130px;
+  }
+
+  .role-span {
+    width: 100%;
+  }
+
+  .role-auth .el-checkbox + .el-checkbox {
+    margin-left: 15px;
+  }
+
+  .role-auth .el-checkbox__label {
+    padding-left: 5px;
+  }
+</style>
 <style scoped lang="scss">
-  .main-content{
-    .main-head{
-      color:#5e6d82;
+  .main-content {
+    .main-head {
+      color: #5e6d82;
       height: 80px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       width: 800px;
-      span{
+      span {
         padding-left: 10px;
-        color:#99a9c0;
+        color: #99a9c0;
       }
     }
-    .room_table{
+    .room_table {
       width: 800px;
     }
-    .el-input{
+    .el-input {
       width: 150px;
     }
-    .el-select{
+    .el-select {
       width: 100px;
     }
   }
-
 
   .role-permission-table {
     border-bottom: none;
@@ -647,21 +676,5 @@
     border-bottom: 1px solid #e0e0e0;
     border-left: 1px solid #e0e0e0;
     border-right: 1px solid #e0e0e0;
-  }
-
-  .role-span {
-    width: 100%;
-  }
-
-  .role-auth {
-    float: right;
-  }
-
-  .role-auth .el-checkbox + .el-checkbox {
-    margin-left: 15px;
-  }
-
-  .role-auth .el-checkbox__label {
-    padding-left: 5px;
   }
 </style>

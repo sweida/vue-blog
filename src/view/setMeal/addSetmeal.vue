@@ -126,14 +126,14 @@
                 <el-dropdown-item command="c">代金券</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-            <div v-for="(item, index) in addList">
+            <div v-for="(item, index) in ccPackageGroupVoList">
               <!-- 产品框 -->
-              <div class="meal_box" v-if="item.groupType == '产品'">
+              <div class="meal_box" v-if="item.groupType == 2">
                 <div class="head_box">
                   <span>NO.{{index+1}}</span>
-                  <span>类型<em>{{item.groupType}}</em></span>
+                  <span>类型<em>产品</em></span>
                   <span>组合名称<el-input size="mini" v-model="item.groupName"></el-input></span>
-                  <span>总次数<el-input size="mini" class="count" type="number" v-model="item.groupTime"></el-input></span>
+                  <!-- <span>总次数<el-input size="mini" class="count" type="number" v-model="item.groupTime"></el-input></span> -->
                   <i class="el-icon-close" @click="delGroup(index)"></i>
                 </div>
                 <div class="set_table">
@@ -167,13 +167,13 @@
               </div>
 
               <!-- 项目框 -->
-              <div class="meal_box" v-if="item.groupType == '项目'">
+              <div class="meal_box" v-if="item.groupType == 1">
                 <div class="head_box">
                   <span>NO.{{index+1}}</span>
-                  <span>类型<em>{{item.groupType}}</em></span>
+                  <span>类型<em>项目</em></span>
                   <span>组合名称<el-input size="mini" v-model="item.groupName"></el-input></span>
                   <span>总使用次数<el-input size="mini" class="count" type="number" v-model="item.groupTime"></el-input></span>
-                  <span>每次最多可选次数<el-input size="mini" class="count" type="number" v-model="item.maxCount"></el-input></span>
+                  <span>每次最多可选次数<el-input size="mini" class="count" type="number" v-model="item.maxOptionalNum"></el-input></span>
                   <i class="el-icon-close" @click="delGroup(index)"></i>
                 </div>
                 <div class="set_table">
@@ -201,7 +201,9 @@
                       >
                       <template slot-scope="scope">
                         <el-switch
-                          v-model="scope.row.value2"
+                          v-model="scope.row.isMandatory"
+                          active-value="1"
+                          inactive-value="0"
                         >
                         </el-switch>
                       </template>
@@ -218,10 +220,10 @@
               </div>
 
               <!-- 代金券框 -->
-              <div class="meal_box" v-if="item.groupType == '代金券'">
+              <div class="meal_box" v-if="item.groupType == 4">
                 <div class="head_box">
                   <span>NO.{{index+1}}</span>
-                  <span>类型<em>{{item.groupType}}</em></span>
+                  <span>类型<em>代金券</em></span>
                   <span>组合名称<el-input size="mini" v-model="item.groupName"></el-input></span>
                   <i class="el-icon-close" @click="delGroup(index)"></i>
                 </div>
@@ -234,12 +236,12 @@
                     tooltip-effect="dark"
                     >
                     <el-table-column
-                      prop="coupName"
+                      prop="projectName"
                       label="名称">
                     </el-table-column>
                     <el-table-column
-                      width="100px"
-                      prop="coupQuota"
+                      width="140px"
+                      prop="projectPrice"
                       label="代金券金额（元）">
                     </el-table-column>
                     <el-table-column
@@ -263,7 +265,7 @@
             <div class="li_box">
               <el-tag
               :key="item.id"
-              v-for="(item, index) in hasAddList"
+              v-for="(item, index) in ccPackageGiveList"
               closable
               :disable-transitions="false"
               @close="CloseBurdenTags(index)"
@@ -277,8 +279,8 @@
 
       <div class="footer">
         <el-button size="medium" onclick="history.back()">取　消</el-button>
-        <el-button type="primary" size="medium" @click="editBtn" v-if="form.packageId">保存修改</el-button>
-        <el-button type="primary" size="medium" @click="saveBtn" v-else>保　存</el-button>
+        <el-button type="primary" size="medium" @click="mealCommon(editBtn)" v-if="form.packageId">保存修改</el-button>
+        <el-button type="primary" size="medium" @click="mealCommon(saveBtn)" v-else>保　存</el-button>
       </div>
       <!-- 添加产品 -->
       <el-dialog :visible.sync="addProductDialog" title="选择产品" width="1050px" class="burbox">
@@ -438,120 +440,19 @@
       <el-dialog :visible.sync="addVoucherDialog" title="选择代金券" width="1050px" class="burbox">
         <div class="tableDialog">
           <div class="tabs scroll">
+            <h3>{{menuVoucherList.name}}</h3>
             <el-menu>
-              <template v-for="(item, index) in menuVoucherList" :keys="index">
-              <el-menu-item :index="item.url" v-if="item.childMenu==null" @click="changeMenu(item, item.id)">
-                <template slot="title">
-                  <span>{{item.name}}</span>
-                </template>
-              </el-menu-item>
-              <el-submenu :index="item.url" v-else>
-                <template slot="title">
-                  <span>{{item.name}}</span>
-                </template>
-                <template v-for="(child, index1) in item.childMenu" :keys="index1">
-                  <el-menu-item :index="item.url+child.url" v-if="child.childMenu==null" @click="changeMenu(child, item.id)">
-                    <span>{{child.name}}</span>
-                  </el-menu-item>
-                  <el-submenu :index="item.url+child.url" v-else>
-                    <template slot="title">
-                      <span>{{child.name}}</span>
-                    </template>
-                    <template v-for="(child2, index2) in child.childMenu" :keys="index1">
-                      <el-menu-item :index="item.url+child.url+child2.url" @click="changeMenu(child2, item.id)">{{child2.name}}</el-menu-item>
-                    </template>
-                  </el-submenu>
-                </template>
-              </el-submenu>
-            </template>
-          </el-menu>
-          </div>
-          <div class="burli1">
-            <el-table
-              :data="materials_arr"
-              stripe
-              style="width:100%"
-              max-height='450'
-              @selection-change="handleSelectionChange"
-              tooltip-effect="dark"
-              >
-              <el-table-column
-              label="选择"
-              type="selection"
-              width="80">
-              </el-table-column>
-              <el-table-column
-                label="序号"
-                type="index"
-                width="50">
-              </el-table-column>
-              <el-table-column
-                prop="coupName"
-                label="名称"
-                >
-              </el-table-column>
-              <el-table-column
-                prop="coupQuota"
-                label="价值">
-              </el-table-column>
-            </el-table>
-            <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
-          </div>
-          <!-- 添加代金券 -->
-          <div class="burli2">
-            <el-table
-              :data="multipleSelection"
-              stripe
-              style="width:100%"
-              max-height='450'
-              tooltip-effect="dark"
-              >
-              <el-table-column
-                prop="coupName"
-                label="名称"
-                >
-              </el-table-column>
-              <el-table-column
-                prop="coupQuota"
-                label="价值">
-              </el-table-column>
-            </el-table>
-          </div>
-        </div>
-        <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="comformAddproduct" size="small">确 定</el-button>
-        </span>
-      </el-dialog>
-      <!-- 添加赠送方案 -->
-      <addGive ref="addGiveChild" :burdening="presentDialog" @saveGive="saveGive" @cancelGive="cancelGive"></addGive>
-      <!-- <el-dialog title="添加赠送方案" :visible.sync="presentDialog" width="1000px" class="burbox">
-        <div class="tableDialog">
-          <div class="tabs scroll">
-            <el-menu
-              class="el-menu-vertical-demo">
-              <template v-for="(item, index) in addGivemenuList" :keys="index">
-                <el-menu-item :index="item.url" v-if="item.childMenu==null" @click="changeMenu(item)">
-                  <template slot="title">
-                    <span>{{item.name}}</span>
-                  </template>
+              <template v-for="(child, index1) in menuVoucherList.childMenu">
+                <el-menu-item :index="menuVoucherList.url+child.url" v-if="child.childMenu == null" @click="changeMenu(child, menuVoucherList.id)">
+                  <span>{{child.name}}</span>
                 </el-menu-item>
-                <el-submenu :index="item.url" v-else>
-                  <template slot="title">
-                    <span>{{item.name}}</span>
-                  </template>
-                  <template v-for="(child, index1) in item.childMenu" :keys="index1">
-                    <el-menu-item :index="item.url+child.url" v-if="child.childMenu==null" @click="changeMenu(child)">
-                      <span>{{child.name}}</span>
-                    </el-menu-item>
-                    <el-submenu :index="item.url+child.url" v-else>
-                      <template slot="title">
-                        <span>{{child.name}}</span>
-                      </template>
-                      <template v-for="(child2, index2) in child.childMenu" :keys="index1">
-                        <el-menu-item :index="item.url+child.url+child2.url" @click="changeMenu(child2, item)">{{child2.name}}</el-menu-item>
-                      </template>
-                    </el-submenu>
-                  </template>
+                <el-submenu :index="menuVoucherList.url+child.url" v-else>
+                <template slot="title">
+                  <span>{{child.name}}</span>
+                </template>
+                <template v-for="(child2, index2) in child.childMenu" :keys="index1">
+                  <el-menu-item :index="menuVoucherList.url+child.url+child2.url" @click="changeMenu(child2, menuVoucherList.id)">{{child2.name}}</el-menu-item>
+                </template>
                 </el-submenu>
               </template>
             </el-menu>
@@ -587,9 +488,7 @@
             </el-table>
             <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
           </div>
-
-
-
+          <!-- 添加代金券 -->
           <div class="burli2">
             <el-table
               :data="multipleSelection"
@@ -613,6 +512,11 @@
         <span slot="footer" class="dialog-footer">
           <el-button type="primary" @click="comformAddproduct" size="small">确 定</el-button>
         </span>
+      </el-dialog>
+      <!-- 添加赠送方案 -->
+       <addGive ref="addGiveChild" :burdening="presentDialog" @saveGive="saveGive" @cancelGive="cancelGive"></addGive>
+      <!-- <el-dialog title="添加赠送方案" :visible.sync="presentDialog" width="1000px" class="burbox">
+
       </el-dialog> -->
   </div>
 </template>
@@ -623,7 +527,6 @@ import { addPackage, editPackage, PackageDetail, getPackage, getProductById } fr
 import { mealMenu, giveNav, productMenu, projectMenu, vouMenu } from '@/api/tree'
 import { VueEditor } from 'vue2-editor'
 import addGive from '@/components/common/addGive'
-const cityOptions = ['上海', '北京', '广州', '深圳', '上海', '北京', '广州', '深圳']
 export default {
   name: 'app',
   components: {
@@ -652,24 +555,23 @@ export default {
       addIndex: -1, // 添加时改变index用于记录下标向数组添加数据
       materials_arr: [],
       multipleSelection: [],
-      hasAddList: [], //已选赠送
+      ccPackageGiveList: [], //已选赠送
       productList: {}, // 产品菜单
       projectList: {}, // 项目菜单
       menuVoucherList: {}, // 代金券菜单
       addGivemenuList: [], // 添加赠送方案
       imageUrl: '',
       tuisong: false,
-      checkedCities1: ['上海', '北京'],
-      cities: cityOptions,
       search: '',
       bed: 1,
       input: '',
       seatDialog: false,
-      addList: [], //添加的组合
+      ccPackageGroupVoList: [], //添加的组合
       form: {
         packageName: '', // 套餐名称
         packagePrice: '', // 套餐价格
         effectiveDays: 3560, // 有效天数
+        arrId: '',
         parentId: '',     // 父级ID
         detail: '',
         pictureUrl: '',
@@ -685,21 +587,12 @@ export default {
         promotionPercentage: '', // 百分比例
         purchaseMethod: '0',
         purchaseAuthority: '0'
-      },
-      ccPackageGroupDetailList: [{
-        date: '2016-05-02',
-        name: '王狮传奇南山总店',
-        phone: '13798661922',
-        address: '上海市普陀区金沙江路 1518 弄',
-        value2: ''
-      }],
-      tags: ['标签一', '标签二', '标签三']
+      }
     }
   },
   created() {
     this.getgiveNav()
     this.getmealMenu()
-    // this.getPackageDetail()
     if (this.$route.params.id != undefined) {
       this.getPackageDetail()
     }
@@ -709,6 +602,8 @@ export default {
     getPackageDetail() {
       PackageDetail(this.$route.params.id).then(res => {
         this.form = res.data.data
+        this.ccPackageGiveList = res.data.data.ccPackageGiveList
+        this.ccPackageGroupVoList = res.data.data.ccPackageGroupVoList
         let arr = res.data.data.arrId.split(',')
         this.selectedOptions = arr.map((item) => {
           return +item
@@ -732,26 +627,14 @@ export default {
     },
     selectRoleList() {
     },
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath)
-    },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath)
-    },
-    CloseTags(tag) {
-      this.tags.splice(this.tags.indexOf(tag), 1)
-    },
+
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
-    },
-    addseatBtn() {
-      this.seatDialog = true
     },
     // 删除已添加
     deleteBtn(index, item) {
       item.splice(index, 1)
     },
-    sureBurden() {},
     beforeAvatarUpload(file) {
       const isJPG = file.type === 'image/jpeg'
       const isLt2M = file.size / 1024 / 1024 < 2
@@ -763,10 +646,6 @@ export default {
       }
       return isJPG && isLt2M
     },
-    // 添加组合
-    addGroup() {
-
-    },
     // 选择事件
     handleSelectionChange(val) {
       this.multipleSelection = val
@@ -774,27 +653,25 @@ export default {
 
     selectDown(command) {
       if (command == 'a') {
-        this.addList.push({
+        this.ccPackageGroupVoList.push({
           groupName: '',
-          groupType: '项目',
-          isNecessary: 1, // 是否必选
+          groupType: 1,
           groupTime: '1', // 次数
-          maxCount: '1', // 最多输入次数
+          maxOptionalNum: '1', // 最多输入次数
           ccPackageGroupDetailList: []
         })
       } else if (command == 'b') {
-        this.addList.push(
+        this.ccPackageGroupVoList.push(
           { //添加产品数据
             groupName: '',
-            groupType: '产品',
-            isNecessary: 1, // 是否必选
+            groupType: 2,
             groupTime: '1', // 次数
             ccPackageGroupDetailList: []
           }
         )
       } else {
-        this.addList.push({
-          groupType: '代金券',
+        this.ccPackageGroupVoList.push({
+          groupType: 4,
           groupName: '',
           ccPackageGroupDetailList: []
         })
@@ -818,7 +695,6 @@ export default {
       this.multipleSelection = []
       this.addIndex = index
       productMenu().then(res => {
-        console.log(res,232)
         this.productList = res.data.data[0]
       })
       this.addProductDialog = true
@@ -840,8 +716,7 @@ export default {
       this.addIndex = index
       vouMenu().then(res => {
         if (res.data.code == 200) {
-          console.log(res,11)
-          this.menuVoucherList = res.data.data
+          this.menuVoucherList = res.data.data[0]
           this.addVoucherDialog = true
         }
       })
@@ -857,92 +732,33 @@ export default {
     },
     // 删除组合
     delGroup(index) {
-      this.addList.splice(index, 1)
+      this.ccPackageGroupVoList.splice(index, 1)
     },
+    // 删除赠送
     CloseBurdenTags(index) {
-      this.hasAddList.splice(index, 1)
+      this.ccPackageGiveList.splice(index, 1)
     },
     // 确认添加产品
     comformAddproduct() {
-      this.addList[this.addIndex].ccPackageGroupDetailList = this.addList[this.addIndex].ccPackageGroupDetailList.concat(this.multipleSelection)
+      this.ccPackageGroupVoList[this.addIndex].ccPackageGroupDetailList = this.ccPackageGroupVoList[this.addIndex].ccPackageGroupDetailList.concat(this.multipleSelection)
       this.addProductDialog = false
       this.addProjectDialog = false
       this.addVoucherDialog = false
     },
-    // 确认保存添加套餐
-    // saveAddMeal() {
-    //   if (this.form.packageName == '' || this.form.packagePrice == '' || this.form.effectiveDays == '' || this.form.desc == '') {
-    //     this.$message.error('名称、价格、有效天数、所属类目不能为空')
-    //   }
-    // },
     // 保存
-    saveBtn() {
-      let param = Object.assign({
-        enterpriseId: '001',
-        ccPackageGroupVoList: this.addList,
-        // ccProjectPushList: [],                // 推送
-        // isGive: 0,
-        // ccPackageGroupVoList: [
-        //   {
-        //     ccPackageGroupDetailList: [
-        //       {
-        //         enterpriseId: string,
-        //         groupId: string,
-        //         id: 0,
-        //         isMandatory: string,
-        //         price: 0,
-        //         targetId: 0
-        //       }
-        //     ],
-        //     enterpriseId: '001',
-        //     groupId: string,
-        //     groupName: string,
-        //     groupTime: string,
-        //     groupType: string,
-        //     isMandatory: string,
-        //     maxOptionalNum: 0,
-        //     packageId: string
-        //   }
-        // ],
-        ccPackageGiveList: this.hasAddList
-        // ccPackageGiveList: [
-        //   {
-        //     enterpriseId: '001',
-        //     giveId: 1,
-        //     giveName: 'aaa',
-        //     giveNum: '10',
-        //     giveType: '1',
-        //     packageId: 0,
-        //     parentId: 17
-        //   },
-        //   {
-        //     enterpriseId: '001',
-        //     giveId: 1,
-        //     giveName: 'bbb',
-        //     giveNum: '10',
-        //     giveType: '1',
-        //     packageId: 0,
-        //     parentId: 17
-        //   }
-        // ]
-      }, this.form)
-      if (this.form.packageName == '' || this.form.packagePrice == '' || this.form.arrId == '') {
-        this.$message.error('套餐名称、类目和价格不能为空')
-      } else {
-        addPackage(param).then(res => {
-          console.log('添加套餐', res)
-          if (res.data.code == 200) {
-            this.$router.push('/setMeal')
-            this.$message.success('新增成功!')
-          } else {
-            this.$message.error('新增套餐失败!')
-          }
-        })
-      }
+    saveBtn(param) {
+      addPackage(param).then(res => {
+        if (res.data.code == 200) {
+          this.$router.push('/setMeal')
+          this.$message.success('新增成功!')
+        } else {
+          this.$message.error('新增套餐失败!')
+        }
+      })
     },
     // 保存修改
-    editBtn() {
-      editPackage(this.form).then(res => {
+    editBtn(param) {
+      editPackage(param).then(res => {
         console.log('保存修改', res)
         if (res.data.code == 200) {
           this.$router.push('/setMeal')
@@ -951,6 +767,51 @@ export default {
           this.$message.error('新增失败!')
         }
       })
+    },
+    // 保存、修改套餐公用
+    mealCommon(method) {
+      let param = Object.assign({
+        enterpriseId: '001',
+        ccPackageGroupVoList: this.ccPackageGroupVoList,
+        ccPackageGiveList: this.ccPackageGiveList
+      }, this.form)
+      if (this.form.packageName == '' || this.form.packagePrice == '' || this.form.arrId == '') {
+        this.$message.error('套餐名称、类目和价格不能为空')
+      } else if (this.ccPackageGroupVoList.length == 0) {
+        this.$message.error('还未添加组合')
+      } else {
+        let hasName = this.ccPackageGroupVoList.every(item => {
+          return item.groupName != ''
+        })
+        let hasCount = this.ccPackageGroupVoList.every(item => {
+          if (item.groupTime != undefined) {
+            return item.groupTime != ''
+          } else {
+            return true
+          }
+        })
+        let hasMaxCount = this.ccPackageGroupVoList.every(item => {
+          if (item.maxOptionalNum != undefined) {
+            return item.maxOptionalNum != ''
+          } else {
+            return true
+          }
+        })
+        let GroupList = this.ccPackageGroupVoList.every(item => {
+          return item.ccPackageGroupDetailList.length != 0
+        })
+        if (hasName == false) {
+          this.$message.error('组合名称不能为空')
+        } else if (hasCount == false) {
+          this.$message.error('总使用次数不能为空')
+        } else if (hasMaxCount == false) {
+          this.$message.error('每次最多可选次数次数不能为空')
+        } else if (GroupList == false) {
+          this.$message.error('组合不能为空')
+        } else {
+          method(param)
+        }
+      }
     },
     // 添加赠送方案按钮
     addGiveList() {
@@ -961,7 +822,7 @@ export default {
     },
     // 监听保存
     saveGive(val) {
-      this.hasAddList = val
+      this.ccPackageGiveList = val
       this.presentDialog = false
     },
     // 监听取消保存

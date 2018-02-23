@@ -18,6 +18,7 @@
           {name: '企业和会所', url: '/home'},
           {name: '房间', url: '/room'},
           {name: '职位权限', url: '/scope'},
+          {name: '菜单管理', url: '/menu'},
           {name: '员工管理', url: '/staff'},
           {name: '优惠券', url: '/voucher'},
           {name: '会员卡', url: '/clubCard'},

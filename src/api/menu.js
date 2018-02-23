@@ -48,13 +48,23 @@ export function getRoleMenuById(roleId) {
     method: 'get'
   });
 }
+
 //根据父级菜单ID获取子菜单
 export function getMenuSortByParentId(id) {
   return fetch({
-    url: 'apis/auth/parent/'+id,
+    url: 'apis/auth/parent/' + id,
     method: 'get'
   });
 }
+
+//根据菜单ID获取权限按钮
+export function getAuthMenuById(id) {
+  return fetch({
+    url: 'apis/auth/authMenu/' + id,
+    method: 'get'
+  });
+}
+
 
 //新增菜单
 export function addMenu(data) {
@@ -85,9 +95,24 @@ export function delMenu(id) {
 //批量删除菜单
 export function delSMenu(ids) {
   return fetch({
-    url: 'apis/delMany',
-    method: 'delete',
-    ids
+    url: 'apis/auth/delMany/' + ids,
+    method: 'delete'
+  });
+}
+
+//启用菜单
+export function enableMenu(id) {
+  return fetch({
+    url: 'apis/auth/' + id,
+    method: 'put'
+  });
+}
+
+//批量启用菜单
+export function enableSMenu(ids) {
+  return fetch({
+    url: 'apis/auth/delMany/' + ids,
+    method: 'put'
   });
 }
 
@@ -107,13 +132,6 @@ export function getFunJson() {
 export function getFunButJson() {
   return fetch({
     url: 'static/json/funBut.json',
-    method: 'get'
-  });
-}
-
-export function getMenuJson() {
-  return fetch({
-    url: 'static/json/menu.json',
     method: 'get'
   });
 }

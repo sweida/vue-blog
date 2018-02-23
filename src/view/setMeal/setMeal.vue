@@ -65,16 +65,16 @@
               tooltip-effect="dark"
               >
               <el-table-column
-                prop="packageName"
+                prop="projectName"
                 label="名称"
                 >
               </el-table-column>
               <el-table-column
-                prop="packagePrice"
+                prop="projectPrice"
                 label="价格"
                 >
                 <template slot-scope="scope">
-                  ￥{{scope.row.packagePrice}}
+                  ￥{{scope.row.projectPrice}}
                 </template>
               </el-table-column>
               <el-table-column
@@ -240,7 +240,7 @@ export default {
       this.$confirm('是否删除该套餐?', '提示', {
         type: 'warning'
       }).then(() => {
-        delPackage(row.packageId).then(res => {
+        delPackage(row.id).then(res => {
           if (res.data.code == 200) {
             console.log(res)
             this.tableData.splice(index, 1)
@@ -255,8 +255,8 @@ export default {
     },
     // 编辑按钮
     editBtn(index, row) {
-      console.log(row.packageId)
-      this.$router.push('setMeal/edit/' + row.packageId)
+      console.log(row.id)
+      this.$router.push('setMeal/edit/' + row.id)
     },
     //搜素客户
     searchBtn() {

@@ -192,9 +192,7 @@ export default {
     confirmAdd() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          let param = this.newstaff
-          param.userId = this.newstaff.mobilePhoneNum
-          addSttaf(param).then(res => {
+          addSttaf(this.newstaff).then(res => {
             if (res.data.code == 200) {
               this.getSttafList()
               this.$message.success(res.data.msg)
