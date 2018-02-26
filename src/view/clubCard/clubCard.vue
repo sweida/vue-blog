@@ -232,8 +232,7 @@
           </div>
         </div>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="burdening = false" size="small">取 消</el-button>
-          <el-button type="primary" @click="sureBurden" size="small">保 存</el-button>
+          <el-button type="primary" @click="sureBurden" size="small">确 定</el-button>
         </span>
       </el-dialog>
 
@@ -435,9 +434,7 @@ export default {
       getCardDetail(row.vipTypeId).then(res => {
         console.log(res, res.data.data.ccVipGiftVoList)
         this.vipinput = res.data.data
-        if (res.data.data.ccVipGiftVoList.length != 0) {
-          this.materials_data = res.data.data.ccVipGiftVoList
-        }
+        this.materials_data = res.data.data.ccVipGiftVoList
       })
     },
     // 取消保存

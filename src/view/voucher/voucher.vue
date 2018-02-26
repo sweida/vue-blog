@@ -61,7 +61,7 @@
                 prop="id"
                 label="编号"
                 :show-overflow-tooltip="true"
-                width="150px">
+                width="220px">
               </el-table-column>
               <el-table-column
                 prop="projectName"
@@ -118,9 +118,9 @@
         <div class="form_box">
           <h4>选择</h4>
           <el-form ref="form" :model="form" label-width="120px" label-position='left'>
-            <el-form-item label="所属类目">
+            <el-form-item label="所属分类">
               <el-cascader
-                placeholder="请选择类目"
+                placeholder="请选择分类"
                 @change="handleItemChange"
                 v-model="selectedOptions"
                 change-on-select
@@ -410,22 +410,28 @@ export default {
     },
     // 保存新增
     addvoucherBtn() {
-      let param = Object.assign({
-        enterpriseId: '001',
-        targetId: this.selectGoods,
-        organId: 1
-      }, this.form)
-      // console.log('添加项目', param)
-      addVoucher(param).then(res => {
-        console.log('新增代金券', res)
-        if (res.data.code == 200) {
-          this.$message.success('新增成功!')
-          this.voucherDialog = false
-          this.getVoucherList()
-        } else {
-          this.$message.error('新增失败!')
-        }
-      })
+      if (this.delselectedOptions == '' && this.form.coupName == undefined) {
+        this.$message.error('请选择所属类目')
+      } else if (this.form.coupQuota == '' || this.form.coupNum == '' || this.form.coupValidfate == '') {
+        this.$message.error('额度、数量、有效期不能为空,')
+      } else {
+        let param = Object.assign({
+          enterpriseId: '001',
+          targetId: this.selectGoods,
+          organId: 1
+        }, this.form)
+        // console.log('添加项目', param)
+        addVoucher(param).then(res => {
+          console.log('新增代金券', res)
+          if (res.data.code == 200) {
+            this.$message.success('新增成功!')
+            this.voucherDialog = false
+            this.getVoucherList()
+          } else {
+            this.$message.error('新增失败!')
+          }
+        })
+      }
     },
     // 删除项目
     deleteBtn(index, row) {
@@ -457,7 +463,7 @@ export default {
         this.selectedOptions = arr.map((item) => {
           return +item
         })
-        debugger
+        // debugger
         this.menuType = parseInt(arr[0])
         let add = res.data.data.arrTypeId.split(',')
         this.delselectedOptions = add.map((item) => {
@@ -468,16 +474,22 @@ export default {
     },
     // 保存编辑代金券
     editvoucherBtn() {
-      editVoucher(this.form).then(res => {
-        console.log('保存修改', res)
-        if (res.data.code == 200) {
-          this.getVoucherList()
-          this.voucherDialog = false
-          this.$message.success('修改成功!')
-        } else {
-          this.$message.error('修改失败!')
-        }
-      })
+      if (this.delselectedOptions == '' || this.form.coupName == '') {
+        this.$message.error('请选择所属类目')
+      } else if (this.form.coupQuota == '' || this.form.coupNum == '' || this.form.coupValidfate == '') {
+        this.$message.error('额度、数量、有效期不能为空,')
+      } else {
+        editVoucher(this.form).then(res => {
+          console.log('保存修改', res)
+          if (res.data.code == 200) {
+            this.getVoucherList()
+            this.voucherDialog = false
+            this.$message.success('修改成功!')
+          } else {
+            this.$message.error('修改失败!')
+          }
+        })
+      }
     },
     selectRoleList () {
       this.getVoucherList()

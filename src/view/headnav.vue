@@ -49,7 +49,7 @@
 									<el-menu-item index="/password">推广</el-menu-item>
                   <el-menu-item index="/message">账号信息</el-menu-item>
                   <el-menu-item index="/password">修改密码</el-menu-item>
-                  <el-menu-item index="/loginout" @click.native="logout">退出登录</el-menu-item>
+                  <el-menu-item  @click.native="logout">退出登录</el-menu-item>
               </el-submenu>
           </el-menu>
         </div>
