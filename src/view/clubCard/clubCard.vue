@@ -41,7 +41,7 @@
                   :disable-transitions="false"
                   @close="handleTagsClose(item)"
                   >
-                  {{(item.givePlanName || item.giftName)+'(*'+item.giftNum+')'}}
+                  {{(item.projectName || item.giftName)+'(*'+item.giftNum+')'}}
                 </el-tag>
               </div>
             </div>
@@ -169,7 +169,7 @@
                 </template>
               </el-table-column>
               <el-table-column
-                prop="givePlanName"
+                prop="projectName"
                 label="名称"
                 >
               </el-table-column>
@@ -214,7 +214,7 @@
               <el-table-column
                 label="名称">
                 <template slot-scope="scope">
-                  {{scope.row.givePlanName||scope.row.giftName}}
+                  {{scope.row.projectName||scope.row.giftName}}
                 </template>
               </el-table-column>
               <el-table-column
@@ -241,7 +241,7 @@
 
 <script>
 import { addvipCard, editvipCard, getvipCard, delvipCard, actDescInfo, editactDesc, getCardDetail } from '@/api/setting'
-import { getgivePlan, givePlanDetail } from '@/api/product'
+import { getVouterDetail, givePlanDetail } from '@/api/product'
 import { giveNav, delMenu, editMenu, addMenu, ccGetMenu } from '@/api/tree'
 import page from '@/components/common/page'
 import { parseTime, clone } from '@/utils/common'
@@ -493,21 +493,13 @@ export default {
     },
     // 改变菜单时得到赠送方案数据
     changeMenu(child) {
-      this.MenuParam = {
-        parentId: child.id
-      }
-      this.getgivePlanList()
-    },
-    // 获取赠送列表
-    getgivePlanList() {
-      getgivePlan(this.pageModel, this.MenuParam).then(res => {
-        this.materials_arr = res.data.data.rows
+      getVouterDetail(5, child.id).then(res => {
+        this.materials_arr = res.data.data
         console.log(this.materials_arr)
-        this.pageModel.sumCount = res.data.data.total
         if (this.materials_arr.length != 0) {
           this.materials_arr.forEach(item => {
-            item.createDate = parseTime(item.createDate, '{y}-{m}-{d}')
-            item.effectiveDate = parseTime(item.effectiveDate, '{y}-{m}-{d}')
+            // item.createDate = parseTime(item.createDate, '{y}-{m}-{d}')
+            // item.effectiveDate = parseTime(item.effectiveDate, '{y}-{m}-{d}')
             if (this.checkGoodIds) {
               var index = this.materials_data.findIndex(val => {
                 return val.id == item.id

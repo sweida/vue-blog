@@ -148,13 +148,13 @@
           <h5>优惠赠送</h5>
           <div class="li_box">
             <el-tag
+            v-for="(item, index) in ccProjectGiveList"
             :key="item.id"
-            v-for="(item, index) in ccPackageGiveList"
             closable
             :disable-transitions="false"
             @close="CloseGiveTags(index)"
             >
-            {{(item.givePlanName || item.giftName)+'（*'+item.giftNum+'）'}}
+            {{item.projectName +'（*'+item.projectNum+'）'}}
             </el-tag>
           </div>
           <div class="right_but">
@@ -391,12 +391,12 @@ export default {
       activeNav: false,
       activeP: true,
       MenuParam: [],
-      imageUrl: 'static/img/phone.png',
+      imageUrl: '/static/img/phone.png',
       presentDialog: false,
       tuisong: false,   // 推送
       textarea: '',
       selectedOptions: [],
-      ccPackageGiveList: [], //已选赠送
+      ccProjectGiveList: [], //已选赠送
       form: {
         projectName: '',
         arrId: '',
@@ -463,6 +463,7 @@ export default {
         this.form = res.data.data
         this.checkSkin = res.data.data.fitSkin.split(',')
         this.checkEffect = res.data.data.effect.split(',')
+        this.ccProjectGiveList = res.data.data.ccProjectGiveList
         let arr = res.data.data.arrId.split(',')
         this.selectedOptions = arr.map((item) => {
           return +item
@@ -478,26 +479,7 @@ export default {
         effect: this.checkEffect.join(','),   // 功效
         ccProjectPushList: [],                // 推送
         isGive: 0,
-        ccProjectGiveList: [
-          {
-            enterpriseId: '001',
-            giveId: 1,
-            giveName: 'aaa',
-            giveNum: '10',
-            giveType: '1',
-            parentId: 0,
-            projectId: ''
-          },
-          {
-            enterpriseId: '001',
-            giveId: 10,
-            giveName: 'bbb',
-            giveNum: '20',
-            giveType: '2',
-            parentId: 0,
-            projectId: ''
-          }
-        ]
+        ccProjectGiveList: this.ccProjectGiveList
       }, this.form)
       if (this.form.projectName == '' || this.form.projectPrice == '') {
         this.$message.error('项目名称、类目和价格不能为空')
@@ -524,6 +506,7 @@ export default {
       } else {
         this.form.fitSkin = this.checkSkin.join(',')
         this.form.effect = this.checkEffect.join(',')
+        this.form.ccProjectGiveList = this.ccProjectGiveList
         editproject(this.form).then(res => {
           console.log('保存修改', res)
           if (res.data.code == 200) {
@@ -704,11 +687,11 @@ export default {
     },
     // 删除赠送
     CloseGiveTags(index) {
-      this.ccPackageGiveList.splice(index, 1)
+      this.ccProjectGiveList.splice(index, 1)
     },
     // 监听保存
     saveGive(val) {
-      this.ccPackageGiveList = val
+      this.ccProjectGiveList = val
       this.presentDialog = false
     },
     // 监听取消保存

@@ -270,7 +270,7 @@
               :disable-transitions="false"
               @close="CloseBurdenTags(index)"
               >
-              {{(item.givePlanName || item.giftName)+'（*'+item.giftNum+'）'}}
+              {{item.projectName +'（*'+item.projectNum+'）'}}
               </el-tag>
             </div>
           </div>
@@ -755,6 +755,7 @@ export default {
     },
     // 保存修改
     editBtn(param) {
+      param.ccPackageGiveList = this.ccPackageGiveList
       editPackage(param).then(res => {
         console.log('保存修改', res)
         if (res.data.code == 200) {
@@ -769,8 +770,8 @@ export default {
     mealCommon(method) {
       let param = Object.assign({
         enterpriseId: '001',
-        ccPackageGroupVoList: this.ccPackageGroupVoList,
-        ccPackageGiveList: this.ccPackageGiveList
+        ccPackageGiveList: this.ccPackageGiveList,
+        ccPackageGroupVoList: this.ccPackageGroupVoList
       }, this.form)
       if (this.form.packageName == '' || this.form.packagePrice == '' || this.form.arrId == '') {
         this.$message.error('套餐名称、类目和价格不能为空')
@@ -812,6 +813,10 @@ export default {
     },
     // 添加赠送方案按钮
     addGiveList() {
+      // if (this.ccPackageGroupVoList != null) {
+      //   this.$refs.addGiveChild.materials_data = this.ccPackageGroupVoList
+      // }
+      // this.$refs.addGiveChild.materials_data = this.ccPackageGiveList
       this.$refs.addGiveChild.materials_data = []
       this.$refs.addGiveChild.materials_arr = []
       this.$refs.addGiveChild.checkGoodIds = []
@@ -821,6 +826,7 @@ export default {
     saveGive(val) {
       this.ccPackageGiveList = val
       this.presentDialog = false
+      console.log(this.ccPackageGiveList,2222);
     },
     // 监听取消保存
     cancelGive() {

@@ -65,7 +65,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="givePlanName"
+            prop="projectName"
             label="名称"
             >
           </el-table-column>
@@ -110,22 +110,18 @@
             </template>
           </el-table-column>
           <el-table-column
-            label="名称"
-            >
-            <template slot-scope="scope">
-              {{scope.row.givePlanName||scope.row.giftName}}
-            </template>
+            prop="projectName"
+            label="名称">
           </el-table-column>
           <el-table-column
             prop="effectiveDays"
-            label="有效天数"
-            >
+            label="有效天数">
           </el-table-column>
           <el-table-column
-            prop="giftNum"
+            prop="projectNum"
             label="数量">
             <template slot-scope="scope" >
-              <el-input-number v-model="scope.row.giftNum"  :min='1'></el-input-number>
+              <el-input-number v-model="scope.row.projectNum"  :min='1'></el-input-number>
             </template>
           </el-table-column>
         </el-table>
@@ -140,16 +136,11 @@
 
 <script>
 import { giveNav } from '@/api/tree'
-import { getgivePlan, givePlanDetail } from '@/api/product'
+import { getVouterDetail, givePlanDetail } from '@/api/product'
 import { parseTime, clone } from '@/utils/common'
 export default {
   data() {
     return {
-      pageModel: {
-        page: 1,
-        rows: 10,
-        sumCount: 0
-      },
       loading: false,
       menuList: {},
       projectType: ['项目', '产品', '套餐', '优惠券'],
@@ -162,21 +153,9 @@ export default {
   methods: {
     // 改变菜单时得到赠送方案数据
     changeMenu(child) {
-      console.log('changeMenu', child.id)
-      this.MenuParam = {
-        parentId: child.id
-      }
-      this.getgivePlanList()
-    },
-    // 获取赠送列表
-    getgivePlanList() {
-      getgivePlan(this.pageModel, this.MenuParam).then(res => {
-        this.materials_arr = res.data.data.rows
-        console.log(this.materials_arr)
-        this.pageModel.sumCount = res.data.data.total
+      getVouterDetail(5, child.id).then(res => {
+        this.materials_arr = res.data.data
         this.materials_arr.forEach(item => {
-          item.createDate = parseTime(item.createDate, '{y}-{m}-{d}')
-          item.effectiveDate = parseTime(item.effectiveDate, '{y}-{m}-{d}')
           if (this.checkGoodIds) {
             var index = this.materials_data.findIndex(val => {
               return val.id == item.id

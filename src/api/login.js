@@ -16,14 +16,14 @@ export function toLogin(data) {
 // 产品菜单
 export function getMenuProduct() {
   return fetch({
-    url: 'apis/menu/product',
+    url: '/apis/menu/product',
     method: 'GET'
   })
 }
 // 产品菜单
 export function getMenuProject() {
   return fetch({
-    url: 'apis/menu/project',
+    url: '/apis/menu/project',
     method: 'GET'
   })
 }
