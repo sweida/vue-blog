@@ -149,13 +149,12 @@
           <div class="li_box">
             <el-tag
             :key="item.id"
-            v-for="(item, index) in ccProjectGiveList"
+            v-for="(item, index) in ccPackageGiveList"
             closable
             :disable-transitions="false"
             @close="CloseGiveTags(index)"
             >
-            {{item.giveName +'（*'+item.giveNum+'）'}}
-            <!-- {{(item.givePlanName || item.giveName)+'（*'+(item.giftNum || item.giveNum)+'）'}} -->
+            {{(item.givePlanName || item.giftName)+'（*'+item.giftNum+'）'}}
             </el-tag>
           </div>
           <div class="right_but">
@@ -248,14 +247,9 @@
       </div>
       <div class="footer">
         <el-button size="medium" onclick="history.back()">取　消</el-button>
-        <el-button type="primary" size="medium" @click="mealCommon(editBtn)" v-if="form.projectId">保存修改</el-button>
-        <el-button type="primary" size="medium" @click="mealCommon(saveBtn)" v-else>保　存</el-button>
-      </div>
-      <!-- <div class="footer">
-        <el-button size="medium" onclick="history.back()">取　消</el-button>
         <el-button type="primary" size="medium" @click="editBtn" v-if="form.projectId">保存修改</el-button>
         <el-button type="primary" size="medium" @click="saveBtn" v-else>保　存</el-button>
-      </div> -->
+      </div>
 
       <!-- 配料弹框 -->
       <el-dialog :visible.sync="burdenDialog" title="编辑配料" width="1200px" class="burbox">
@@ -402,7 +396,7 @@ export default {
       tuisong: false,   // 推送
       textarea: '',
       selectedOptions: [],
-      ccProjectGiveList: [], //已选赠送
+      ccPackageGiveList: [], //已选赠送
       form: {
         projectName: '',
         arrId: '',
@@ -448,6 +442,7 @@ export default {
     }
   },
   methods: {
+
     // 获取项目产品菜单
     getmixMenu() {
       mixppMenu().then(res => {
@@ -466,7 +461,6 @@ export default {
     getprojectDetail() {
       projectDetail(this.$route.params.id).then(res => {
         this.form = res.data.data
-        this.ccProjectGiveList = res.data.data.ccProjectGiveList
         this.checkSkin = res.data.data.fitSkin.split(',')
         this.checkEffect = res.data.data.effect.split(',')
         let arr = res.data.data.arrId.split(',')
@@ -477,132 +471,70 @@ export default {
       })
     },
     // 保存
-    saveBtn(param) {
-      addproject(param).then(res => {
-        console.log('添加项目', res)
-        if (res.data.code == 200) {
-          this.$router.push('/project')
-          this.$message.success('新增成功!')
-        } else {
-          this.$message.error('新增失败!')
-        }
-      })
-    },
-    // 保存修改
-    editBtn(param) {
-      editproject(param).then(res => {
-        console.log('保存修改', res)
-        if (res.data.code == 200) {
-          this.$router.push('/project')
-          this.$message.success('修改成功!')
-        } else {
-          this.$message.error('新增失败!')
-        }
-      })
-    },
-    // 保存、修改套餐公用
-    mealCommon(method) {
+    saveBtn() {
       let param = Object.assign({
         enterpriseId: '001',
         fitSkin: this.checkSkin.join(','),    // 肤质
         effect: this.checkEffect.join(','),   // 功效
         ccProjectPushList: [],                // 推送
         isGive: 0,
-        ccProjectGiveList: this.ccProjectGiveList,
-        // ccProjectGiveList: [
-        //   {
-        //     enterpriseId: '001',
-        //     giveId: 1,
-        //     giveName: 'aaa',
-        //     giveNum: '10',
-        //     giveType: '1',
-        //     parentId: 0,
-        //     projectId: ''
-        //   },
-        //   {
-        //     enterpriseId: '001',
-        //     giveId: 10,
-        //     giveName: 'bbb',
-        //     giveNum: '20',
-        //     giveType: '2',
-        //     parentId: 0,
-        //     projectId: ''
-        //   }
-        // ]
+        ccProjectGiveList: [
+          {
+            enterpriseId: '001',
+            giveId: 1,
+            giveName: 'aaa',
+            giveNum: '10',
+            giveType: '1',
+            parentId: 0,
+            projectId: ''
+          },
+          {
+            enterpriseId: '001',
+            giveId: 10,
+            giveName: 'bbb',
+            giveNum: '20',
+            giveType: '2',
+            parentId: 0,
+            projectId: ''
+          }
+        ]
       }, this.form)
       if (this.form.projectName == '' || this.form.projectPrice == '') {
         this.$message.error('项目名称、类目和价格不能为空')
       } else if (this.form.arrId.length < 2) {
         this.$message.error('请选择一个分类')
       } else {
-        method(param)
+        addproject(param).then(res => {
+          console.log('添加项目', res)
+          if (res.data.code == 200) {
+            this.$router.push('/project')
+            this.$message.success('新增成功!')
+          } else {
+            this.$message.error('新增失败!')
+          }
+        })
       }
     },
-    // // 保存
-    // saveBtn() {
-    //   let param = Object.assign({
-    //     enterpriseId: '001',
-    //     fitSkin: this.checkSkin.join(','),    // 肤质
-    //     effect: this.checkEffect.join(','),   // 功效
-    //     ccProjectPushList: [],                // 推送
-    //     isGive: 0,
-    //     ccProjectGiveList: [
-    //       {
-    //         enterpriseId: '001',
-    //         giveId: 1,
-    //         giveName: 'aaa',
-    //         giveNum: '10',
-    //         giveType: '1',
-    //         parentId: 0,
-    //         projectId: ''
-    //       },
-    //       {
-    //         enterpriseId: '001',
-    //         giveId: 10,
-    //         giveName: 'bbb',
-    //         giveNum: '20',
-    //         giveType: '2',
-    //         parentId: 0,
-    //         projectId: ''
-    //       }
-    //     ]
-    //   }, this.form)
-    //   if (this.form.projectName == '' || this.form.projectPrice == '') {
-    //     this.$message.error('项目名称、类目和价格不能为空')
-    //   } else if (this.form.arrId.length < 2) {
-    //     this.$message.error('请选择一个分类')
-    //   } else {
-    //     addproject(param).then(res => {
-    //       console.log('添加项目', res)
-    //       if (res.data.code == 200) {
-    //         this.$router.push('/project')
-    //         this.$message.success('新增成功!')
-    //       } else {
-    //         this.$message.error('新增失败!')
-    //       }
-    //     })
-    //   }
-    // },
-    // // 保存修改
-    // editBtn() {
-    //   if (this.form.projectName == '' || this.form.projectPrice == '') {
-    //     this.$message.error('项目名称、类目和价格不能为空')
-    //   } else if (this.form.arrId.length < 2) {
-    //     this.$message.error('请选择一个分类')
-    //   } else {
-    //     this.form.fitSkin = this.checkSkin.join(',')
-    //     this.form.effect = this.checkEffect.join(',')
-    //     editproject(this.form).then(res => {
-    //       console.log('保存修改', res)
-    //       if (res.data.code == 200) {
-    //         this.$router.push('/project')
-    //         this.$message.success('修改成功!')
-    //       } else {
-    //         this.$message.error('新增失败!')
-    //       }
-    //     })
-    //   }
-    // },
+    // 保存修改
+    editBtn() {
+      if (this.form.projectName == '' || this.form.projectPrice == '') {
+        this.$message.error('项目名称、类目和价格不能为空')
+      } else if (this.form.arrId.length < 2) {
+        this.$message.error('请选择一个分类')
+      } else {
+        this.form.fitSkin = this.checkSkin.join(',')
+        this.form.effect = this.checkEffect.join(',')
+        editproject(this.form).then(res => {
+          console.log('保存修改', res)
+          if (res.data.code == 200) {
+            this.$router.push('/project')
+            this.$message.success('修改成功!')
+          } else {
+            this.$message.error('新增失败!')
+          }
+        })
+      }
+    },
     // 获取肤质
     getTagskin() {
       getTagli(1).then(res => {
@@ -769,34 +701,14 @@ export default {
       this.$refs.addGiveChild.materials_arr = []
       this.$refs.addGiveChild.checkGoodIds = []
       this.presentDialog = true
-      console.log('关闭', this.ccProjectGiveList)
     },
     // 删除赠送
     CloseGiveTags(index) {
-      this.ccProjectGiveList.splice(index, 1)
+      this.ccPackageGiveList.splice(index, 1)
     },
     // 监听保存
     saveGive(val) {
-      //         enterpriseId: '001',
-      //         giveId: 1,
-      //         giveName: 'aaa',
-      //         giveNum: '10',
-      //         giveType: '1',
-      //         parentId: 0,
-      //         projectId: ''
-      val.forEach((item, index) => {
-        item.enterpriseId = '001'
-        item.giveName = item.givePlanName
-        item.giveNum = item.giftNum
-        item.giveId = item.id
-      })
-      // this.ccProjectGiveList.forEach((item) => {
-      //   item.enterpriseId = '001'
-      //   item.giveName = val.givePlanName
-      //   item.giveNum = val.giftNum
-      // })
-      this.ccProjectGiveList = val
-      console.log('赠送', val, this.ccProjectGiveList)
+      this.ccPackageGiveList = val
       this.presentDialog = false
     },
     // 监听取消保存
