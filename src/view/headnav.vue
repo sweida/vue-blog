@@ -58,7 +58,7 @@
 </template>
 
 <script>
-
+import { removeToken } from '@/utils/token'
 export default {
   data () {
     return {
@@ -75,11 +75,13 @@ export default {
   methods: {
 		logout: function () {
 			this.$confirm('确认退出吗?', '提示', {
-				type: 'warning'
-			}).then(() => {
-				this.$router.push('/login');
-			}).catch(() => {
-			});
+			type: 'warning'
+		}).then(() => {
+			removeToken()
+			this.$router.push('/login')
+			this.$message.success('已退出登录')
+		}).catch(() => {
+		})
 		},
 		url(val) {
 			window.location = val
