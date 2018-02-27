@@ -229,11 +229,12 @@
                 prop="number"
                 label="数量">
                 <template slot-scope="scope" >
-                  <el-input-number v-model="scope.row.projectNum"  :min="1"></el-input-number>
-                  <!-- <el-input-number v-model="scope.row.projectNum"  :min="1" :max="scope.row.projectNum"></el-input-number> -->
+                  <el-input-number v-model="scope.row.number"  :min="1"></el-input-number>
+                  <!-- <el-input-number v-model="scope.row.number"  :min="1" :max="scope.row.projectNum"></el-input-number> -->
                 </template>
               </el-table-column>
             </el-table>
+
             <el-form ref="form" v-model="form" label-width="120px" label-position='left'>
               <el-form-item label="有效天数">
                 <el-input type="number" size="medium" v-model="form.effectiveDays" placeholder="填写有效天数"></el-input>
@@ -499,7 +500,6 @@ export default {
       this.getprojectList(child.id, item.id)
     },
     selectGoods(selection, val) {
-      console.log(val,12)
       var index = selection.indexOf(val)
       if (index < 0) {
         var sIndex = this.checkGoodIds.indexOf(val.id)
@@ -512,7 +512,6 @@ export default {
         this.checkGoods.push(val)
         this.checkGoodIds.push(val.id)
       }
-      console.log(this.checkGoodIds, this.checkGoods, selection,111)
     },
     selectAllGoods(val) {
       if (val.length == 0) {
