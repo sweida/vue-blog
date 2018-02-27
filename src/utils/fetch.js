@@ -2,6 +2,7 @@ import axios from "axios"
 import router from "@/router"
 import store from "../store"
 import { Message } from "element-ui"
+import { getToken, removeToken } from '@/utils/token'
 
 // 创建axios实例
 const service = axios.create({
@@ -11,11 +12,11 @@ const service = axios.create({
 
 // request拦截器
 service.interceptors.request.use(config => {
-  if (config.url == "apis/authentication/form") {
+  if (config.url == 'apis/authentication/form') {
     config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
   } else {
     config.headers['Content-Type'] = 'application/json;charset=utf-8'
-    let Authorization = store.getters.token.token_type + ' ' + store.getters.token.access_token
+    let Authorization = 'bearer ' + getToken().access_token
     config.headers['Authorization'] = Authorization
   }
   return config
@@ -34,7 +35,7 @@ service.interceptors.response.use(
         type: 'error',
         duration: 2000,
         onClose() {
-          // removeToken()
+          removeToken()
           router.push('/')
         }
       })
@@ -45,7 +46,7 @@ service.interceptors.response.use(
         type: 'error',
         duration: 2000,
         onClose() {
-          // removeToken()
+          removeToken()
           router.push('/')
         }
       })
@@ -54,12 +55,33 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('err:' + error.response.status)// for debug
-    Message({
-      message: error.response.data.message,
-      type: 'error',
-      duration: 5 * 1000
-    })
+    if (error.response.status == 401) {
+      Message({
+        message: '登录信息过期，请重新登录！',
+        type: 'error',
+        duration: 800,
+        onClose() {
+          removeToken()
+          router.push('/login')
+        }
+      })
+    }
+    if (error.response.status == 504) {
+      Message({
+        message: '服务器异常！',
+        type: 'error',
+        duration: 800,
+        onClose() {
+          removeToken()
+          router.push('/login')
+        }
+      })
+    }
+    // Message({
+    //   message: error.response.data.message,
+    //   type: 'error',
+    //   duration: 5 * 1000
+    // })
     return Promise.reject(error)
   }
 )

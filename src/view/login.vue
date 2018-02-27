@@ -18,6 +18,7 @@
 
 <script>
   import { toLogin } from '@/api/login'
+  import { setToken } from '@/utils/token'
   export default {
     data() {
       return {
@@ -33,7 +34,7 @@
       loginSubmit: function() {
         toLogin(this.param).then((res) => {
           if (res.status == 200) {
-            this.$store.dispatch('changeToken', res.data)
+            setToken(res.data)
             this.$router.push({ path: '/home' })
           }
         })

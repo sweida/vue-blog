@@ -8,7 +8,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import router from './router'
 
 Vue.config.productionTip = false
-
+import '@/permission'
 new Vue({
   el: '#app',
   router,

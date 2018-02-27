@@ -515,9 +515,6 @@
       </el-dialog>
       <!-- 添加赠送方案 -->
        <addGive ref="addGiveChild" :burdening="presentDialog" @saveGive="saveGive" @cancelGive="cancelGive"></addGive>
-      <!-- <el-dialog title="添加赠送方案" :visible.sync="presentDialog" width="1000px" class="burbox">
-
-      </el-dialog> -->
   </div>
 </template>
 
