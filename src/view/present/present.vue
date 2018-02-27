@@ -158,7 +158,6 @@
               tooltip-effect="dark"
               @select="selectGoods"
               @select-all="selectAllGoods"
-              @selection-change="addtableList"
               >
               <el-table-column
                 label="名称"
@@ -231,6 +230,7 @@
                 label="数量">
                 <template slot-scope="scope" >
                   <el-input-number v-model="scope.row.projectNum"  :min="1"></el-input-number>
+                  <!-- <el-input-number v-model="scope.row.projectNum"  :min="1" :max="scope.row.projectNum"></el-input-number> -->
                 </template>
               </el-table-column>
             </el-table>
@@ -457,10 +457,34 @@ export default {
       }
       this.tableList = []
       this.checkGoods = []
+      this.checkGoodIds = []
       this.selectedOptions = []
       this.presentDialog = true
       this.getccGetMenu()
       console.log('form', this.form)
+    },
+    // 打开编辑弹框
+    editBtn(index, row) {
+      this.tableList = []
+      this.checkGoods = []
+      this.checkGoodIds = []
+      this.selectedOptions = []
+      this.getccGetMenu()
+      this.presentDialog = true
+      givePlanDetail(row.id).then(res => {
+        console.log(res)
+        if (res.data.code == 200) {
+          this.form = res.data.data
+          this.checkGoods = res.data.data.ccSelectedProjectVos
+          this.checkGoods.forEach(val => {
+            this.checkGoodIds.push(val.id)
+          })
+          let arr = res.data.data.takeMode.split(',')
+          this.selectedOptions = arr.map((item) => {
+            return +item
+          })
+        }
+      })
     },
     // 获取项目、产品、套餐、优惠券菜单
     getccGetMenu() {
@@ -474,24 +498,21 @@ export default {
     dialogChangeMenu(child, item) {
       this.getprojectList(child.id, item.id)
     },
-    // 添加列表
-    addtableList(val) {
-      // this.checkGoods = val
-      // console.log(val)
-    },
     selectGoods(selection, val) {
+      console.log(val,12)
       var index = selection.indexOf(val)
       if (index < 0) {
         var sIndex = this.checkGoodIds.indexOf(val.id)
         val.number = 1
         if (sIndex > -1) {
-          this.checkGoods.splice(sIndex, 1)
           this.checkGoodIds.splice(sIndex, 1)
+          this.checkGoods.splice(sIndex, 1)
         }
       } else {
         this.checkGoods.push(val)
         this.checkGoodIds.push(val.id)
       }
+      console.log(this.checkGoodIds, this.checkGoods, selection,111)
     },
     selectAllGoods(val) {
       if (val.length == 0) {
@@ -519,7 +540,7 @@ export default {
         this.tableList = res.data.data.rows
         this.tableList.forEach((good) => {
           if (this.checkGoodIds) {
-            var index = this.checkGoods.indexOf(good)
+            var index = this.checkGoodIds.indexOf(good.id)
             if (index > -1) {
               setTimeout(() => {
                 this.$refs.goods.toggleRowSelection(good)
@@ -551,25 +572,6 @@ export default {
           }
         })
       }
-    },
-    // 打开编辑弹框
-    editBtn(index, row) {
-      this.tableList = []
-      this.checkGoods = []
-      this.selectedOptions = []
-      this.getccGetMenu()
-      this.presentDialog = true
-      givePlanDetail(row.id).then(res => {
-        console.log(res)
-        if (res.data.code == 200) {
-          this.form = res.data.data
-          this.checkGoods = res.data.data.ccSelectedProjectVos
-          let arr = res.data.data.takeMode.split(',')
-          this.selectedOptions = arr.map((item) => {
-            return +item
-          })
-        }
-      })
     },
     // 修改赠送方案
     editPlanBtn() {
