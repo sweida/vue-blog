@@ -229,8 +229,7 @@
                 prop="number"
                 label="数量">
                 <template slot-scope="scope" >
-                  <el-input-number v-model="scope.row.number"  :min="1"></el-input-number>
-                  <!-- <el-input-number v-model="scope.row.number"  :min="1" :max="scope.row.projectNum"></el-input-number> -->
+                  <el-input-number v-model="scope.row.projectNum" :min="1" :max="scope.row.coupNum"></el-input-number>
                 </template>
               </el-table-column>
             </el-table>

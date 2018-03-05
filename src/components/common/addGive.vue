@@ -49,13 +49,13 @@
             <div v-loading="loading" >
               <div>
                 <div class="item-details" style="width: 100%;height: 50px;line-height: 50px;text-align: center;background: #f4f4f4;font-weight:bold">
-                  <div style="width: 10%;display: inline-block">类型</div>
+                  <div style="width: 20%;display: inline-block">类型</div>
                   <div style="width: 40%;display: inline-block">名称</div>
                   <div style="width: 20%;display: inline-block">价值</div>
                   <div style="width: 10%;display: inline-block">数量</div>
                 </div>
                 <div class="item-details" v-for="item in scope.row.ccSelectedProjectVos" style="width: 100%;height: 30px;line-height: 30px;text-align: center">
-                  <div style="width: 10%;display: inline-block">{{item.coupType == 0 ? projectType[3] : projectType[item.projectType-1]}}</div>
+                  <div style="width: 20%;display: inline-block">{{item.coupType == 0 ? projectType[3] : projectType[item.projectType-1]}}</div>
                   <div style="width: 40%;display: inline-block">{{item.projectName}}</div>
                   <div style="width: 20%;display: inline-block">{{item.projectPrice}}</div>
                   <div style="width: 10%;display: inline-block">{{item.projectNum}}</div>
@@ -94,13 +94,13 @@
             <div v-loading="loading" >
               <div>
                 <div class="item-details" style="width: 100%;height:100%;height: 50px;line-height: 50px;text-align: center;background: #f4f4f4;font-weight:bold">
-                  <div style="width: 10%;display: inline-block">类型</div>
+                  <div style="width: 20%;display: inline-block">类型</div>
                   <div style="width: 40%;display: inline-block">名称</div>
                   <div style="width: 20%;display: inline-block">价值</div>
                   <div style="width: 10%;display: inline-block">数量</div>
                 </div>
                 <div class="item-details" v-for="item in scope.row.ccSelectedProjectVos" style="width: 100%;height:100%;height: 30px;line-height: 30px;text-align: center">
-                  <div style="width: 10%;display: inline-block">{{item.coupType == 0 ? projectType[3] : projectType[item.projectType-1]}}</div>
+                  <div style="width: 20%;display: inline-block">{{item.coupType == 0 ? projectType[3] : projectType[item.projectType-1]}}</div>
                   <div style="width: 40%;display: inline-block">{{item.projectName}}</div>
                   <div style="width: 20%;display: inline-block">{{item.projectPrice}}</div>
                   <div style="width: 10%;display: inline-block">{{item.projectNum}}</div>
