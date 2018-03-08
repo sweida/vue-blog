@@ -78,7 +78,7 @@
                 </template>
               </el-table-column>
               <el-table-column
-                prop="projectNum"
+                prop="coupNum"
                 label="总数量"
                 >
               </el-table-column>
@@ -114,7 +114,7 @@
       </div>
 
       <!-- 弹框 -->
-      <el-dialog title="新增代金券" :visible.sync="voucherDialog" width="1000px">
+      <el-dialog :title="dialogTitle" :visible.sync="voucherDialog" width="1000px">
         <div class="form_box">
           <h4>选择</h4>
           <el-form ref="form" :model="form" label-width="120px" label-position='left'>
@@ -211,6 +211,7 @@ export default {
       bed: 1,
       input: '',
       voucherDialog: false,
+      dialogTitle: '',
       banner: 'static/img/phone.png',
       MenuParam: {},
       menuType: 18,
@@ -378,6 +379,7 @@ export default {
       this.delselectedOptions = []
       this.goodsList = ''
       this.selectGoods = ''
+      this.dialogTitle = '新增代金券'
       this.voucherDialog = true
     },
     //搜素客户
@@ -460,6 +462,7 @@ export default {
     },
     // 编辑按钮
     editBtn(index, row) {
+      this.dialogTitle = '修改代金券'
       this.voucherDialog = true
       VoucherDetail(row.id).then(res => {
         this.form = res.data.data
