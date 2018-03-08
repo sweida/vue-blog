@@ -147,16 +147,19 @@ export default {
           name: value,
           parentId: item.id
         }
-        addMenu(param).then(res => {
-          console.log('添加菜单', res)
-          if (res.data.code == 200) {
-            this.getmealMenu()
-            this.$message.success('新增菜单成功!')
-          } else {
-            this.$message.error('新增菜单失败!')
-          }
-        })
-        this.$message.success('新增类目成功')
+        if (value == null) {
+          this.$message.error('不能为空')
+        } else {
+          addMenu(param).then(res => {
+            console.log('添加菜单', res)
+            if (res.data.code == 200) {
+              this.getmealMenu()
+              this.$message.success('新增菜单成功!')
+            } else {
+              this.$message.error('新增菜单失败!')
+            }
+          })
+        }
       }).catch(() => {
       })
     },
@@ -186,16 +189,19 @@ export default {
       this.$prompt('请输入修改的类目名称', '提示', {
         inputValue: name
       }).then(({ value }) => {
-        editMenu(item.id, value).then(res => {
-          console.log('修改菜单', res)
-          if (res.data.code == 200) {
-            this.getmealMenu()
-            this.$message.success('修改菜单成功!')
-          } else {
-            this.$message.error('修改菜单失败!')
-          }
-        })
-        this.$message.success('新增类目成功')
+        if (value == null) {
+          this.$message.error('不能为空')
+        } else {
+          editMenu(item.id, value).then(res => {
+            console.log('修改菜单', res)
+            if (res.data.code == 200) {
+              this.getmealMenu()
+              this.$message.success('修改菜单成功!')
+            } else {
+              this.$message.error('修改菜单失败!')
+            }
+          })
+        }
       }).catch(() => {
       })
     },

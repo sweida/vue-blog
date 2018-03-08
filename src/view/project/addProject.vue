@@ -403,7 +403,7 @@ export default {
         projectPrice: '',
         projectType: '',
         availabilityDay: 3650,  // 有效天数
-        consumeTime: 30,      // 耗时
+        consumeTime: 60,      // 耗时
         parentId: '',         // 父id
         detail: '',           // 文章
         ccProjectMaterialList: [],   // 配料
