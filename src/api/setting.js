@@ -105,7 +105,7 @@ export function editSttaf(data) {
 // 添加会员卡
 export function addvipCard(data) {
   return fetch({
-    url: '/apis/vipStructure',
+    url: '/apis/organManager',
     method: 'post',
     data
   })
@@ -113,7 +113,7 @@ export function addvipCard(data) {
 // 获取会员卡
 export function getvipCard(pageModel, data) {
   return fetch({
-    url: `/apis/vipStructure/page/${pageModel.page}/${pageModel.rows}`,
+    url: `/apis/organManager/page/${pageModel.page}/${pageModel.rows}`,
     method: 'post',
     data
   })
@@ -121,7 +121,7 @@ export function getvipCard(pageModel, data) {
 // 删除会员卡
 export function delvipCard(data) {
   return fetch({
-    url: `/apis/vipStructure/${data}`,
+    url: `/apis/organManager/${data}`,
     method: 'DELETE',
     data
   })
@@ -129,7 +129,7 @@ export function delvipCard(data) {
 // 编辑会员卡
 export function editvipCard(data) {
   return fetch({
-    url: '/apis/vipStructure',
+    url: '/apis/organManager',
     method: 'PUT',
     data
   })
@@ -137,7 +137,7 @@ export function editvipCard(data) {
 // 会员卡详细信息
 export function getCardDetail(id) {
   return fetch({
-    url: `/apis/vipStructure/${id}`,
+    url: `/apis/organManager/${id}`,
     method: 'GET'
   })
 }

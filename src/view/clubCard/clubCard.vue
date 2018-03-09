@@ -8,11 +8,11 @@
             <div class="input_box">
               <li>
                 <label for="">会员卡级别</label>
-                <el-input size="small" placeholder="请输入会员名称" v-model="vipinput.vipTypeName"></el-input>
+                <el-input size="small" placeholder="请输入会员级别" v-model="vipinput.schemeName"></el-input>
               </li>
               <li>
                 <label for="">起点金额</label>
-                <el-input size="small" v-model="vipinput.startingPointSum"></el-input>
+                <el-input size="small" v-model="vipinput.schemePrice"></el-input>
               </li>
               <li>
                 <label for="">有效期（月）</label>
@@ -20,15 +20,15 @@
               </li>
               <li>
                 <label for="">项目折扣</label>
-                <el-input size="small" v-model="vipinput.discountProduct"></el-input>
+                <el-input size="small" v-model="vipinput.projectDiscount"></el-input>
               </li>
               <li>
                 <label for="">产品折扣</label>
-                <el-input size="small" v-model="vipinput.discountProject"></el-input>
+                <el-input size="small" v-model="vipinput.productDiscount"></el-input>
               </li>
               <li>
                 <label for="">套餐折扣</label>
-                <el-input size="small" v-model="vipinput.discountMeal"></el-input>
+                <el-input size="small" v-model="vipinput.packageDiscount"></el-input>
               </li>
             </div>
             <div class="addpresent">
@@ -41,7 +41,7 @@
                   :disable-transitions="false"
                   @close="handleTagsClose(item)"
                   >
-                  {{(item.projectName || item.giftName)+'(*'+item.giftNum+')'}}
+                  {{(item.projectName)+'(*'+item.projectNum+')'}}
                 </el-tag>
               </div>
             </div>
@@ -59,27 +59,27 @@
             tooltip-effect="dark"
             >
             <el-table-column
-              prop="vipTypeName"
+              prop="schemeName"
               label="会员卡级别"
               sortable>
             </el-table-column>
             <el-table-column
-              prop="startingPointSum"
+              prop="schemePrice"
               label="起点金额"
               sortable>
             </el-table-column>
             <el-table-column
-              prop="discountProject"
+              prop="productDiscount"
               label="项目折扣"
               >
             </el-table-column>
             <el-table-column
-              prop="discountProduct"
+              prop="projectDiscount"
               label="产品折扣"
               >
             </el-table-column>
             <el-table-column
-              prop="discountMeal"
+              prop="packageDiscount"
               label="套餐折扣"
               >
             </el-table-column>
@@ -222,10 +222,10 @@
                 label="有效天数">
               </el-table-column>
               <el-table-column
-                prop="giftNum"
+                prop="projectNum"
                 label="数量">
                 <template slot-scope="scope" >
-                  <el-input-number v-model="scope.row.giftNum"  :min='1'></el-input-number>
+                  <el-input-number v-model="scope.row.projectNum"  :min='1'></el-input-number>
                 </template>
               </el-table-column>
             </el-table>
@@ -271,16 +271,16 @@ export default {
       },
       vipinput: {},
       vipCard: {
-        vipTypeName: '',
-        startingPointSum: '',
+        schemeName: '',
+        schemePrice: '',
         vipValidityDate: '',
-        discountProduct: '',
-        discountProject: '',
-        discountMeal: ''
+        projectDiscount: '',
+        productDiscount: '',
+        packageDiscount: ''
       },
-      vipTypeId: '',
+      id: '',
       vipcardList: [],
-      ccVipGiftVoList: []
+      ccSelectedProjectVoList: []
     }
   },
   created() {
@@ -377,26 +377,14 @@ export default {
     },
     // 添加会员卡
     vipinputBtn() {
-      if (this.vipinput.vipTypeName == '' || this.vipinput.startingPointSum == '') {
+      if (this.vipinput.schemeName == '' || this.vipinput.schemePrice == '') {
         this.$message.error('会员卡信息不能为空')
       } else {
         console.log(this.materials_data)
-        let GiftList = []
-        this.materials_data.forEach((item, index) => {
-          GiftList[index] = {}
-          GiftList[index].effectiveDays = item.effectiveDays
-          GiftList[index].giftName = item.givePlanName || item.giftName
-          GiftList[index].giftNum = item.giftNum
-          GiftList[index].giftId = item.id || item.giftId
-        })
-        let param = Object.assign({
-          enterpriseId: '001',
-          ccVipGiftVoList: GiftList
-        }, this.vipinput)
-        addvipCard(param).then(res => {
-          console.log('添加会员卡', param, this.vipCard, res)
+        this.vipinput.ccSelectedProjectVoList = this.materials_data
+        addvipCard(this.vipinput).then(res => {
+          console.log('添加会员卡', this.vipinput, this.vipCard, res)
           if (res.data.code == 200) {
-            this.vipcardList.unshift(param)
             this.materials_data = []
             this.getvipList()
             this.$message.success('新增成功!')
@@ -413,10 +401,9 @@ export default {
       this.$confirm('是否删除该会员卡等级?', '提示', {
         type: 'warning'
       }).then(() => {
-        delvipCard(row.vipTypeId).then(res => {
+        delvipCard(row.id).then(res => {
           if (res.data.code == 200) {
             console.log(res)
-            this.vipcardList.splice(index, 1)
             this.$message.success('删除成功!')
             this.getvipList()
           } else {
@@ -427,14 +414,14 @@ export default {
       })
     },
 
-    // 编辑会员卡 vipTypeId
+    // 编辑会员卡 id
     editvipBtn(index, row) {
       this.change = false
-      this.vipTypeId = row.vipTypeId
-      getCardDetail(row.vipTypeId).then(res => {
-        console.log(res, res.data.data.ccVipGiftVoList)
+      this.id = row.id
+      getCardDetail(row.id).then(res => {
+        console.log(res, res.data.data.ccSelectedProjectVoList)
         this.vipinput = res.data.data
-        this.materials_data = res.data.data.ccVipGiftVoList
+        this.materials_data = res.data.data.ccSelectedProjectVoList
       })
     },
     // 取消保存
@@ -448,31 +435,23 @@ export default {
     },
     // 保存修改
     sureChange() {
-      if (this.vipinput.vipTypeName == '' || this.vipinput.startingPointSum == '') {
+      if (this.vipinput.schemeName == '' || this.vipinput.schemePrice == '') {
         this.$message.error('会员卡信息不能为空')
       } else {
-        let GiftList = []
-        this.materials_data.forEach((item, index) => {
-          GiftList[index] = {}
-          GiftList[index].giftName = item.givePlanName || item.giftName
-          GiftList[index].giftNum = item.giftNum
-          GiftList[index].giftId = item.id || item.giftId
-        })
         let param = Object.assign({
           enterpriseId: '001',
-          vipTypeId: this.vipTypeId
+          id: this
         }, this.vipinput)
-        param.ccVipGiftVoList = GiftList
+        param.ccSelectedProjectVoList = this.materials_data
         console.log('bbbb', param)
         editvipCard(param).then(res => {
-          console.log('编辑会员卡', param, this.vipCard, res, '赠送', GiftList, param.ccVipGiftVoList)
+          console.log('编辑会员卡', param, this.vipCard, res, '赠送', param.ccSelectedProjectVoList)
           if (res.data.code == 200) {
-            this.vipcardList.unshift(param)
             this.getvipList()
             this.$message.success('修改成功!')
             this.materials_data = []
             this.change = true
-            this.vipTypeId = ''
+            this.id = ''
           } else {
             this.$message.error('修改失败!')
           }
@@ -498,8 +477,6 @@ export default {
         console.log(this.materials_arr)
         if (this.materials_arr.length != 0) {
           this.materials_arr.forEach(item => {
-            // item.createDate = parseTime(item.createDate, '{y}-{m}-{d}')
-            // item.effectiveDate = parseTime(item.effectiveDate, '{y}-{m}-{d}')
             if (this.checkGoodIds) {
               var index = this.materials_data.findIndex(val => {
                 return val.id == item.id
