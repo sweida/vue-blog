@@ -1,6 +1,6 @@
 <template>
   <div class="aside scroll">
-    <router-link :to="item.url" tag="li" v-for="(item,index) in nav" :key="index">
+    <router-link :to="item.path" tag="li" v-for="(item,index) in addRouters[0].children" :key="index" v-if="!item.hidden">
       <i class="animate05 i"></i>
       <i class="el-icon-document"></i><span>{{item.name}}</span>
     </router-link>
@@ -8,8 +8,12 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
   export default {
     components: {
+    },
+    computed: {
+      ...mapGetters(['addRouters'])
     },
     data() {
       return {
@@ -31,6 +35,9 @@
       }
     },
     methods: {
+    },
+    created() {
+      console.log(this.addRouters)
     }
   }
 </script>

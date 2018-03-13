@@ -4,10 +4,10 @@
       <div class="logo"></div>
       <div class="formbox">
         <div>
-          <label for="name">账号</label><input v-model="param.mobile_phone_num" type="text" id="name" placeholder="请输入账号" auto-complete="off">
+          <label for="name">账号</label><input v-model="param.username" type="text" id="name" placeholder="请输入账号" auto-complete="off">
         </div>
         <div>
-          <label for="password">密码</label><input v-model="param.staff_pass" :type="show ? 'password' : 'text'" id="password" placeholder="请输入密码" auto-complete="off"><i :class="show ?'seepassword' : 'el-icon-view'" @click="show=!show"></i>
+          <label for="password">密码</label><input v-model="param.password" :type="show ? 'password' : 'text'" id="password" placeholder="请输入密码" auto-complete="off"><i :class="show ?'seepassword' : 'el-icon-view'" @click="show=!show"></i>
         </div>
       </div>
       <el-checkbox v-model="checked" checked class="remember" >记住密码</el-checkbox>
@@ -32,9 +32,8 @@
     },
     methods: {
       loginSubmit: function() {
-        toLogin(this.param).then((res) => {
+        this.$store.dispatch('LoginByUsername', this.param).then(res => {
           if (res.status == 200) {
-            setToken(res.data)
             this.$router.push({ path: '/home' })
           }
         })

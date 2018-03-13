@@ -479,7 +479,8 @@
       permissionCheckChange(data, isChecked) {
         if (!this.authType) {
           let node = this.$refs.menuTree.store.getNode(data.id);
-          if (node.data.parent) {
+          console.log(111, node.data)
+          if (node.data.haveAuth) {
             if (node.data.authNodeList) {
               node.data.authNodeList.forEach((node) => {
                 node.checked = isChecked;

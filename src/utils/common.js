@@ -1,6 +1,5 @@
-
 // 时间格式化
-export function parseTime (time, cFormat) {
+export function parseTime(time, cFormat) {
   if (arguments.length === 0) {
     return null
   }
@@ -49,4 +48,10 @@ export function clone(Obj) {
   } else {
     return Obj
   }
+}
+// 按钮权限
+export function buttonPermission(auth, name) {
+  return auth.findIndex(item => {
+    return item.perUrl == name
+  }) != -1
 }

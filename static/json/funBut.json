@@ -38,5 +38,25 @@
   {
     "value": 10,
     "disabled": false
+  },
+  {
+    "value": 11,
+    "disabled": false
+  },
+  {
+    "value": 12,
+    "disabled": false
+  },
+  {
+    "value": 13,
+    "disabled": false
+  },
+  {
+    "value": 14,
+    "disabled": false
+  },
+  {
+    "value": 15,
+    "disabled": false
   }
 ]
