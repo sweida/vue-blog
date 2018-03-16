@@ -1,6 +1,5 @@
 import { auth, constantRouterMap } from '@/router'
-import {getRouterMenu} from '@/api/login' // 权限菜单
-
+import { getRouterMenu } from '@/api/login' // 权限菜单
 /**
  * 通过meta.role判断是否与当前用户权限匹配
  * @param roles
