@@ -106,10 +106,10 @@
 
       </div>
 
+      <!-- 添加弹框 -->
       <el-dialog :visible.sync="presentDialog" title="添加赠送方案" width="1250px" class="burbox">
         <div class="tableDialog">
           <div class="tabs scroll">
-
             <el-menu
               class="el-menu-vertical-demo"
               @open="handleOpen"
@@ -146,7 +146,6 @@
                 </el-submenu>
               </template>
             </el-menu>
-
           </div>
           <div class="burli1">
             <el-table
@@ -180,7 +179,6 @@
           </div>
           <!-- 已选列表 -->
           <div class="burli3">
-            <!-- <h4>设置</h4> -->
             <el-form ref="form" v-model="form" label-width="120px" label-position='left'>
               <el-form-item label="赠送方案名称">
                 <el-input size="medium" v-model="form.givePlanName" placeholder="填写赠送方案名称"></el-input>
@@ -456,6 +454,7 @@ export default {
     added() {
       this.form = {
         givePlanName: '',
+        effectiveDays: 1000,
         createDate: new Date(),
         effectiveDate: new Date((+new Date()) + 3651 * 24 * 3600 * 1000),
         parentId: '',

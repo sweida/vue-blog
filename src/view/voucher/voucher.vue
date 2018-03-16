@@ -58,10 +58,10 @@
               tooltip-effect="dark"
               >
               <el-table-column
-                prop="id"
+                prop="coupNumber"
                 label="编号"
                 :show-overflow-tooltip="true"
-                width="220px">
+                width="350px">
               </el-table-column>
               <el-table-column
                 prop="projectName"
