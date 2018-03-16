@@ -113,12 +113,19 @@
         <el-form-item label="菜单地址" class="el-form-item-input" prop="perUrl">
           <el-input style="width: 50%" v-model="menu.perUrl"></el-input>
         </el-form-item>
-        <el-form-item label="父菜单" class="el-form-item-input">
+        <el-form-item label="菜单路径" class="el-form-item-input" prop="component">
+          <el-input style="width: 50%" v-model="menu.component"></el-input>
+        </el-form-item>
+        <el-form-item label="菜单类型" class="el-form-item-input" prop="perType">
+          <el-radio v-model="menu.perType" label="0">菜单</el-radio>
+          <el-radio v-model="menu.perType" label="2">按钮</el-radio>
+        </el-form-item>
+        <el-form-item label="父菜单" class="el-form-item-input" v-if="menu.perType==0">
           <el-cascader v-model="arrParent" clearable expand-trigger="hover" filterable :options="lmenu"
                        :props="parentProps"
                        change-on-select @change="parentChange"></el-cascader>
         </el-form-item>
-        <el-form-item label="排序">
+        <el-form-item label="排序" v-if="menu.perType==0">
           <el-select v-model="menu.showPosition" placeholder="请选择">
             <el-option
               v-for="item in sortOption"
@@ -247,6 +254,7 @@
           id: '',
           arrParent: '',
           perName: '',
+          perType:'0',
           perIcon: '',
           perUrl: '',
           superiorMenuid: '',
@@ -279,7 +287,7 @@
           },
             {
               min: 3,
-              max: 15,
+              max: 30,
               message: '长度在 3 到 15 个字符',
               trigger: 'change,blur'
             }
@@ -568,11 +576,15 @@
         });
       },
       submitForm(formName) {
-        this.menu.arrParent=this.arrParent.join(",");
-        this.menu.authMenus = this.funs;
+        this.menu.arrParent = this.arrParent.join(",")
+        this.menu.authMenus = this.funs
+        if (!this.menu.superiorMenuid) {
+          this.menu.menuLevel = 1
+        }
         this.$refs[formName].validate((valid) => {
           if (valid) {
             if (!this.menu.id) {
+              console.log(111, this.menu)
               addMenu(this.menu).then(res => {
                 if (res.data.code == 0) {
                   this.$message({

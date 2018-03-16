@@ -16,8 +16,10 @@ service.interceptors.request.use(config => {
     config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
   } else {
     config.headers['Content-Type'] = 'application/json;charset=utf-8'
-    let Authorization = 'bearer ' + getToken().access_token
-    config.headers['Authorization'] = Authorization
+    if (store.getters.token) {
+      let Authorization = 'bearer ' + getToken() // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
+      config.headers['Authorization'] = Authorization
+    }
   }
   return config
 }, error => {

@@ -13,6 +13,19 @@ export function toLogin(data) {
     }
   })
 }
+export function logout() {
+  return fetch({
+    url: 'apis/authentication/out',
+    method: 'post'
+  })
+}
+// 用户权限菜单
+export function getRouterMenu() {
+  return fetch({
+    url: '/apis/auth/user/router',
+    method: 'GET'
+  })
+}
 // 产品菜单
 export function getMenuProduct() {
   return fetch({
@@ -20,7 +33,7 @@ export function getMenuProduct() {
     method: 'GET'
   })
 }
-// 产品菜单
+// 项目菜单
 export function getMenuProject() {
   return fetch({
     url: '/apis/menu/project',
