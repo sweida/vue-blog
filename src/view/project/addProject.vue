@@ -25,6 +25,9 @@
             <el-form-item label="价格">
               <el-input size="medium" type="number" v-model="form.projectPrice" ></el-input>
             </el-form-item>
+            <el-form-item label="会员价格">
+              <el-input size="medium" type="number" v-model="form.discountPrice" ></el-input>
+            </el-form-item>
             <el-form-item label="有效天数">
               <el-input size="medium" type="number" v-model="form.availabilityDay" ></el-input>
             </el-form-item>
@@ -401,6 +404,7 @@ export default {
         projectName: '',
         arrId: '',
         projectPrice: '',
+        discountPrice: '',
         projectType: '',
         availabilityDay: 3650,  // 有效天数
         consumeTime: 60,      // 耗时

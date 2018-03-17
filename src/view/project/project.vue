@@ -72,14 +72,22 @@
             <el-table-column
               prop="projectName"
               label="名称"
-              width="320px">
+              show-overflow-tooltip
+              width="300px">
             </el-table-column>
             <el-table-column
               prop="projectPrice"
               label="价格"
-              width="150px">
+              width="120px">
               <template slot-scope="scope">
                 <span>￥{{scope.row.projectPrice}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="会员价格"
+              width="120px">
+              <template slot-scope="scope">
+                <span class="red">￥{{scope.row.discountPrice}}</span>
               </template>
             </el-table-column>
             <el-table-column

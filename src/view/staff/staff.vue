@@ -22,7 +22,7 @@
         </el-table-column>
         <el-table-column prop="mobilePhoneNum" label="手机号">
         </el-table-column>
-        <el-table-column prop="ccOrganDetail.organName" label="会所">
+        <el-table-column prop="ccOrganDetail.organName" label="机构">
         </el-table-column>
         <el-table-column label="修改">
           <template slot-scope="scope">
@@ -59,9 +59,9 @@
               </template>
           </el-select>
         </el-form-item>
-        <el-form-item label="会所">
+        <el-form-item label="机构">
           <!-- <el-input  size="mini" placeholder="王狮传奇南山总店" :readonly="true"></el-input> -->
-          <el-select v-model="organId" placeholder="请选择会所" size="mini">
+          <el-select v-model="organId" placeholder="请选择机构" size="mini">
             <el-option label="王狮传奇南山总店" value="1"></el-option>
           </el-select>
         </el-form-item>

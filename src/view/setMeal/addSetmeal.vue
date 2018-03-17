@@ -25,6 +25,9 @@
             <el-form-item label="套餐价格">
               <el-input size="medium" type="number" v-model="form.packagePrice"></el-input>
             </el-form-item>
+            <el-form-item label="会员价格">
+              <el-input size="medium" type="number" v-model="form.discountPrice" ></el-input>
+            </el-form-item>
             <el-form-item label="有效天数">
               <el-input size="medium" type="number" v-model="form.effectiveDays"></el-input>
             </el-form-item>
@@ -294,7 +297,7 @@
                 </el-menu-item>
                 <el-submenu :index="productList.url+child.url" v-else>
                 <template slot="title">
-                  <span>{{child.name}}</span>
+                  <span @click="changeMenu(child, menuVoucherList.id)">{{child.name}}</span>
                 </template>
                 <template v-for="(child2, index2) in child.childMenu" :keys="index1">
                   <el-menu-item :index="productList.url+child.url+child2.url" @click="changeMenu(child2, productList.id)">{{child2.name}}</el-menu-item>
@@ -370,12 +373,12 @@
                   <span>{{child.name}}</span>
                 </el-menu-item>
                 <el-submenu :index="projectList.url+child.url" v-else>
-                <template slot="title">
-                  <span>{{child.name}}</span>
-                </template>
-                <template v-for="(child2, index2) in child.childMenu" :keys="index1">
-                  <el-menu-item :index="projectList.url+child.url+child2.url" @click="changeMenu(child2, projectList.id)">{{child2.name}}</el-menu-item>
-                </template>
+                  <template slot="title">
+                    <span @click="changeMenu(child, projectList.id)">{{child.name}}</span>
+                  </template>
+                  <template v-for="(child2, index2) in child.childMenu" :keys="index1">
+                    <el-menu-item :index="projectList.url+child.url+child2.url" @click="changeMenu(child2, projectList.id)">{{child2.name}}</el-menu-item>
+                  </template>
                 </el-submenu>
               </template>
             </el-menu>
@@ -448,7 +451,7 @@
                 </el-menu-item>
                 <el-submenu :index="menuVoucherList.url+child.url" v-else>
                 <template slot="title">
-                  <span>{{child.name}}</span>
+                  <span @click="changeMenu(child, menuVoucherList.id)">{{child.name}}</span>
                 </template>
                 <template v-for="(child2, index2) in child.childMenu" :keys="index1">
                   <el-menu-item :index="menuVoucherList.url+child.url+child2.url" @click="changeMenu(child2, menuVoucherList.id)">{{child2.name}}</el-menu-item>
@@ -567,6 +570,7 @@ export default {
       form: {
         packageName: '', // 套餐名称
         packagePrice: '', // 套餐价格
+        discountPrice: '',
         effectiveDays: 3560, // 有效天数
         arrId: '',
         parentId: '',     // 父级ID
