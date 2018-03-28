@@ -220,13 +220,17 @@ export default {
     },
     // 保存编辑
     confirmEdit() {
-      editSttaf(this.newstaff).then(res => {
-        if (res.data.code == 200) {
-          this.getSttafList()
-          this.$message.success(res.data.msg)
-          this.dialogVisible = false
-        } else {
-          this.$message.error(res.data.msg)
+      this.$refs.ruleForm.validate((valid) => {
+        if (valid) {
+          editSttaf(this.newstaff).then(res => {
+            if (res.data.code == 200) {
+              this.getSttafList()
+              this.$message.success(res.data.msg)
+              this.dialogVisible = false
+            } else {
+              this.$message.error(res.data.msg)
+            }
+          })
         }
       })
     },

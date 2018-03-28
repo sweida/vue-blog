@@ -55,3 +55,16 @@ export function buttonPermission(auth, name) {
     return item.perUrl == name
   }) != -1
 }
+// 去除空格
+export function Trim(val) {
+  return val.replace(/\s/g, '')
+}
+// 验证0到1的数字
+export function discount(val) {
+  var myreg = /^[0-1]$|^0\.[0-9]+$/
+  if (!myreg.test(val)) {
+    return false
+  } else {
+    return true
+  }
+}
