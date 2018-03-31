@@ -50,12 +50,8 @@ import {
   delRoom
 } from '@/api/setting'
 import page from '@/components/common/page'
-import {
-  buttonPermission
-} from '@/utils/common'
-import {
-  mapGetters
-} from 'vuex'
+import { mapGetters } from 'vuex'
+import { buttonPermission, Trim } from '@/utils/common'
 export default {
   name: 'app',
   components: {
@@ -83,7 +79,7 @@ export default {
       return buttonPermission(this.$route.meta.auth, name)
     },
     addBtn() {
-      if (this.roomName == '' || this.bedsAmount == '') {
+      if (this.roomName == '' || this.bedsAmount == '' || !Trim(this.roomName)) {
         this.$message.error('房间名和床位数不能为空')
       } else {
         let param = {

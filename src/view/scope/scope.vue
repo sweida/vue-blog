@@ -77,33 +77,26 @@
 </template>
 
 <script>
-import {
-  getRoleListPage,
-  delRole,
-  delsRole,
-  enableRole,
-  enableSRole,
-  getRoleById,
-  addRole,
-  editRole
-} from '@/api/role';
-
-import {
-  getAllMenu,
-  getRoleMenuById
-} from '@/api/menu'
-import {
-  delModel,
-  enableModel
-} from '@/utils/common'
+import { getRoleListPage, delRole, delsRole, enableRole, enableSRole, getRoleById, addRole, editRole } from '@/api/role';
+import { Trim } from '@/utils/common'
+import { getAllMenu, getRoleMenuById } from '@/api/menu'
+import { delModel, enableModel } from '@/utils/common'
 import page from '@/components/common/page'
-
 export default {
-  name: "roleList",
+  name: 'roleList',
   components: {
     page
   },
   data() {
+    var checkName = (rule, value, callback) => {
+      if (!value || !Trim(value)) {
+        return callback(new Error('角色名称不能为空'))
+      } else if (value.length > 10) {
+        return callback(new Error('长度在 1 到 10 个字符'))
+      } else {
+        callback()
+      }
+    }
     return {
       loading: false, //表格加载
       treeLoading: false, //树形菜单加载
@@ -113,7 +106,7 @@ export default {
       pageModel: { //分页实体
         page: 1,
         rows: 10,
-        sumCount: 0,
+        sumCount: 0
       },
       roleList: [], //表格数据
       multipleSelection: [], //表格多选
@@ -126,17 +119,8 @@ export default {
         menus: []
       },
       rules: { //验证
-        rolename: [{
-            required: true,
-            message: '请输入角色名称',
-            trigger: 'blur'
-          },
-          {
-            min: 1,
-            max: 10,
-            message: '长度在 1 到 10 个字符',
-            trigger: 'change,blur'
-          }
+        rolename: [
+          { validator: checkName, trigger: 'blur' }
         ]
       },
       menu: [], //树形菜单数据
@@ -145,7 +129,7 @@ export default {
         children: 'children',
         label: 'label'
       }, //树形菜单展示
-      authType: false, //当前类型是否是按钮
+      authType: false //当前类型是否是按钮
     }
   },
   computed: {

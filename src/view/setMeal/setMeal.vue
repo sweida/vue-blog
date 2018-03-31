@@ -1,20 +1,16 @@
 <template>
-  <div >
-      <div class="header_title">套餐<i class="el-icon-info"></i></div>
-      <div class="main-content scroll">
-        <div class="left_tree scroll">
-          <p class="nav-title" @click="navtitle">
-            <span>{{menuList.name}}</span>
-            <em class="navicon" v-if="openindex==menuList.url">
+<div>
+  <div class="header_title">套餐<i class="el-icon-info"></i></div>
+  <div class="main-content scroll">
+    <div class="left_tree scroll">
+      <p class="nav-title" @click="navtitle">
+        <span>{{menuList.name}}</span>
+        <em class="navicon" v-if="openindex==menuList.url">
               <i class="el-icon-plus" @click="plusNav(menuList)"></i>
             </em>
-          </p>
-          <el-menu
-            class="el-menu-vertical-demo"
-            @open="handleOpen"
-            @close="handleClose"
-            @select="handleSelect">
-            <template v-for="(item, index) in menuList.childMenu" :keys="index">
+      </p>
+      <el-menu class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" @select="handleSelect">
+        <template v-for="(item, index) in menuList.childMenu" :keys="index">
               <el-menu-item :index="item.url" v-if="item.childMenu==null || item.childMenu.length==0" @click="changeMenu(item)">
                 <template slot="title">
                   <span>{{item.name}}</span>
@@ -24,9 +20,9 @@
                     <i class="el-icon-minus" @click="minusNav(item)" v-if="tableData==''"></i>
                   </em>
                 </template>
-              </el-menu-item>
-              <el-submenu :index="item.url"  v-else>
-                <template slot="title" >
+        </el-menu-item>
+        <el-submenu :index="item.url" v-else>
+          <template slot="title">
                   <div @click="changeMenu(item)">
                     <span >{{item.name}}</span>
                     <em class="navicon" v-if="item.url==openindex">
@@ -35,7 +31,7 @@
                     </em>
                   </div>
                 </template>
-                <template v-for="(child, index1) in item.childMenu" :keys="index1">
+          <template v-for="(child, index1) in item.childMenu" :keys="index1">
                   <el-menu-item :index="child.url" @click="changeMenu(child)">
                     <span>{{child.name}}</span>
                     <em class="navicon" v-if="child.url==openindex">
@@ -44,72 +40,56 @@
                     </em>
                   </el-menu-item>
                 </template>
-              </el-submenu>
-            </template>
-          </el-menu>
+        </el-submenu>
+        </template>
+      </el-menu>
+    </div>
+    <div class="right_main">
+      <div class="main-head">
+        <div>
+          <input type="text" class="search" v-model="search" v-on:keyup.enter="searchBtn">
+          <i class="el-icon-search" @click="searchBtn"></i>
         </div>
-        <div class="right_main">
-          <div class="main-head">
-            <div>
-              <input type="text" class="search" v-model="search" v-on:keyup.enter="searchBtn">
-              <i class="el-icon-search" @click="searchBtn"></i>
-            </div>
-            <el-button type="primary"  size="small" @click="addBtn">新　增</el-button>
-          </div>
-          <div class="main_table">
-            <el-table
-              :data="tableData"
-              stripe
-              style="width: 100%"
-              max-height="600"
-              tooltip-effect="dark"
-              >
-              <el-table-column
-                prop="projectName"
-                label="名称"
-                width="300px"
-                >
-              </el-table-column>
-              <el-table-column
-                prop="projectPrice"
-                label="价格"
-                width="120px">
-                <template slot-scope="scope">
+        <el-button type="primary" size="small" @click="addBtn">新　增</el-button>
+      </div>
+      <div class="main_table">
+        <el-table :data="tableData" stripe style="width: 100%" max-height="600" tooltip-effect="dark">
+          <el-table-column prop="projectName" label="名称" width="300px">
+          </el-table-column>
+          <el-table-column prop="projectPrice" label="价格" width="120px">
+            <template slot-scope="scope">
                   ￥{{scope.row.projectPrice}}
                 </template>
-              </el-table-column>
-              <el-table-column
-                label="会员价格"
-                width="120px">
-                <template slot-scope="scope">
+          </el-table-column>
+          <el-table-column label="会员价格" width="120px">
+            <template slot-scope="scope">
                   <span class="red">￥{{scope.row.discountPrice}}</span>
                 </template>
-              </el-table-column>
-              <el-table-column
-                label="修改">
-                <template slot-scope="scope">
+          </el-table-column>
+          <el-table-column label="修改">
+            <template slot-scope="scope">
                   <i class="el-icon-edit" @click="editBtn(scope.$index, scope.row)"></i>
                 </template>
-              </el-table-column>
-              <el-table-column
-                label="删除">
-                <template slot-scope="scope">
+          </el-table-column>
+          <el-table-column label="删除">
+            <template slot-scope="scope">
                   <i class="el-icon-delete" @click="deleteBtn(scope.$index, scope.row)"></i>
                 </template>
-              </el-table-column>
-            </el-table>
-            <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
-          </div>
-        </div>
-
+          </el-table-column>
+        </el-table>
+        <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
       </div>
+    </div>
 
   </div>
+
+</div>
 </template>
 
 <script>
 import { PackageList, delPackage } from '@/api/product'
 import { mealMenu, delMenu, editMenu, addMenu } from '@/api/tree'
+import { Trim } from '@/utils/common'
 import page from '@/components/common/page'
 export default {
   name: 'meal',
@@ -147,15 +127,14 @@ export default {
     // 新增菜单
     plusNav(item) {
       event.stopPropagation()
-      this.$prompt('请输入新增的类目名称', '提示', {
-      }).then(({ value }) => {
+      this.$prompt('请输入新增的类目名称', '提示', {}).then(({ value }) => {
         console.log(value)
         let param = {
           icon: '',
           name: value,
           parentId: item.id
         }
-        if (value == null) {
+        if (value == null || !Trim(value)) {
           this.$message.error('不能为空')
         } else {
           addMenu(param).then(res => {
@@ -168,8 +147,7 @@ export default {
             }
           })
         }
-      }).catch(() => {
-      })
+      }).catch(() => {})
     },
     // 删除菜单
     minusNav(item) {
@@ -187,8 +165,7 @@ export default {
             this.$message.error(res.data.msg)
           }
         })
-      }).catch(() => {
-      })
+      }).catch(() => {})
     },
     // 修改菜单
     editNav(item, name) {
@@ -197,7 +174,7 @@ export default {
       this.$prompt('请输入修改的类目名称', '提示', {
         inputValue: name
       }).then(({ value }) => {
-        if (value == null) {
+        if (value == null || !Trim(value)) {
           this.$message.error('不能为空')
         } else {
           editMenu(item.id, value).then(res => {
@@ -210,8 +187,7 @@ export default {
             }
           })
         }
-      }).catch(() => {
-      })
+      }).catch(() => {})
     },
     navtitle() {
       this.openindex = this.menuList.url
@@ -264,8 +240,7 @@ export default {
             this.$message.error('删除失败!')
           }
         })
-      }).catch(() => {
-      })
+      }).catch(() => {})
     },
     // 编辑按钮
     editBtn(index, row) {
@@ -276,7 +251,7 @@ export default {
     searchBtn() {
       console.log('搜索')
     },
-    selectRoleList () {
+    selectRoleList() {
       this.getPackageList()
     }
   }
@@ -285,8 +260,7 @@ export default {
 
 <style scoped lang="scss">
 @import "../../style/project.scss";
-.main-content .right_main{
-  width: 750px;
+.main-content .right_main {
+    width: 750px;
 }
-
 </style>

@@ -1,9 +1,9 @@
 <template>
-  <div >
-    <div class="header_title">项目和产品<i class="el-icon-info"></i></div>
-    <div class="main-content scroll">
-      <div class="left_tree scroll">
-        <template v-for="(menuLi,index) in menuList">
+<div>
+  <div class="header_title">项目和产品<i class="el-icon-info"></i></div>
+  <div class="main-content scroll">
+    <div class="left_tree scroll">
+      <template v-for="(menuLi,index) in menuList">
           <p class="nav-title" @click="navtitle(index)">
             <span>{{menuLi.name}}</span>
             <em class="navicon" v-if="menuLi.url==openindex">
@@ -27,9 +27,9 @@
                     </em>
                   </div>
                 </template>
-              </el-menu-item>
-              <el-submenu :index="item.url"  v-else>
-                <template slot="title" >
+      </el-menu-item>
+      <el-submenu :index="item.url" v-else>
+        <template slot="title">
                   <div @click="changeMenu(item)">
                     <span >{{item.name}}</span>
                     <em class="navicon" v-if="item.url==openindex">
@@ -38,7 +38,7 @@
                     </em>
                   </div>
                 </template>
-                <template v-for="(child, index1) in item.childMenu" :keys="index1">
+        <template v-for="(child, index1) in item.childMenu" :keys="index1">
                   <el-menu-item :index="child.url" @click="changeMenu(child)">
                     <span>{{child.name}}</span>
                     <em class="navicon" v-if="child.url==openindex">
@@ -47,73 +47,57 @@
                     </em>
                   </el-menu-item>
                 </template>
-              </el-submenu>
-            </template>
-          </el-menu>
-        </template>
-      </div>
+      </el-submenu>
+      </template>
+      </el-menu>
+      </template>
+    </div>
 
-      <div class="right_main">
-        <div class="main-head">
-          <div>
-            <input type="text" class="search" v-model="search" v-on:keyup.enter="searchBtn">
-            <i class="el-icon-search" @click="searchBtn"></i>
-          </div>
-          <el-button type="primary"  size="small" @click="addBtn">新　增</el-button>
+    <div class="right_main">
+      <div class="main-head">
+        <div>
+          <input type="text" class="search" v-model="search" v-on:keyup.enter="searchBtn">
+          <i class="el-icon-search" @click="searchBtn"></i>
         </div>
-        <div class="main_table">
-          <el-table
-            :data="projectList"
-            stripe
-            style="width: 100%"
-            max-height="600"
-            tooltip-effect="dark"
-            >
-            <el-table-column
-              prop="projectName"
-              label="名称"
-              show-overflow-tooltip
-              width="300px">
-            </el-table-column>
-            <el-table-column
-              prop="projectPrice"
-              label="价格"
-              width="120px">
-              <template slot-scope="scope">
+        <el-button type="primary" size="small" @click="addBtn">新　增</el-button>
+      </div>
+      <div class="main_table">
+        <el-table :data="projectList" stripe style="width: 100%" max-height="600" tooltip-effect="dark">
+          <el-table-column prop="projectName" label="名称" show-overflow-tooltip width="300px">
+          </el-table-column>
+          <el-table-column prop="projectPrice" label="价格" width="120px">
+            <template slot-scope="scope">
                 <span>￥{{scope.row.projectPrice}}</span>
               </template>
-            </el-table-column>
-            <el-table-column
-              label="会员价格"
-              width="120px">
-              <template slot-scope="scope">
+          </el-table-column>
+          <el-table-column label="会员价格" width="120px">
+            <template slot-scope="scope">
                 <span class="red">￥{{scope.row.discountPrice}}</span>
               </template>
-            </el-table-column>
-            <el-table-column
-              label="修改">
-              <template slot-scope="scope">
+          </el-table-column>
+          <el-table-column label="修改">
+            <template slot-scope="scope">
                 <i class="el-icon-edit" @click="editBtn(scope.$index, scope.row)"></i>
               </template>
-            </el-table-column>
-            <el-table-column
-              label="删除">
-              <template slot-scope="scope">
+          </el-table-column>
+          <el-table-column label="删除">
+            <template slot-scope="scope">
                 <i class="el-icon-delete" @click="deleteBtn(scope.$index, scope.row)"></i>
               </template>
-            </el-table-column>
-          </el-table>
-          <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
-        </div>
+          </el-table-column>
+        </el-table>
+        <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <script>
 import { addproject, getproject, delProject } from '@/api/product'
 import { delMenu, editMenu, addMenu, productMenu, projectMenu, mixppMenu } from '@/api/tree'
 import page from '@/components/common/page'
+import { Trim } from '@/utils/common'
 export default {
   name: 'app',
   components: {
@@ -147,15 +131,14 @@ export default {
     // 新增菜单
     plusNav(item) {
       event.stopPropagation()
-      this.$prompt('请输入新增的类目名称', '提示', {
-      }).then(({ value }) => {
+      this.$prompt('请输入新增的类目名称', '提示', {}).then(({ value }) => {
         console.log(value)
         let param = {
           icon: '',
           name: value,
           parentId: item.id
         }
-        if (value == null) {
+        if (value == null || !Trim(value)) {
           this.$message.error('不能为空')
         } else {
           addMenu(param).then(res => {
@@ -168,8 +151,7 @@ export default {
             }
           })
         }
-      }).catch(() => {
-      })
+      }).catch(() => {})
     },
     // 删除菜单
     minusNav(item) {
@@ -187,8 +169,7 @@ export default {
             this.$message.error(res.data.msg)
           }
         })
-      }).catch(() => {
-      })
+      }).catch(() => {})
     },
     // 修改菜单
     editNav(item, name) {
@@ -197,7 +178,7 @@ export default {
       this.$prompt('请输入修改的类目名称', '提示', {
         inputValue: name
       }).then(({ value }) => {
-        if (value == null) {
+        if (value == null || !Trim(value)) {
           this.$message.error('不能为空')
         } else {
           editMenu(item.id, value).then(res => {
@@ -210,8 +191,7 @@ export default {
             }
           })
         }
-      }).catch(() => {
-      })
+      }).catch(() => {})
     },
     handleSelect(key, keyPath) {
       this.openindex = key
@@ -268,8 +248,7 @@ export default {
             this.$message.error('删除失败!')
           }
         })
-      }).catch(() => {
-      })
+      }).catch(() => {})
     },
     // 编辑项目
     editBtn(index, row) {
@@ -285,7 +264,7 @@ export default {
 
 <style scoped lang="scss">
 @import "../../style/project.scss";
-.main-content .right_main{
-  width: 750px;
+.main-content .right_main {
+    width: 750px;
 }
 </style>

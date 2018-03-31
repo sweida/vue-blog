@@ -1,242 +1,82 @@
 <template>
-  <div >
-      <div class="header_title">会员卡<i class="el-icon-info"></i></div>
-      <div class="main-content scroll">
-        <div class="left_box">
-          <h4>会员卡信息</h4>
-          <div class="club_box">
-            <div class="input_box">
-              <li>
-                <label for="">会员卡级别</label>
-                <el-input size="small" placeholder="请输入会员级别" v-model="vipinput.schemeName"></el-input>
-              </li>
-              <li>
-                <label for="">起点金额</label>
-                <el-input size="small" v-model="vipinput.schemePrice"></el-input>
-              </li>
-              <li>
-                <label for="">有效期（月）</label>
-                <el-input size="small" v-model="vipinput.vipValidityDate"></el-input>
-              </li>
-              <li>
-                <label for="">项目折扣</label>
-                <el-input size="small" v-model="vipinput.projectDiscount"></el-input>
-              </li>
-              <li>
-                <label for="">产品折扣</label>
-                <el-input size="small" v-model="vipinput.productDiscount"></el-input>
-              </li>
-              <li>
-                <label for="">套餐折扣</label>
-                <el-input size="small" v-model="vipinput.packageDiscount"></el-input>
-              </li>
-            </div>
-            <div class="addpresent">
-              <p @click="addpresent">添加赠送+</p>
-              <div>
-                <el-tag
-                  v-for="(item,index) in materials_data"
-                  :key="materials_data.givePlanName"
-                  closable
-                  :disable-transitions="false"
-                  @close="handleTagsClose(item)"
-                  >
-                  {{(item.projectName)+'(*'+item.projectNum+')'}}
-                </el-tag>
-              </div>
-            </div>
+<div>
+  <div class="header_title">会员卡<i class="el-icon-info"></i></div>
+  <div class="main-content scroll">
+    <div class="left_box">
+      <h4>会员卡信息</h4>
+      <div class="club_box">
+        <div class="input_box">
+          <li>
+            <label for="">会员卡级别</label>
+            <el-input size="small" placeholder="请输入会员级别" v-model="vipinput.schemeName"></el-input>
+          </li>
+          <li>
+            <label for="">起点金额</label>
+            <el-input size="small" v-model="vipinput.schemePrice"></el-input>
+          </li>
+          <li>
+            <label for="">有效期（月）</label>
+            <el-input size="small" v-model="vipinput.vipValidityDate"></el-input>
+          </li>
+          <li>
+            <label for="">项目折扣</label>
+            <el-input size="small" v-model="vipinput.projectDiscount"></el-input>
+          </li>
+          <li>
+            <label for="">产品折扣</label>
+            <el-input size="small" v-model="vipinput.productDiscount"></el-input>
+          </li>
+          <li>
+            <label for="">套餐折扣</label>
+            <el-input size="small" v-model="vipinput.packageDiscount"></el-input>
+          </li>
+        </div>
+        <div class="addpresent">
+          <p @click="addpresent">添加赠送+</p>
+          <div>
+            <el-tag :key="item.id" v-for="(item, index) in ccPackageGiveList" closable :disable-transitions="false" @close="CloseBurdenTags(index)">
+              {{item.projectName +'（*'+item.projectNum+'）'}}
+            </el-tag>
           </div>
-          <el-button type="primary" size="small" @click="vipinputBtn" v-if="change">确认新增</el-button>
-          <template v-else>
+        </div>
+      </div>
+      <el-button type="primary" size="small" @click="vipinputBtn" v-if="change">确认新增</el-button>
+      <template v-else>
             <el-button type="primary" size="small" @click="sureChange">保　存</el-button>
             <el-button  size="small" @click="cancelSave">取　消</el-button>
           </template>
-          <el-table
-            :data="vipcardList"
-            stripe
-            style="width: 100%"
-            max-height="345"
-            tooltip-effect="dark"
-            >
-            <el-table-column
-              prop="schemeName"
-              label="会员卡级别"
-              sortable>
-            </el-table-column>
-            <el-table-column
-              prop="schemePrice"
-              label="起点金额"
-              sortable>
-            </el-table-column>
-            <el-table-column
-              prop="productDiscount"
-              label="项目折扣"
-              >
-            </el-table-column>
-            <el-table-column
-              prop="projectDiscount"
-              label="产品折扣"
-              >
-            </el-table-column>
-            <el-table-column
-              prop="packageDiscount"
-              label="套餐折扣"
-              >
-            </el-table-column>
-            <el-table-column
-              label="修改">
-              <template slot-scope="scope">
+      <el-table :data="vipcardList" stripe style="width: 100%" max-height="345" tooltip-effect="dark">
+        <el-table-column prop="schemeName" label="会员卡级别" sortable>
+        </el-table-column>
+        <el-table-column prop="schemePrice" label="起点金额" sortable>
+        </el-table-column>
+        <el-table-column prop="productDiscount" label="项目折扣">
+        </el-table-column>
+        <el-table-column prop="projectDiscount" label="产品折扣">
+        </el-table-column>
+        <el-table-column prop="packageDiscount" label="套餐折扣">
+        </el-table-column>
+        <el-table-column label="修改">
+          <template slot-scope="scope">
                 <i class="el-icon-edit" @click="editvipBtn(scope.$index, scope.row)"></i>
               </template>
-            </el-table-column>
-            <el-table-column
-              label="删除">
-              <template slot-scope="scope">
+        </el-table-column>
+        <el-table-column label="删除">
+          <template slot-scope="scope">
                 <i class="el-icon-delete" @click="deleteVip(scope.$index, scope.row)"></i>
               </template>
-            </el-table-column>
-          </el-table>
-          <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
-        </div>
-        <div class="explain">
-          <h4>活动说明</h4>
-          <textarea name="" id="" cols="30" rows="10" class="scroll" v-model="actDesc"></textarea>
-          <el-button type="primary" size="small" @click="subText">提　交</el-button>
-        </div>
-      </div>
-
-      <el-dialog :visible.sync="burdening" title="添加赠送" width="1050px" class="burbox">
-        <div class="tableDialog">
-          <div class="tabs">
-            <p class="nav-title">
-              <span>{{menuList.name}}</span>
-            </p>
-            <el-menu
-              class="el-menu-vertical-demo"
-              @open="handleOpen"
-              @close="handleClose"
-              @select="handleSelect">
-              <template v-for="(item, index) in menuList.childMenu" :keys="index">
-                <el-menu-item :index="item.url" v-if="item.childMenu==null || item.childMenu==''" @click="changeMenu(item)">
-                  <template slot="title">
-                    <span>{{item.name}}</span>
-                  </template>
-                </el-menu-item>
-                <el-submenu :index="item.url"  v-else>
-                  <template slot="title" >
-                    <div @click="changeMenu(item)">
-                      <span >{{item.name}}</span>
-                    </div>
-                  </template>
-                  <template v-for="(child, index1) in item.childMenu" :keys="index1">
-                    <el-menu-item :index="child.url" @click="changeMenu(child)">
-                      <span>{{child.name}}</span>
-                    </el-menu-item>
-                  </template>
-                </el-submenu>
-              </template>
-            </el-menu>
-          </div>
-          <div class="burli1">
-            <el-table
-              ref="goods"
-              :data="materials_arr"
-              stripe
-              style="width:100%"
-              max-height='450'
-              tooltip-effect="dark"
-              @select="selectGoods"
-              @select-all="selectAllGoods"
-              @selection-change="addtableList"
-              @expand-change="getSetMealDetails"
-              >
-              <el-table-column type="expand">
-                <template slot-scope="scope" v-loading="loading">
-                  <div  v-if="!loading">
-                    <div class="item-detail">
-                      <li>类型</li>
-                      <li>名称</li>
-                      <li>价值</li>
-                      <li>数量</li>
-                    </div>
-                    <div class="item-detail" v-for="item in scope.row.ccSelectedProjectVos">
-                      <li>{{item.coupType == 0 ? projectType[3] : projectType[item.projectType-1]}}</li>
-                      <li>{{item.projectName}}</li>
-                      <li>{{item.projectPrice}}</li>
-                      <li>{{item.projectNum}}</li>
-                    </div>
-                  </div>
-                </template>
-              </el-table-column>
-              <el-table-column
-                prop="projectName"
-                label="名称"
-                >
-              </el-table-column>
-              <el-table-column
-                prop="effectiveDays"
-                label="有效天数">
-              </el-table-column>
-              <el-table-column
-              type="selection"
-              label="选择"
-              width="80">
-              </el-table-column>
-            </el-table>
-          </div>
-          <!-- 默认赠送 -->
-          <div class="burli2">
-            <el-table
-              :data="materials_data"
-              style="width: 100%;"
-              max-height='450'
-              tooltip-effect="dark"
-              @expand-change="getSetMealDetails"
-            >
-              <el-table-column type="expand">
-                <template slot-scope="scope" v-loading="loading">
-                  <div  v-if="!loading">
-                    <div class="item-detail">
-                      <li>类型</li>
-                      <li>名称</li>
-                      <li>价值</li>
-                      <li>数量</li>
-                    </div>
-                    <div class="item-detail" v-for="item in scope.row.ccSelectedProjectVos">
-                      <li>{{item.coupType == 0 ? projectType[3] : projectType[item.projectType-1]}}</li>
-                      <li>{{item.projectName}}</li>
-                      <li>{{item.projectPrice}}</li>
-                      <li>{{item.projectNum}}</li>
-                    </div>
-                  </div>
-                </template>
-              </el-table-column>
-              <el-table-column
-                label="名称">
-                <template slot-scope="scope">
-                  {{scope.row.projectName||scope.row.giftName}}
-                </template>
-              </el-table-column>
-              <el-table-column
-                prop="effectiveDays"
-                label="有效天数">
-              </el-table-column>
-              <el-table-column
-                prop="projectNum"
-                label="数量">
-                <template slot-scope="scope" >
-                  <el-input-number v-model="scope.row.projectNum"  :min='1'></el-input-number>
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
-        </div>
-        <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="sureBurden" size="small">确 定</el-button>
-        </span>
-      </el-dialog>
-
+        </el-table-column>
+      </el-table>
+      <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
+    </div>
+    <div class="explain">
+      <h4>活动说明</h4>
+      <textarea name="" id="" cols="30" rows="10" class="scroll" v-model="actDesc"></textarea>
+      <el-button type="primary" size="small" @click="subText">提　交</el-button>
+    </div>
   </div>
+  <addGive ref="addGiveChild" :burdening="presentDialog" @saveGive="saveGive" @cancelGive="cancelGive"></addGive>
+</div>
 </template>
 
 <script>
@@ -244,31 +84,30 @@ import { addvipCard, editvipCard, getvipCard, delvipCard, actDescInfo, editactDe
 import { getVouterDetail, givePlanDetail } from '@/api/product'
 import { giveNav, delMenu, editMenu, addMenu, ccGetMenu } from '@/api/tree'
 import page from '@/components/common/page'
-import { parseTime, clone } from '@/utils/common'
+import { parseTime, clone, discount } from '@/utils/common'
+import addGive from '@/components/common/addGive'
 export default {
   name: 'app',
   components: {
-    page
+    page,
+    addGive
   },
   data() {
     return {
       loading: false,
       bed: 1,
       input: '',
-      burdening: false,
+      presentDialog: false,
       actDesc: '',
       banner: 'static/img/phone.png',
       change: true,
-      menuList: {},
       projectType: ['项目', '产品', '套餐', '优惠券'],
-      materials_data: [],
-      checkGoodIds: [],
-      materials_arr: [],
       pageModel: {
         page: 1,
         rows: 10,
         sumCount: 0
       },
+      ccPackageGiveList: [], //已选赠送
       vipinput: {},
       vipCard: {
         schemeName: '',
@@ -278,56 +117,15 @@ export default {
         productDiscount: '',
         packageDiscount: ''
       },
-      id: '',
-      vipcardList: [],
-      ccSelectedProjectVoList: []
+      vipcardList: []
     }
   },
   created() {
     this.vipinput = clone(this.vipCard)
     this.getvipList()
     this.getactDescList()
-    this.getgiveNav()
   },
   methods: {
-    // 添加列表
-    addtableList(val) {
-      // this.materials_data = val
-    },
-    selectGoods(selection, val) {
-      var index = selection.indexOf(val)
-      if (index < 0) {
-        var sIndex = this.checkGoodIds.indexOf(val.id)
-        if (sIndex > -1) {
-          this.materials_data.splice(sIndex, 1)
-          this.checkGoodIds.splice(sIndex, 1)
-        }
-      } else {
-        this.materials_data.push(val)
-        this.checkGoodIds.push(val.id)
-      }
-    },
-    selectAllGoods(val) {
-      if (val.length == 0) {
-        this.materials_arr.forEach((good) => {
-          var index = this.checkGoodIds.indexOf(good.id)
-          this.materials_data.splice(index, 1)
-          this.checkGoodIds.splice(index, 1)
-        })
-      } else {
-        val.forEach((good) => {
-          var index = this.checkGoodIds.indexOf(good.id)
-          if (index < 0) {
-            this.materials_data.push(good)
-            this.checkGoodIds.push(good.id)
-          }
-        })
-      }
-    },
-    // 删除已选
-    delSelect(index) {
-      this.materials_data.splice(index, 1)
-    },
     subText() {
       let param = {
         actDesc: this.actDesc,
@@ -337,37 +135,19 @@ export default {
       }
       editactDesc(param).then(res => {
         console.log('修改活动说明', res)
-        // this.actDesc = res.data.data.actDesc
         this.$message.success('活动说明保存成功')
       })
     },
-    handleTagsClose(tag) {
-      this.materials_data.splice(this.materials_data.indexOf(tag), 1)
-    },
     // 弹框
     addpresent() {
-      this.burdening = true
-    },
-    // 获取赠送菜单
-    getgiveNav() {
-      giveNav().then(res => {
-        if (res.data.code == 200) {
-          this.menuList = res.data.data[0]
-        }
+      this.$refs.addGiveChild.checkGoodIds = []
+      this.$refs.addGiveChild.materials_arr = []
+      this.$refs.addGiveChild.materials_data = clone(this.ccPackageGiveList)
+      this.$refs.addGiveChild.materials_data.forEach(item => {
+        this.$refs.addGiveChild.checkGoodIds.push(item.id)
       })
-    },
-    handleSelect(key, keyPath) {
-      console.log('handleSelect', key, keyPath)
-    },
-    handleOpen(key, keyPath) {
-      console.log('handleOpen', key, keyPath)
-    },
-    handleClose(key, keyPath) {
-      console.log('handleOpen', key, keyPath)
-    },
-    sureBurden() {
-      console.log(this.materials_data)
-      this.burdening = false
+      this.$refs.addGiveChild.checkSelect()
+      this.presentDialog = true
     },
     getactDescList() {
       actDescInfo(1).then(res => {
@@ -379,13 +159,18 @@ export default {
     vipinputBtn() {
       if (this.vipinput.schemeName == '' || this.vipinput.schemePrice == '') {
         this.$message.error('会员卡信息不能为空')
+      } else if (!discount(this.vipinput.projectDiscount) || !discount(this.vipinput.productDiscount) || !discount(this.vipinput.packageDiscount)) {
+        this.$message.error('折扣只能是0~1的数字')
       } else {
         console.log(this.materials_data)
-        this.vipinput.ccSelectedProjectVoList = this.materials_data
+        this.vipinput.ccSelectedProjectVoList = this.ccPackageGiveList
         addvipCard(this.vipinput).then(res => {
           console.log('添加会员卡', this.vipinput, this.vipCard, res)
           if (res.data.code == 200) {
-            this.materials_data = []
+            this.$refs.addGiveChild.checkGoodIds = []
+            this.$refs.addGiveChild.materials_arr = []
+            this.$refs.addGiveChild.materials_data = []
+            this.ccPackageGiveList = []
             this.getvipList()
             this.$message.success('新增成功!')
           } else {
@@ -410,48 +195,49 @@ export default {
             this.$message.error('删除失败!')
           }
         })
-      }).catch(() => {
-      })
+      }).catch(() => {})
     },
-
     // 编辑会员卡 id
     editvipBtn(index, row) {
       this.change = false
-      this.id = row.id
       getCardDetail(row.id).then(res => {
         console.log(res, res.data.data.ccSelectedProjectVoList)
         this.vipinput = res.data.data
-        this.materials_data = res.data.data.ccSelectedProjectVoList
+        this.ccPackageGiveList = res.data.data.ccSelectedProjectVoList
       })
     },
     // 取消保存
     cancelSave() {
       this.change = true
       this.vipinput = clone(this.vipCard)
-      this.burdening = false
-      this.materials_data = []
-      this.checkGoodIds = []
-      this.materials_arr = []
+      this.presentDialog = false
+      this.$refs.addGiveChild.checkGoodIds = []
+      this.$refs.addGiveChild.materials_arr = []
+      this.$refs.addGiveChild.materials_data = []
+      this.ccPackageGiveList = []
     },
     // 保存修改
     sureChange() {
       if (this.vipinput.schemeName == '' || this.vipinput.schemePrice == '') {
         this.$message.error('会员卡信息不能为空')
+      } else if (!discount(this.vipinput.projectDiscount) || !discount(this.vipinput.productDiscount) || !discount(this.vipinput.packageDiscount)) {
+        this.$message.error('折扣只能是0~1的数字')
       } else {
         let param = Object.assign({
-          enterpriseId: '001',
-          id: this
+          enterpriseId: '001'
         }, this.vipinput)
-        param.ccSelectedProjectVoList = this.materials_data
+        param.ccSelectedProjectVoList = this.ccPackageGiveList
         console.log('bbbb', param)
         editvipCard(param).then(res => {
           console.log('编辑会员卡', param, this.vipCard, res, '赠送', param.ccSelectedProjectVoList)
           if (res.data.code == 200) {
             this.getvipList()
             this.$message.success('修改成功!')
-            this.materials_data = []
+            this.$refs.addGiveChild.checkGoodIds = []
+            this.$refs.addGiveChild.materials_arr = []
+            this.$refs.addGiveChild.materials_data = []
+            this.ccPackageGiveList = []
             this.change = true
-            this.id = ''
           } else {
             this.$message.error('修改失败!')
           }
@@ -462,7 +248,6 @@ export default {
     // 获取会员卡列表
     getvipList() {
       getvipCard(this.pageModel, {}).then(res => {
-        // console.log('会员列表', res)
         this.vipcardList = res.data.data.rows
         this.pageModel.sumCount = res.data.data.total
       })
@@ -470,145 +255,118 @@ export default {
     selectRoleList() {
       this.getvipList()
     },
-    // 改变菜单时得到赠送方案数据
-    changeMenu(child) {
-      getVouterDetail(5, child.id).then(res => {
-        this.materials_arr = res.data.data
-        console.log(this.materials_arr)
-        if (this.materials_arr.length != 0) {
-          this.materials_arr.forEach(item => {
-            if (this.checkGoodIds) {
-              var index = this.materials_data.findIndex(val => {
-                return val.id == item.id
-              })
-              if (index > -1) {
-                setTimeout(() => {
-                  this.$refs.goods.toggleRowSelection(item)
-                }, 1)
-              }
-            }
-          })
-        } else {
-          this.materials_arr = []
-        }
-      })
+    // 监听保存
+    saveGive(val) {
+      this.ccPackageGiveList = val
+      this.presentDialog = false
     },
-    // 赠送方案详情
-    getSetMealDetails(row, allRows) {
-      this.loading = true
-      givePlanDetail(row.id || row.giftId).then(res => {
-        // console.log('赠送方案详情', res)
-        if (res.data.code == 200) {
-          this.loading = false
-          row.ccSelectedProjectVos = res.data.data.ccSelectedProjectVos
-        }
-      })
+    // 监听取消保存
+    cancelGive() {
+      this.presentDialog = false
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
-.main-content{
-  display: flex;
-  justify-content: space-between;
-  height: calc(100% - 50px);
+.main-content {
+    display: flex;
+    justify-content: space-between;
+    height: calc(100% - 50px);
 }
-.left_box{
-  flex: 1;
-  padding-right: 40px;
-  border-right: 1px solid #ddd;
-  .club_box{
-    width: 100%;
-    border: 1px solid #C0CCDA;
-    .input_box{
-      padding-top: 30px;
-      display: flex;
-      flex-wrap: wrap;
-      border-bottom: 1px solid #EBEBEB;
-      li{
-        display: flex;
-        align-items: center;
-        width: 300px;
-        padding-bottom:30px;
-        label{
-          width: 100px;
-          padding-right: 10px;
-          text-align: right;
+.left_box {
+    flex: 1;
+    padding-right: 40px;
+    border-right: 1px solid #ddd;
+    .club_box {
+        width: 100%;
+        border: 1px solid #C0CCDA;
+        .input_box {
+            padding-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            border-bottom: 1px solid #EBEBEB;
+            li {
+                display: flex;
+                align-items: center;
+                width: 300px;
+                padding-bottom: 30px;
+                label {
+                    width: 100px;
+                    padding-right: 10px;
+                    text-align: right;
+                }
+                .el-input {
+                    width: 140px;
+                }
+            }
         }
-        .el-input{
-          width: 140px;
+        .addpresent {
+            display: flex;
+            align-items: center;
+            margin: 7px 0;
+            p {
+                color: #3BB3FF;
+                width: 120px;
+                text-align: center;
+                border-right: 1px solid #ddd;
+                line-height: 32px;
+                margin: 5px 0;
+                cursor: pointer;
+            }
+            .el-tag {
+                margin: 5px 0 5px 20px;
+            }
         }
-      }
     }
-    .addpresent{
-      display: flex;
-      align-items: center;
-      margin:7px 0;
-      p{
-        color: #3BB3FF;
-        width: 120px;
-        text-align: center;
-        border-right: 1px solid #ddd;
-        line-height: 32px;
-        margin: 5px 0;
-        cursor: pointer;
-      }
-      .el-tag{
-        margin: 5px 0 5px 20px;
-      }
+    .el-button {
+        margin: 20px 0 30px 20px;
+        float: right;
     }
-  }
-  .el-button{
-    margin: 20px 0 30px 20px;
-    float: right;
-  }
 }
-.explain{
-  width: 400px;
-  color:#475669;
-  padding: 0;
-  padding-left: 40px;
-  box-sizing: border-box;
-  textarea{
-    padding:10px;
-    line-height: 26px;
-    font-size: 14px;
-    resize: none;
-    border: 0;
-    background: #f7f7f7;
-    color: #3a4354;
-    width: 100%;
-    height: 200px;
-    outline: none;
-    margin-bottom: 20px;
+.explain {
+    width: 400px;
+    color: #475669;
+    padding: 0 0 0 40px;
     box-sizing: border-box;
-  }
-  .el-button{
-    float: right;
-  }
+    textarea {
+        padding: 10px;
+        line-height: 26px;
+        font-size: 14px;
+        resize: none;
+        border: 0;
+        background: #f7f7f7;
+        color: #3a4354;
+        width: 100%;
+        height: 200px;
+        outline: none;
+        margin-bottom: 20px;
+        box-sizing: border-box;
+    }
+    .el-button {
+        float: right;
+    }
 }
-.el-table{
-  margin-bottom: 25px;
+.el-table {
+    margin-bottom: 25px;
 }
-.item-detail{
-  width: 100%;
-  line-height: 32px;
-  text-align: center;
-  display: flex;
-  justify-content: space-around;
-  li{
-    flex:1;
+.item-detail {
+    width: 100%;
+    line-height: 32px;
     text-align: center;
-  }
-  li:nth-of-type(2){
-    flex:2;
-  }
+    display: flex;
+    justify-content: space-around;
+    li {
+        flex: 1;
+        text-align: center;
+    }
+    li:nth-of-type(2) {
+        flex: 2;
+    }
 }
-.item-detail:first-child{
-  line-height: 36px;
-  background: #f4f4f4;
-  font-weight:bold;
+.item-detail:first-child {
+    line-height: 36px;
+    background: #f4f4f4;
+    font-weight: bold;
 }
-
 </style>

@@ -1,14 +1,10 @@
 <template>
-  <div >
-      <div class="header_title">代金券<i class="el-icon-info"></i></div>
-      <div class="main-content scroll">
-        <div class="left_tree scroll">
-          <el-menu
-            class="el-menu-vertical-demo"
-            @open="handleOpen"
-            @close="handleClose"
-            @select="handleSelect">
-            <template v-for="(item, index) in menuList.childMenu" :keys="index">
+<div>
+  <div class="header_title">代金券<i class="el-icon-info"></i></div>
+  <div class="main-content scroll">
+    <div class="left_tree scroll">
+      <el-menu class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" @select="handleSelect">
+        <template v-for="(item, index) in menuList.childMenu" :keys="index">
               <el-menu-item :index="item.url" v-if="item.childMenu==null || item.childMenu==''" @click="changeMenu(item)">
                 <template slot="title">
                   <span class="title">{{item.name}}</span>
@@ -16,9 +12,9 @@
                     <i class="el-icon-plus" @click="plusNav(item)"></i>
                   </em>
                 </template>
-              </el-menu-item>
-              <el-submenu :index="item.url" v-else>
-                <template slot="title" >
+        </el-menu-item>
+        <el-submenu :index="item.url" v-else>
+          <template slot="title">
                   <div @click="changeMenu(item)">
                     <span class="title">{{item.name}}</span>
                     <em class="navicon" v-if="item.url==openindex">
@@ -26,7 +22,7 @@
                     </em>
                   </div>
                 </template>
-                <template v-for="(child, index1) in item.childMenu" :keys="index1">
+          <template v-for="(child, index1) in item.childMenu" :keys="index1">
                   <el-menu-item :index="child.url" @click="changeMenu(child)" v-if="child.childMenu==null || child.childMenu==''">
                     <template slot="title">
                       <span>{{child.name}}</span>
@@ -35,104 +31,68 @@
                         <i class="el-icon-minus" @click="minusNav(child)" v-if="tableData==''"></i>
                       </em>
                     </template>
-                  </el-menu-item>
-                </template>
-              </el-submenu>
-            </template>
-          </el-menu>
+          </el-menu-item>
+          </template>
+        </el-submenu>
+        </template>
+      </el-menu>
+    </div>
+    <div class="right_main">
+      <div class="main-head">
+        <div>
+          <input type="text" class="search" v-model="voucherParam.coupName" v-on:keyup.enter="searchBtn" placeholder="请输入代金券名称">
+          <i class="el-icon-search" @click="searchBtn"></i>
         </div>
-        <div class="right_main">
-          <div class="main-head">
-            <div>
-              <input type="text" class="search" v-model="voucherParam.coupName" v-on:keyup.enter="searchBtn" placeholder="请输入代金券名称">
-              <i class="el-icon-search" @click="searchBtn"></i>
-            </div>
-            <el-button type="primary" size="small" @click="addBtn">新　增</el-button>
-          </div>
-          <div class="main_table">
-            <el-table
-              :data="tableData"
-              stripe
-              style="width: 100%"
-              max-height="600"
-              tooltip-effect="dark"
-              >
-              <el-table-column
-                prop="coupNumber"
-                label="编号"
-                :show-overflow-tooltip="true"
-                width="350px">
-              </el-table-column>
-              <el-table-column
-                prop="projectName"
-                label="名称"
-                :show-overflow-tooltip="true"
-                width="200px"
-                >
-              </el-table-column>
-              <el-table-column
-                prop="projectPrice"
-                label="代金券额度">
-                <template slot-scope="scope">
+        <el-button type="primary" size="small" @click="addBtn">新　增</el-button>
+      </div>
+      <div class="main_table">
+        <el-table :data="tableData" stripe style="width: 100%" max-height="600" tooltip-effect="dark">
+          <el-table-column prop="coupNumber" label="编号" :show-overflow-tooltip="true" width="350px">
+          </el-table-column>
+          <el-table-column prop="projectName" label="名称" :show-overflow-tooltip="true" width="200px">
+          </el-table-column>
+          <el-table-column prop="projectPrice" label="代金券额度">
+            <template slot-scope="scope">
                   ￥{{scope.row.projectPrice}}
                 </template>
-              </el-table-column>
-              <el-table-column
-                prop="coupNum"
-                label="总数量"
-                >
-              </el-table-column>
-              <el-table-column
-                prop="effectiveDays"
-                label="有效期(天)"
-                >
-              </el-table-column>
-              <el-table-column
-                label="修改"
-                >
-                <template slot-scope="scope">
+          </el-table-column>
+          <el-table-column prop="coupNum" label="总数量">
+          </el-table-column>
+          <el-table-column prop="effectiveDays" label="有效期(天)">
+          </el-table-column>
+          <el-table-column label="修改">
+            <template slot-scope="scope">
                   <i class="el-icon-edit" @click="editBtn(scope.$index, scope.row)"></i>
                 </template>
-              </el-table-column>
-              <el-table-column
-                label="删除">
-                <template slot-scope="scope">
+          </el-table-column>
+          <el-table-column label="删除">
+            <template slot-scope="scope">
                   <i class="el-icon-delete" @click="deleteBtn(scope.$index, scope.row)"></i>
                 </template>
-              </el-table-column>
-              <el-table-column
-                label="打印">
-                <template slot-scope="scope">
+          </el-table-column>
+          <el-table-column label="打印">
+            <template slot-scope="scope">
                   <el-button type="primary" size="mini">打印</el-button>
                 </template>
-              </el-table-column>
-            </el-table>
-            <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
-          </div>
-        </div>
-
+          </el-table-column>
+        </el-table>
+        <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>
       </div>
+    </div>
 
-      <!-- 弹框 -->
-      <el-dialog :title="dialogTitle" :visible.sync="voucherDialog" width="1000px">
-        <div class="form_box">
-          <h4>选择</h4>
-          <el-form ref="form" :model="form" label-width="120px" label-position='left'>
-            <el-form-item label="所属分类">
-              <el-cascader
-                placeholder="请选择分类"
-                @change="handleItemChange"
-                v-model="selectedOptions"
-                change-on-select
-                :options="menuList.childMenu"
-                :props="defaultProps"
-                :clearable="true"
-                :disabled="form.coupId!=''"
-                >
-              </el-cascader>
-            </el-form-item>
+  </div>
 
-            <template v-if="menuType==18 || menuType==20" >
+  <!-- 弹框 -->
+  <el-dialog :title="dialogTitle" :visible.sync="voucherDialog" width="1000px">
+    <div class="form_box">
+      <h4>选择</h4>
+      <el-form ref="form" :model="form" label-width="120px" label-position='left'>
+        <el-form-item label="所属分类">
+          <el-cascader placeholder="请选择分类" @change="handleItemChange" v-model="selectedOptions" change-on-select :options="menuList.childMenu" :props="defaultProps" :clearable="true" :disabled="form.coupId!=''">
+          </el-cascader>
+        </el-form-item>
+
+        <template v-if="menuType==18 || menuType==20">
               <el-form-item label="专项类目">
                 <el-cascader
                   placeholder="请选择专项类目"
@@ -156,39 +116,40 @@
                 </el-select>
               </el-form-item>
             </template>
-            <el-form-item label="名称" v-else>
-              <el-input size="medium" v-model="form.coupName"></el-input>
-            </el-form-item>
-          </el-form>
-        </div>
-        <div class="form_box">
-          <h4>设置</h4>
-          <el-form ref="form" :model="form" label-width="120px" label-position='left'>
-            <el-form-item label="额度（元）">
-              <el-input type="number" size="medium" v-model="form.coupQuota"></el-input>
-            </el-form-item>
-            <el-form-item label="数量（张）">
-              <el-input type="number" size="medium" v-model="form.coupNum"></el-input>
-            </el-form-item>
-            <el-form-item label="有效期（天）">
-              <el-input type="number" size="medium" v-model="form.coupValidfate"></el-input>
-            </el-form-item>
-          </el-form>
-        </div>
-        <span slot="footer" class="dialog-footer">
+        <el-form-item label="名称" v-else>
+          <el-input size="medium" v-model="form.coupName"></el-input>
+        </el-form-item>
+      </el-form>
+    </div>
+    <div class="form_box">
+      <h4>设置</h4>
+      <el-form ref="form" :model="form" label-width="120px" label-position='left'>
+        <el-form-item label="额度（元）">
+          <el-input type="number" size="medium" v-model="form.coupQuota"></el-input>
+        </el-form-item>
+        <el-form-item label="数量（张）">
+          <el-input type="number" size="medium" v-model="form.coupNum"></el-input>
+        </el-form-item>
+        <el-form-item label="有效期（天）">
+          <el-input type="number" size="medium" v-model="form.coupValidfate"></el-input>
+        </el-form-item>
+      </el-form>
+    </div>
+    <span slot="footer" class="dialog-footer">
           <el-button @click="voucherDialog = false" size="small">取 消</el-button>
           <el-button type="primary" @click="addvoucherBtn" size="small" v-if="form.coupId==''">确 定</el-button>
           <el-button type="primary" @click="editvoucherBtn" size="small" v-else>保存修改</el-button>
         </span>
-      </el-dialog>
+  </el-dialog>
 
-  </div>
+</div>
 </template>
 
 <script>
 import { getVoucher, addVoucher, editVoucher, delVoucher, VoucherDetail, getVouterDetail } from '@/api/product'
 import { vouMenu, delMenu, editMenu, addMenu, ccCouponMenu } from '@/api/tree'
-import { clone } from '@/utils/common'
+import { clone, Trim } from '@/utils/common'
+
 import page from '../../components/common/page'
 export default {
   name: 'voucher',
@@ -205,8 +166,8 @@ export default {
         sumCount: 0
       },
       aa: {},
-      openindex: '',      // 点击菜单显示操作按钮
-      voucherParam: {},   //代金券参数
+      openindex: '', // 点击菜单显示操作按钮
+      voucherParam: {}, //代金券参数
       menuList: [],
       bed: 1,
       input: '',
@@ -267,17 +228,15 @@ export default {
     // 新增菜单
     plusNav(item) {
       event.stopPropagation()
-      this.$prompt('请输入新增的类目名称', '提示', {
-      }).then(({ value }) => {
-        console.log(value)
-        let param = {
-          icon: '',
-          name: value,
-          parentId: item.id
-        }
-        if (value == null) {
+      this.$prompt('请输入新增的类目名称', '提示', {}).then(({ value }) => {
+        if (value == null || !Trim(value)) {
           this.$message.error('不能为空')
         } else {
+          let param = {
+            icon: '',
+            name: value,
+            parentId: item.id
+          }
           addMenu(param).then(res => {
             console.log('添加菜单', res)
             if (res.data.code == 200) {
@@ -288,8 +247,7 @@ export default {
             }
           })
         }
-      }).catch(() => {
-      })
+      }).catch(() => {})
     },
     // 删除菜单
     minusNav(item) {
@@ -307,8 +265,7 @@ export default {
             this.$message.error(res.data.msg)
           }
         })
-      }).catch(() => {
-      })
+      }).catch(() => {})
     },
     // 修改菜单
     editNav(item, name) {
@@ -317,7 +274,7 @@ export default {
       this.$prompt('请输入修改的类目名称', '提示', {
         inputValue: name
       }).then(({ value }) => {
-        if (value == null) {
+        if (value == null || !Trim(value)) {
           this.$message.error('不能为空')
         } else {
           editMenu(item.id, value).then(res => {
@@ -330,8 +287,7 @@ export default {
             }
           })
         }
-      }).catch(() => {
-      })
+      }).catch(() => {})
     },
     handleSelect(key, keyPath) {
       this.openindex = key
@@ -369,9 +325,9 @@ export default {
         arrId: '18',
         arrTypeId: '',
         coupId: '',
-        coupNum: '',       // 数量
+        coupNum: '', // 数量
         coupQuota: '',
-        coupValidfate: '',   // 有效天
+        coupValidfate: '', // 有效天
         parentId: 18
       }
       this.menuType = 18
@@ -457,8 +413,7 @@ export default {
             this.$message.error('删除失败!')
           }
         })
-      }).catch(() => {
-      })
+      }).catch(() => {})
     },
     // 编辑按钮
     editBtn(index, row) {
@@ -500,7 +455,7 @@ export default {
         })
       }
     },
-    selectRoleList () {
+    selectRoleList() {
       this.getVoucherList()
     }
   },
@@ -516,37 +471,39 @@ export default {
 </script>
 
 <style>
-.form_box .el-input.is-disabled .el-input__inner{
-  background-color:#f9f9f9;
+.form_box .el-input.is-disabled .el-input__inner {
+  background-color: #f9f9f9;
 }
-.form_box .el-cascader.is-disabled .el-cascader__label, .form_box .el-input.is-disabled .el-input__inner {
+
+.form_box .el-cascader.is-disabled .el-cascader__label,
+.form_box .el-input.is-disabled .el-input__inner {
   color: #606266;
 }
 </style>
 
 <style scoped lang="scss">
 @import "../../style/project.scss";
-.main-content .right_main{
-  flex:1;
+.main-content .right_main {
+    flex: 1;
 }
-.form_box{
-  display: flex;
-  width: 500px;
-  margin: 30px auto;
-  h4{
-    width: 100px;
-    font-size: 16px;
-    padding-top: 8px;
-  }
-  .el-form{
-    width: 350px;
-    .el-radio{
-      color:#1F2D3D;
+.form_box {
+    display: flex;
+    width: 500px;
+    margin: 30px auto;
+    h4 {
+        width: 100px;
+        font-size: 16px;
+        padding-top: 8px;
     }
-    .el-cascader, .el-select {
-      width: 230px;
+    .el-form {
+        width: 350px;
+        .el-radio {
+            color: #1F2D3D;
+        }
+        .el-cascader,
+        .el-select {
+            width: 230px;
+        }
     }
-  }
 }
-
 </style>

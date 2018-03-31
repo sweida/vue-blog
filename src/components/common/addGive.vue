@@ -1,51 +1,36 @@
 <template>
-  <el-dialog :visible="burdening" title="添加赠送" width="1050px" class="burbox" @close="cancelSave">
-    <div class="tableDialog">
-      <div class="tabs">
-        <p class="nav-title">
-          <span>{{menuList.name}}</span>
-        </p>
-        <el-menu
-          class="el-menu-vertical-demo"
-          @open="handleOpen"
-          @close="handleClose"
-          @select="handleSelect">
-          <template v-for="(item, index) in menuList.childMenu" :keys="index">
+<el-dialog :visible="burdening" title="添加赠送" width="1050px" class="burbox" @close="cancelSave">
+  <div class="tableDialog">
+    <div class="tabs">
+      <p class="nav-title">
+        <span>{{menuList.name}}</span>
+      </p>
+      <el-menu class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" @select="handleSelect">
+        <template v-for="(item, index) in menuList.childMenu" :keys="index">
             <el-menu-item :index="item.url" v-if="item.childMenu==null || item.childMenu==''" @click="changeMenu(item)">
               <template slot="title">
                 <span>{{item.name}}</span>
               </template>
-            </el-menu-item>
-            <el-submenu :index="item.url"  v-else>
-              <template slot="title" >
+        </el-menu-item>
+        <el-submenu :index="item.url" v-else>
+          <template slot="title">
                 <div @click="changeMenu(item)">
                   <span >{{item.name}}</span>
                 </div>
               </template>
-              <template v-for="(child, index1) in item.childMenu" :keys="index1">
+          <template v-for="(child, index1) in item.childMenu" :keys="index1">
                 <el-menu-item :index="child.url" @click="changeMenu(child)">
                   <span>{{child.name}}</span>
                 </el-menu-item>
               </template>
-            </el-submenu>
-          </template>
-        </el-menu>
-      </div>
-      <div class="burli1">
-        <el-table
-          ref="goods"
-          :data="materials_arr"
-          stripe
-          style="width:100%"
-          max-height='450'
-          tooltip-effect="dark"
-          @select="selectGoods"
-          @select-all="selectAllGoods"
-          @selection-change="addtableList"
-          @expand-change="getSetMealDetails"
-          >
-          <el-table-column type="expand">
-            <template slot-scope="scope">
+        </el-submenu>
+        </template>
+      </el-menu>
+    </div>
+    <div class="burli1">
+      <el-table ref="goods" :data="materials_arr" stripe style="width:100%" max-height='450' tooltip-effect="dark" @select="selectGoods" @select-all="selectAllGoods" @selection-change="addtableList" @expand-change="getSetMealDetails">
+        <el-table-column type="expand">
+          <template slot-scope="scope">
             <div v-loading="loading" >
               <div>
                 <div class="item-details" style="width: 100%;height: 50px;line-height: 50px;text-align: center;background: #f4f4f4;font-weight:bold">
@@ -63,34 +48,20 @@
               </div>
             </div>
             </template>
-          </el-table-column>
-          <el-table-column
-            prop="projectName"
-            label="名称"
-            >
-          </el-table-column>
-          <el-table-column
-            prop="effectiveDays"
-            label="有效天数">
-          </el-table-column>
-          <el-table-column
-          type="selection"
-          label="选择"
-          width="80">
-          </el-table-column>
-        </el-table>
-      </div>
-      <!-- 默认配料 -->
-      <div class="burli2">
-        <el-table
-          :data="materials_data"
-          stripe
-          style="width: 400px;margin-bottom:20px;"
-          max-height='400'
-          @expand-change="getSetMealDetails"
-          >
-          <el-table-column type="expand">
-            <template slot-scope="scope">
+        </el-table-column>
+        <el-table-column prop="projectName" label="名称">
+        </el-table-column>
+        <el-table-column prop="effectiveDays" label="有效天数">
+        </el-table-column>
+        <el-table-column type="selection" label="选择" width="80">
+        </el-table-column>
+      </el-table>
+    </div>
+    <!-- 默认选择 -->
+    <div class="burli2">
+      <el-table ref="hasCheck" :data="materials_data" stripe style="width: 400px;margin-bottom:20px;" max-height='400' @expand-change="getSetMealDetails" @select="checkSelectGoods" @select-all="checkSelectAllGoods">
+        <el-table-column type="expand">
+          <template slot-scope="scope">
             <div v-loading="loading" >
               <div>
                 <div class="item-details" style="width: 100%;height:100%;height: 50px;line-height: 50px;text-align: center;background: #f4f4f4;font-weight:bold">
@@ -108,30 +79,26 @@
               </div>
             </div>
             </template>
-          </el-table-column>
-          <el-table-column
-            prop="projectName"
-            label="名称">
-          </el-table-column>
-          <el-table-column
-            prop="effectiveDays"
-            label="有效天数">
-          </el-table-column>
-          <el-table-column
-            prop="projectNum"
-            label="数量">
-            <template slot-scope="scope" >
+        </el-table-column>
+        <el-table-column prop="projectName" label="名称">
+        </el-table-column>
+        <el-table-column prop="effectiveDays" label="有效天数">
+        </el-table-column>
+        <el-table-column prop="projectNum" label="数量">
+          <template slot-scope="scope">
               <el-input-number v-model="scope.row.projectNum"  :min='1'></el-input-number>
             </template>
-          </el-table-column>
-        </el-table>
-      </div>
+        </el-table-column>
+        <el-table-column type="selection" label="选择" width="50">
+        </el-table-column>
+      </el-table>
     </div>
-    <span slot="footer" class="dialog-footer">
+  </div>
+  <span slot="footer" class="dialog-footer">
       <el-button @click="cancelSave" size="small">取 消</el-button>
       <el-button type="primary" @click="sureBurden" size="small">确认选择</el-button>
     </span>
-  </el-dialog>
+</el-dialog>
 </template>
 
 <script>
@@ -156,7 +123,7 @@ export default {
       getVouterDetail(5, child.id).then(res => {
         this.materials_arr = res.data.data
         this.materials_arr.forEach(item => {
-          if (this.checkGoodIds) {
+          if (this.checkGoodIds.length != 0) {
             var index = this.materials_data.findIndex(val => {
               return val.id == item.id
             })
@@ -200,7 +167,46 @@ export default {
     addtableList(val) {
       // this.materials_data = val
     },
-    selectGoods(selection, val) {
+    //已选择表格打钩事件
+    checkSelect(val) {
+      if (val == null) {
+        this.materials_data.forEach(item => {
+          setTimeout(() => {
+            this.$refs.hasCheck.toggleRowSelection(item)
+          }, 0)
+        })
+      } else if (Object.prototype.toString.call(val) == '[object Array]') {
+        this.materials_arr.forEach(item => {
+          this.$refs.hasCheck.toggleRowSelection(item)
+        })
+      } else {
+        this.materials_data.forEach(item => {
+          if (item.id == val.id) {
+            this.$refs.hasCheck.toggleRowSelection(item)
+          }
+        })
+      }
+    },
+    // 已选打钩时更新待选择表格的勾
+    waitSelect(val) {
+      if (Object.prototype.toString.call(val) == '[object Array]') {
+        val.forEach(child => {
+          this.materials_arr.forEach(item => {
+            if (child.id == item.id) {
+              this.$refs.goods.toggleRowSelection(item)
+            }
+          })
+        })
+      } else {
+        this.materials_arr.forEach(item => {
+          if (val.id == item.id) {
+            this.$refs.goods.toggleRowSelection(item)
+          }
+        })
+      }
+    },
+    // 单选共用方法
+    oneCommon(selection, val) {
       var index = selection.indexOf(val)
       if (index < 0) {
         var sIndex = this.checkGoodIds.indexOf(val.id)
@@ -213,7 +219,8 @@ export default {
         this.checkGoodIds.push(val.id)
       }
     },
-    selectAllGoods(val) {
+    // 待选列表多选
+    allCommon(val) {
       if (val.length == 0) {
         this.materials_arr.forEach((good) => {
           var index = this.checkGoodIds.indexOf(good.id)
@@ -228,6 +235,25 @@ export default {
             this.checkGoodIds.push(good.id)
           }
         })
+      }
+    },
+    selectGoods(selection, val) {
+      this.oneCommon(selection, val)
+      this.checkSelect(val)
+    },
+    selectAllGoods(val) {
+      this.allCommon(val)
+      this.checkSelect(val)
+    },
+    checkSelectGoods(selection, val) {
+      this.waitSelect(val)
+      this.oneCommon(selection, val)
+    },
+    checkSelectAllGoods(val) {
+      if (this.materials_data.length != 0) {
+        this.waitSelect(this.materials_arr)
+        this.materials_data = []
+        this.checkGoodIds = []
       }
     },
     cancelSave() {
