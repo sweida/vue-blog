@@ -400,7 +400,7 @@ export default {
     // 删除项目
     deleteBtn(index, row) {
       console.log(row)
-      this.$confirm('是否删除该项目?', '提示', {
+      this.$confirm('是否删除该优惠券?', '提示', {
         type: 'warning'
       }).then(() => {
         delVoucher(row.id).then(res => {
