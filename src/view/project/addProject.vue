@@ -55,21 +55,21 @@
                   <el-checkbox v-for="skin in skinList" :label="skin" :key="skin">{{skin}}</el-checkbox>
                 </el-checkbox-group>
                 <template v-else>
-                      <el-tag
-                        v-for="skin in skinList"
-                        :key="skin"
-                        closable
-                        :disable-transitions="false"
-                        @close="CloseSkinTags(skin)"
-                        >
-                        {{skin}}
-                      </el-tag>
-                      <div class="edit_box" >
-                        <el-input size="mini" v-model="skinInput"></el-input>
-                        <el-button type="primary" size="mini" @click='addSkin'>新增</el-button>
-                        <el-button size="mini" @click="skinClose">取消</el-button>
-                      </div>
-                    </template>
+                  <el-tag
+                    v-for="skin in skinList"
+                    :key="skin"
+                    closable
+                    :disable-transitions="false"
+                    @close="CloseSkinTags(skin)"
+                    >
+                    {{skin}}
+                  </el-tag>
+                  <div class="edit_box" >
+                    <el-input size="mini" v-model="skinInput"></el-input>
+                    <el-button type="primary" size="mini" @click='addSkin'>新增</el-button>
+                    <el-button size="mini" @click="skinClose">取消</el-button>
+                  </div>
+                </template>
               </div>
               <div class="right_but">
                 <el-button type="primary" size="mini" @click="skinBtn">编辑肤质</el-button>
@@ -83,21 +83,21 @@
                   <el-checkbox v-for="effect in effectList" :label="effect" :key="effect">{{effect}}</el-checkbox>
                 </el-checkbox-group>
                 <template v-else>
-                      <el-tag
-                        v-for="effect in effectList"
-                        :key="effect"
-                        closable
-                        :disable-transitions="false"
-                        @close="CloseEffectTags(effect)"
-                        >
-                        {{effect}}
-                      </el-tag>
-                      <div class="edit_box" >
-                        <el-input size="mini" v-model="effectInput"></el-input>
-                        <el-button type="primary" size="mini" @click='addEffect'>新增</el-button>
-                        <el-button size="mini" @click="effectClose">取消</el-button>
-                      </div>
-                    </template>
+                  <el-tag
+                    v-for="effect in effectList"
+                    :key="effect"
+                    closable
+                    :disable-transitions="false"
+                    @close="CloseEffectTags(effect)"
+                    >
+                    {{effect}}
+                  </el-tag>
+                  <div class="edit_box" >
+                    <el-input size="mini" v-model="effectInput"></el-input>
+                    <el-button type="primary" size="mini" @click='addEffect'>新增</el-button>
+                    <el-button size="mini" @click="effectClose">取消</el-button>
+                  </div>
+                </template>
               </div>
               <div class="right_but">
                 <el-button type="primary" size="mini" @click="effectBtn">编辑功效</el-button>
@@ -236,30 +236,30 @@
         </p>
         <el-menu class="el-menu-vertical-demo">
           <template v-for="(item, index) in diolmenuList" :keys="index">
-                <el-submenu :index="item.url">
+            <el-submenu :index="item.url">
+              <template slot="title" >
+                <span >{{item.name}}</span>
+              </template>
+              <template v-for="(child, index1) in item.childMenu" :keys="index1">
+                <el-menu-item :index="child.url" v-if="child.childMenu==null || child.childMenu==''">
+                  <div @click="changeMenu(child)">
+                    <span>{{child.name}}</span>
+                  </div>
+                </el-menu-item>
+                <el-submenu :index="child.url" v-else>
                   <template slot="title" >
-                    <span >{{item.name}}</span>
+                    <div @click="changeMenu(child)">
+                      <span >{{child.name}}</span>
+                    </div>
                   </template>
-          <template v-for="(child, index1) in item.childMenu" :keys="index1">
-                    <el-menu-item :index="child.url" v-if="child.childMenu==null || child.childMenu==''">
-                      <div @click="changeMenu(child)">
-                        <span>{{child.name}}</span>
-                      </div>
+                  <template v-for="(son, index1) in child.childMenu" :keys="index1">
+                    <el-menu-item :index="son.url" v-if="son.childMenu==null || son.childMenu==''" @click="changeMenu(son)">
+                      <span>{{son.name}}</span>
                     </el-menu-item>
-                    <el-submenu :index="child.url" v-else>
-                      <template slot="title" >
-                        <div @click="changeMenu(child)">
-                          <span >{{child.name}}</span>
-                        </div>
-                      </template>
-          <template v-for="(son, index1) in child.childMenu" :keys="index1">
-                        <el-menu-item :index="son.url" v-if="son.childMenu==null || son.childMenu==''" @click="changeMenu(son)">
-                          <span>{{son.name}}</span>
-                        </el-menu-item>
-                      </template>
-          </el-submenu>
-          </template>
-          </el-submenu>
+                  </template>
+                </el-submenu>
+              </template>
+            </el-submenu>
           </template>
         </el-menu>
       </div>
@@ -286,15 +286,15 @@
           </el-table-column>
           <el-table-column prop="materialNum" label="数量">
             <template slot-scope="scope">
-                  <el-input-number v-model="scope.row.materialNum" :min="1"></el-input-number>
-                </template>
+              <el-input-number v-model="scope.row.materialNum" :min="1"></el-input-number>
+            </template>
           </el-table-column>
         </el-table>
       </div>
     </div>
     <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="burdenDialog = false" size="small">确 定</el-button>
-        </span>
+      <el-button type="primary" @click="burdenDialog = false" size="small">确 定</el-button>
+    </span>
   </el-dialog>
   <!-- 添加赠送方案 -->
   <addGive ref="addGiveChild" :burdening="presentDialog" @saveGive="saveGive" @cancelGive="cancelGive"></addGive>

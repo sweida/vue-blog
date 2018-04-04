@@ -14,6 +14,7 @@ const service = axios.create({
 service.interceptors.request.use(config => {
   if (config.url == 'apis/authentication/form') {
     config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    config.headers['deviceId'] = '9001'
   } else {
     config.headers['Content-Type'] = 'application/json;charset=utf-8'
     if (store.getters.token) {

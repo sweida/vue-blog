@@ -4,52 +4,52 @@
   <div class="main-content scroll">
     <div class="left_tree scroll">
       <template v-for="(menuLi,index) in menuList">
-          <p class="nav-title" @click="navtitle(index)">
-            <span>{{menuLi.name}}</span>
-            <em class="navicon" v-if="menuLi.url==openindex">
-              <i class="el-icon-plus" @click="plusNav(menuLi)"></i>
-            </em>
-          </p>
-          <el-menu
-            class="el-menu-vertical-demo"
-            @open="handleOpen"
-            @close="handleClose"
-            @select="handleSelect">
-            <template v-for="(item, index) in menuLi.childMenu" :keys="index">
-              <el-menu-item :index="item.url" v-if="item.childMenu==null || item.childMenu==''" @click="changeMenu(item)">
-                <template slot="title">
-                  <div @click="changeMenu(item)">
-                    <span>{{item.name}}</span>
-                    <em class="navicon" v-if="item.url==openindex">
-                      <i class="el-icon-plus" @click="plusNav(item)"></i>
-                      <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
-                      <i class="el-icon-minus" @click="minusNav(item)" v-if="projectList==''"></i>
-                    </em>
-                  </div>
-                </template>
-      </el-menu-item>
-      <el-submenu :index="item.url" v-else>
-        <template slot="title">
-                  <div @click="changeMenu(item)">
-                    <span >{{item.name}}</span>
-                    <em class="navicon" v-if="item.url==openindex">
-                      <i class="el-icon-plus" @click="plusNav(item)"></i>
-                      <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
-                    </em>
-                  </div>
-                </template>
-        <template v-for="(child, index1) in item.childMenu" :keys="index1">
-                  <el-menu-item :index="child.url" @click="changeMenu(child)">
-                    <span>{{child.name}}</span>
-                    <em class="navicon" v-if="child.url==openindex">
-                      <i class="el-icon-edit" @click="editNav(child, child.name)"></i>
-                      <i class="el-icon-minus" @click="minusNav(child)" v-if="projectList==''"></i>
-                    </em>
-                  </el-menu-item>
-                </template>
-      </el-submenu>
-      </template>
-      </el-menu>
+        <p class="nav-title" @click="navtitle(index)">
+          <span>{{menuLi.name}}</span>
+          <em class="navicon" v-if="menuLi.url==openindex">
+            <i class="el-icon-plus" @click="plusNav(menuLi)"></i>
+          </em>
+        </p>
+        <el-menu
+          class="el-menu-vertical-demo"
+          @open="handleOpen"
+          @close="handleClose"
+          @select="handleSelect">
+          <template v-for="(item, index) in menuLi.childMenu" :keys="index">
+            <el-menu-item :index="item.url" v-if="item.childMenu==null || item.childMenu==''" @click="changeMenu(item)">
+              <template slot="title">
+                <div @click="changeMenu(item)">
+                  <span>{{item.name}}</span>
+                  <em class="navicon" v-if="item.url==openindex">
+                    <i class="el-icon-plus" @click="plusNav(item)"></i>
+                    <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
+                    <i class="el-icon-minus" @click="minusNav(item)" v-if="projectList==''"></i>
+                  </em>
+                </div>
+              </template>
+            </el-menu-item>
+            <el-submenu :index="item.url" v-else>
+              <template slot="title">
+                <div @click="changeMenu(item)">
+                  <span >{{item.name}}</span>
+                  <em class="navicon" v-if="item.url==openindex">
+                    <i class="el-icon-plus" @click="plusNav(item)"></i>
+                    <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
+                  </em>
+                </div>
+              </template>
+              <template v-for="(child, index1) in item.childMenu" :keys="index1">
+                <el-menu-item :index="child.url" @click="changeMenu(child)">
+                  <span>{{child.name}}</span>
+                  <em class="navicon" v-if="child.url==openindex">
+                    <i class="el-icon-edit" @click="editNav(child, child.name)"></i>
+                    <i class="el-icon-minus" @click="minusNav(child)" v-if="projectList==''"></i>
+                  </em>
+                </el-menu-item>
+              </template>
+            </el-submenu>
+          </template>
+        </el-menu>
       </template>
     </div>
 
