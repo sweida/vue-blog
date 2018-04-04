@@ -34,7 +34,7 @@
         <div class="addpresent">
           <p @click="addpresent">添加赠送+</p>
           <div>
-            <el-tag :key="item.id" v-for="(item, index) in ccPackageGiveList" closable :disable-transitions="false" @close="CloseBurdenTags(index)">
+            <el-tag :key="item.id" v-for="(item, index) in ccPackageGiveList" closable :disable-transitions="false" @close="CloseGiveTags(index)">
               {{item.projectName +'（*'+item.projectNum+'）'}}
             </el-tag>
           </div>
@@ -196,6 +196,10 @@ export default {
           }
         })
       }).catch(() => {})
+    },
+    // 删除赠送
+    CloseGiveTags(index) {
+      this.ccPackageGiveList.splice(index, 1)
     },
     // 编辑会员卡 id
     editvipBtn(index, row) {

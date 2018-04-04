@@ -176,9 +176,7 @@ export default {
           }, 0)
         })
       } else if (Object.prototype.toString.call(val) == '[object Array]') {
-        this.materials_arr.forEach(item => {
-          this.$refs.hasCheck.toggleRowSelection(item)
-        })
+        return false
       } else {
         this.materials_data.forEach(item => {
           if (item.id == val.id) {
@@ -232,6 +230,7 @@ export default {
           var index = this.checkGoodIds.indexOf(good.id)
           if (index < 0) {
             this.materials_data.push(good)
+            this.$refs.hasCheck.toggleRowSelection(good)
             this.checkGoodIds.push(good.id)
           }
         })
@@ -251,7 +250,7 @@ export default {
     },
     checkSelectAllGoods(val) {
       if (this.materials_data.length != 0) {
-        this.waitSelect(this.materials_arr)
+        this.waitSelect(this.materials_data)
         this.materials_data = []
         this.checkGoodIds = []
       }

@@ -141,7 +141,7 @@ export default {
     // 得到企业文化信息
     getCompanyCurture() {
       getCurtureCompany('001').then(res => {
-        console.log(res)
+        console.log(res, 1234)
       })
     }
   },
