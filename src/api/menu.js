@@ -10,10 +10,11 @@ export function getMenuListPage(pageModel, data) {
 }
 
 //树形组件菜单
-export function getMenuTree() {
+export function getMenuTree(data) {
   return fetch({
     url: '/apis/auth/show',
-    method: 'get'
+    method: 'post',
+    data: data
   });
 }
 
@@ -34,17 +35,17 @@ export function getCurMenu() {
 }
 
 //角色编辑页面获取全部菜单
-export function getAllMenu() {
+export function getAllMenu(osType) {
   return fetch({
-    url: '/apis/auth/all',
-    method: 'get',
-  });
+    url: `/apis/auth/all/${osType}`,
+    method: 'get'
+  })
 }
 
 //根据角色ID获取菜单和权限
-export function getRoleMenuById(roleId) {
+export function getRoleMenuById(osType, roleId) {
   return fetch({
-    url: '/apis/auth/role/' + roleId,
+    url: `/apis/auth/role/${osType}/${roleId}`,
     method: 'get'
   });
 }

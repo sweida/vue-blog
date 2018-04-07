@@ -45,11 +45,12 @@ const permission = {
   actions: {
     GenerateRoutes({ commit }) {
       return new Promise(resolve => {
-        getRouterMenu().then(res => {
-          let accessedRouters = auth(res.data.data)
-          commit('SET_ROUTERS', accessedRouters)
-          resolve()
-        })
+        getRouterMenu()
+          .then(res => {
+            let accessedRouters = auth(res.data.data)
+            commit('SET_ROUTERS', accessedRouters)
+            resolve()
+          })
       })
     }
   }

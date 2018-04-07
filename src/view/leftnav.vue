@@ -14,65 +14,61 @@ import {
 export default {
   components: {},
   computed: {
-    ...mapGetters(['addRouters', 'permiRouters'])
+    ...mapGetters(['addRouters'])
   },
   data() {
     return {
       navindex: 0,
       nav: [{
-          name: '企业和会所',
-          url: '/home'
-        },
-        {
-          name: '房间',
-          url: '/room'
-        },
-        {
-          name: '职位权限',
-          url: '/scope'
-        },
-        {
-          name: '菜单管理',
-          url: '/menu'
-        },
-        {
-          name: '员工管理',
-          url: '/staff'
-        },
-        {
-          name: '优惠券',
-          url: '/voucher'
-        },
-        {
-          name: '会员卡',
-          url: '/clubCard'
-        },
-        {
-          name: '赠送方案',
-          url: '/present'
-        },
-        {
-          name: '项目',
-          url: '/project'
-        },
-        {
-          name: '套餐',
-          url: '/setMeal'
-        },
-        {
-          name: '云电话',
-          url: '/phone'
-        },
-        {
-          name: '设置',
-          url: '/setting'
-        }
+        name: '企业和会所',
+        url: '/home'
+      },
+      {
+        name: '房间',
+        url: '/room'
+      },
+      {
+        name: '职位权限',
+        url: '/scope'
+      },
+      {
+        name: '菜单管理',
+        url: '/menu'
+      },
+      {
+        name: '员工管理',
+        url: '/staff'
+      },
+      {
+        name: '优惠券',
+        url: '/voucher'
+      },
+      {
+        name: '会员卡',
+        url: '/clubCard'
+      },
+      {
+        name: '赠送方案',
+        url: '/present'
+      },
+      {
+        name: '项目',
+        url: '/project'
+      },
+      {
+        name: '套餐',
+        url: '/setMeal'
+      },
+      {
+        name: '云电话',
+        url: '/phone'
+      },
+      {
+        name: '设置',
+        url: '/setting'
+      }
       ]
     }
-  },
-  methods: {},
-  created() {
-    console.log(this.permiRouters)
   }
 }
 </script>
