@@ -47,10 +47,15 @@
   <el-dialog :title="title" :visible.sync="roleEdDialog" width="60%" height="80%" @close="roleEdDialogClose" center>
     <div id="roleed">
       <el-form ref="role" :rules="rules" :model="role" label-width="80px">
+        <el-form-item label="所属模块">
+          <el-select v-model="role.osType" placeholder="请选择" @change="getAllMenu">
+            <el-option v-for="item in modelOptions" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="角色名" class="el-form-item-input" prop="rolename">
           <el-input v-model="role.rolename"></el-input>
         </el-form-item>
-
         <el-form-item label="权限" class="el-form-item-input">
           <!-- 角色权限面板 -->
           <div class="role-permission-panel">
@@ -108,6 +113,13 @@ export default {
         rows: 10,
         sumCount: 0
       },
+      modelOptions: [{
+        value: '0',
+        label: '客户'
+      }, {
+        value: '1',
+        label: '设定'
+      }],
       roleList: [], //表格数据
       multipleSelection: [], //表格多选
       roleEdDialog: false, //dialog
@@ -116,7 +128,8 @@ export default {
       role: { //角色实体
         id: '',
         rolename: '',
-        menus: []
+        menus: [],
+        osType: '0'
       },
       rules: { //验证
         rolename: [
@@ -324,7 +337,7 @@ export default {
     },
     getAllMenu() {
       this.treeLoading = true;
-      getAllMenu().then(res => {
+      getAllMenu(this.role.osType).then(res => {
         if (res.data.code == 0) {
           this.menu = res.data.data;
           this.treeLoading = false;
@@ -339,7 +352,9 @@ export default {
     getRoleInfo() {
       getRoleById(this.role.id).then(res => {
         if (res.data.code == 0) {
-          this.role = res.data.data;
+          let osType = this.role.osType
+          this.role = res.data.data
+          this.role.osType = osType
         } else {
           this.$message({
             message: res.data.msg,
@@ -349,7 +364,7 @@ export default {
       })
     },
     getRoleMenuById() {
-      getRoleMenuById(this.role.id).then(res => {
+      getRoleMenuById(this.role.osType, this.role.id).then(res => {
         if (res.data.code == 0) {
           let menus = [];
           res.data.data.forEach((menu) => {
@@ -554,6 +569,10 @@ export default {
 
 .role-span {
   width: 100%;
+}
+
+#roleed .el-input {
+  width: 217px;
 }
 
 .role-auth .el-checkbox+.el-checkbox {
