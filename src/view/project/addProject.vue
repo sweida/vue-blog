@@ -22,7 +22,7 @@
           <el-input size="medium" type="number" v-model="form.discountPrice"></el-input>
         </el-form-item>
         <el-form-item label="有效天数">
-          <el-input size="medium" type="number" v-model="form.availabilityDay"></el-input>
+          <el-input size="medium" type="number" v-model="form.effectiveDays"></el-input>
         </el-form-item>
         <el-form-item label="耗时(分钟)">
           <el-select v-model="form.consumeTime" size="medium" placeholder="请选择">
@@ -348,7 +348,7 @@ export default {
         projectPrice: '',
         discountPrice: '',
         projectType: '',
-        availabilityDay: 3650, // 有效天数
+        effectiveDays: 3650, // 有效天数
         consumeTime: 60, // 耗时
         parentId: '', // 父id
         detail: '', // 文章
