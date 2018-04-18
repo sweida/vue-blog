@@ -144,7 +144,7 @@
             </el-cascader>
           </el-form-item>
         </el-form>
-        <el-table :data="checkGoods" stripe style="width: 100%;margin-bottom:20px;" height='240' tooltip-effect="dark">
+        <el-table :data="checkGoods" stripe style="width: 100%;margin-bottom:20px;" height='280' tooltip-effect="dark">
           <el-table-column prop="projectType" label="类型">
             <template slot-scope="scope">
                   {{scope.row.coupType == 0 ? projectType[3] : projectType[scope.row.projectType-1]}}
@@ -171,7 +171,7 @@
           <el-form-item label="有效天数">
             <el-input type="number" size="medium" v-model="form.effectiveDays" placeholder="填写有效天数"></el-input>
           </el-form-item>
-          <el-form-item label="生效日期">
+          <el-form-item label="生效日期" class="none">
             <el-date-picker type="date" placeholder="选择生效日期" v-model="form.createDate" size="medium" :editable="false"></el-date-picker>
           </el-form-item>
           <el-form-item label="使用截止日期">
