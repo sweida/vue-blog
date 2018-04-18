@@ -48,8 +48,8 @@
     <div class="right_main">
       <div class="main-head">
         <div>
-          <input type="text" class="search" v-model="search" v-on:keyup.enter="searchBtn">
-          <i class="el-icon-search" @click="searchBtn"></i>
+          <!-- <input type="text" class="search" v-model="search" v-on:keyup.enter="searchBtn">
+          <i class="el-icon-search" @click="searchBtn"></i> -->
         </div>
         <el-button type="primary" size="small" @click="added">新　增</el-button>
       </div>
