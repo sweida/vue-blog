@@ -128,7 +128,6 @@ export default {
         let timeli = res.data.data
         this.setting.bookingStarttime = res.data.data.bookingStarttime.substring(0, 5)
         this.setting.bookingEndtime = res.data.data.bookingEndtime.substring(0, 5)
-        // console.log(this.setting)
       })
     },
     saveBtn() {

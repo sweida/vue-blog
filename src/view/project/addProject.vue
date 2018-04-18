@@ -394,7 +394,6 @@ export default {
     getmixMenu() {
       mixppMenu().then(res => {
         this.menuList = res.data.data
-        console.log('获取项目和产品菜单', res)
       })
     },
     // 选择类目获取id
@@ -402,7 +401,6 @@ export default {
       this.form.arrId = val.join(',')
       this.form.parentId = val[val.length - 1]
       this.form.projectType = val[0]
-      console.log('点击', val, val[val.length - 1], this.form.arrId)
     },
     // 获取项目详情
     getprojectDetail() {
@@ -415,7 +413,6 @@ export default {
         this.selectedOptions = arr.map((item) => {
           return +item
         })
-        console.log('项目详情', res, this.$route.params.id, this.form)
       })
     },
     // 保存
@@ -434,7 +431,6 @@ export default {
           ccProjectGiveList: this.ccProjectGiveList
         }, this.form)
         addproject(param).then(res => {
-          console.log('添加项目', res)
           if (res.data.code == 200) {
             this.$router.push('/project')
             this.$message.success('新增成功!')
@@ -455,7 +451,6 @@ export default {
         this.form.effect = this.checkEffect.join(',')
         this.form.ccProjectGiveList = this.ccProjectGiveList
         editproject(this.form).then(res => {
-          console.log('保存修改', res)
           if (res.data.code == 200) {
             this.$router.push('/project')
             this.$message.success('修改成功!')
@@ -469,7 +464,6 @@ export default {
     getTagskin() {
       getTagli(1).then(res => {
         this.skinList = res.data.data
-        console.log('获取肤质', res)
       })
     },
     // 添加肤质
@@ -484,7 +478,6 @@ export default {
         }
         addTag(param).then(res => {
           if (res.data.code == 200) {
-            console.log('添加肤质', res)
             this.skinInput = ''
             this.getTagskin()
           }
@@ -499,7 +492,6 @@ export default {
         tagType: 1
       }
       delTag(param).then(res => {
-        console.log('删除肤质', res)
         if (res.data.code == 200) {
           this.skinList.splice(this.skinList.indexOf(skin), 1)
         } else {
@@ -511,7 +503,6 @@ export default {
     getTageffect() {
       getTagli(2).then(res => {
         this.effectList = res.data.data
-        console.log('获取功效', res)
       })
     },
     // 添加功效
@@ -526,7 +517,6 @@ export default {
         }
         addTag(param).then(res => {
           if (res.data.code == 200) {
-            console.log('添加功效', res)
             this.effectInput = ''
             this.getTageffect()
           }
@@ -541,7 +531,6 @@ export default {
         tagType: 2
       }
       delTag(param).then(res => {
-        console.log('删除功效', res)
         if (res.data.code == 200) {
           this.effectList.splice(this.effectList.indexOf(effect), 1)
         } else {
@@ -569,7 +558,6 @@ export default {
       // 获取项目产品菜单
       projectMenu().then(res => {
         this.diolmenuList = res.data.data
-        console.log('获取项目菜单', res)
       })
     },
     // 点击所有配料
@@ -580,7 +568,6 @@ export default {
     },
     // 改变菜单时得到列表数据
     changeMenu(child) {
-      console.log('changeMenu', child.id)
       this.MenuParam = {
         parentId: child.id
       }
@@ -589,7 +576,6 @@ export default {
     // 获取项目列表
     getprojectList() {
       getproject(this.pageModel2, this.MenuParam).then(res => {
-        console.log('获取项目列表', res)
         this.pageModel2.sumCount = res.data.data.total
         this.projectList = res.data.data.rows
       })
@@ -603,7 +589,6 @@ export default {
         projectId: item.id
       }
       getprojectBurden(this.pageModel, param).then(res => {
-        console.log('载入项目配料', res.data.data.rows)
         this.pageModel2.sumCount = res.data.data.total
         this.form.ccProjectMaterialList = res.data.data.rows
       })
@@ -611,14 +596,12 @@ export default {
     // 获取配料列表
     getBurdenlist() {
       getBurden(this.pageModel, {}).then(res => {
-        console.log('获取配料列表', res)
         this.materials_arr = res.data.data.rows
       })
     },
     // 添加配料
     addMaterials(val) {
       this.form.ccProjectMaterialList = val
-      console.log(val)
     },
     // 删除配料tag
     CloseBurdenTags(index) {

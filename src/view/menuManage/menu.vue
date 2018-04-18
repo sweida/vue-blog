@@ -547,7 +547,6 @@ export default {
           this.arrParent = arr.map((item) => {
             return +item
           });
-          console.log(this.arrParent)
         } else {
           this.$message({
             message: res.data.msg,
@@ -565,7 +564,6 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (!this.menu.id) {
-            console.log(111, this.menu)
             addMenu(this.menu).then(res => {
               if (res.data.code == 0) {
                 this.$message({

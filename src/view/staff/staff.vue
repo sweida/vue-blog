@@ -60,18 +60,6 @@
               </template>
           </el-select>
         </el-form-item>
-        <el-form-item label="机构">
-          <!-- <el-input  size="mini" placeholder="王狮传奇南山总店" :readonly="true"></el-input> -->
-          <el-select v-model="organId" placeholder="请选择机构" size="mini">
-            <el-option label="王狮传奇南山总店" value="1"></el-option>
-          </el-select>
-        </el-form-item>
-        <!-- <el-form-item label="直接添加" v-if="addShow">
-            <el-radio-group v-model="newstaff.direct_add">
-              <el-radio :label="1">是</el-radio>
-              <el-radio :label="'0'">否</el-radio>
-            </el-radio-group>
-          </el-form-item> -->
         <el-form-item label="登录移动端">
           <el-radio-group v-model="newstaff.loginStatus">
             <el-radio :label="'0'">允许</el-radio>
@@ -110,7 +98,6 @@ export default {
       inputContent: '',
       selectInput: 'userName',
       search: '',
-      organId: '1',
       dialogVisible: false,
       img: 'static/img/staff.jpg',
       pageModel: {
@@ -170,7 +157,6 @@ export default {
     // 获取职位
     getJoblist() {
       getJob().then(res => {
-        // console.log('getJob', res)
         this.jobList = res.data.data
       })
     },
@@ -249,7 +235,6 @@ export default {
       let param = {}
       param[this.selectInput] = this.inputContent
       getSttaf(this.pageModel, param).then(res => {
-        // console.log('获取员工列表', res)
         this.loading = false
         this.pageModel.sumCount = res.data.data.total
         this.tableData = res.data.data.rows

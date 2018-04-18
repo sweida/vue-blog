@@ -468,14 +468,12 @@ export default {
         this.selectedOptions = arr.map((item) => {
           return +item
         })
-        console.log('套餐详情', res, this.$route.params.id, this.form)
       })
     },
     // 获取项目产品菜单
     getmealMenu() {
       mealMenu().then(res => {
         this.menuList = res.data.data[0].childMenu
-        console.log('获取套餐菜单', res)
       })
     },
     // 选择类目获取id
@@ -483,7 +481,6 @@ export default {
       this.form.arrId = val.join(',')
       this.form.parentId = val[val.length - 1]
       this.form.projectType = val[0]
-      console.log('点击', val, this.form.arrId, this.form.parentId)
     },
     selectRoleList() {},
     // 上传图片
@@ -540,14 +537,12 @@ export default {
     },
     // 改变菜单时得到数据
     changeMenu(child, parentId) {
-      console.log(child, parentId, 333)
       this.pageModel.topId = parentId
       let param = {
         'parentId': child.id
       }
       getProductById(this.pageModel, param).then(res => {
         this.materials_arr = res.data.data.rows
-        console.log(res.data.data.rows, 21)
       })
     },
     // 添加产品
@@ -612,7 +607,6 @@ export default {
     editBtn(param) {
       param.ccPackageGiveList = this.ccPackageGiveList
       editPackage(param).then(res => {
-        console.log('保存修改', res)
         if (res.data.code == 200) {
           this.$router.push('/setMeal')
           this.$message.success('修改成功!')

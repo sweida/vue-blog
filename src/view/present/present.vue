@@ -249,14 +249,12 @@ export default {
         if (res.data.code == 200) {
           this.menuList = res.data.data[0]
         }
-        console.log('获取赠送菜单', res, this.menuList)
       })
     },
     // 新增菜单
     plusNav(item) {
       event.stopPropagation()
       this.$prompt('请输入新增的类目名称', '提示', {}).then(({ value }) => {
-        console.log(value)
         let param = {
           icon: '',
           name: value,
@@ -266,7 +264,6 @@ export default {
           this.$message.error('不能为空')
         } else {
           addMenu(param).then(res => {
-            console.log('添加菜单', res)
             if (res.data.code == 200) {
               this.getgiveNav()
               this.$message.success('新增菜单成功!')
@@ -280,12 +277,10 @@ export default {
     // 删除菜单
     minusNav(item) {
       event.stopPropagation()
-      console.log(item.id)
       this.$confirm('是否删除该类目?', '提示', {
         type: 'warning'
       }).then(() => {
         delMenu(item.id).then(res => {
-          console.log('删除菜单', res)
           if (res.data.code == 200) {
             this.getgiveNav()
             this.$message.success(res.data.msg)
@@ -297,7 +292,6 @@ export default {
     },
     // 修改菜单
     editNav(item, name) {
-      console.log(item, name)
       event.stopPropagation()
       this.$prompt('请输入修改的类目名称', '提示', {
         inputValue: name
@@ -306,7 +300,6 @@ export default {
           this.$message.error('不能为空')
         } else {
           editMenu(item.id, value).then(res => {
-            console.log('修改菜单', res)
             if (res.data.code == 200) {
               this.getgiveNav()
               this.$message.success('修改菜单成功!')
@@ -319,32 +312,25 @@ export default {
     },
     handleSelect(key, keyPath) {
       this.openindex = key
-      console.log('handleSelect', key, keyPath)
     },
     handleOpen(key, keyPath) {
       this.openindex = key
-      console.log('handleOpen', key, keyPath)
     },
     handleOpen2(item) {
-      console.log('handleOpen2', item)
     },
     handleClose(key, keyPath) {
       this.openindex = ''
-      console.log('handleOpen', key, keyPath)
     },
     navtitle() {
       this.openindex = this.menuList.url
-      console.log(this.openindex)
     },
     // 选择菜单获取id
     handleItemChange(val) {
       this.form.takeMode = val.join(',')
       this.form.parentId = val[val.length - 1]
-      console.log('点击', val, val[val.length - 1], this.form.takeMode)
     },
     // 改变菜单时得到赠送方案数据
     changeMenu(child) {
-      console.log('changeMenu', child.id)
       this.MenuParam = {
         parentId: child.id
       }
@@ -353,7 +339,6 @@ export default {
     // 获取赠送列表
     getgivePlanList() {
       getgivePlan(this.pageModel, this.MenuParam).then(res => {
-        console.log(res.data)
         this.givePlanli = res.data.data.rows
         this.pageModel.sumCount = res.data.data.total
         this.givePlanli.forEach(item => {
@@ -364,13 +349,11 @@ export default {
     },
     // 删除赠送
     deleteBtn(index, row) {
-      console.log(row)
       this.$confirm('是否删除该赠送方案?', '提示', {
         type: 'warning'
       }).then(() => {
         delgivePlan(row.id).then(res => {
           if (res.data.code == 200) {
-            console.log(res)
             this.givePlanli.splice(index, 1)
             this.$message.success(res.data.msg)
             this.getgivePlanList()
@@ -396,7 +379,6 @@ export default {
       this.selectedOptions = []
       this.presentDialog = true
       this.getccGetMenu()
-      console.log('form', this.form)
     },
     // 打开编辑弹框
     editBtn(index, row) {
@@ -407,7 +389,6 @@ export default {
       this.getccGetMenu()
       this.presentDialog = true
       givePlanDetail(row.id).then(res => {
-        console.log(res)
         if (res.data.code == 200) {
           this.form = res.data.data
           this.checkGoods = res.data.data.ccSelectedProjectVos
@@ -468,7 +449,6 @@ export default {
     // 获取项目列表
     getprojectList(childId, itemId) {
       addGivePlan(this.pageModel, itemId, { parentId: childId }).then(res => {
-        console.log('获取项目列表', res)
         this.diologpageModel.sumCount = res.data.data.total
         this.tableList = res.data.data.rows
         this.tableList.forEach((good) => {
@@ -526,7 +506,6 @@ export default {
           ccSelectedProjectVos: this.checkGoods
         }, this.form)
         editgivePlan(param).then(res => {
-          console.log('添加赠送', res)
           if (res.data.code == 200) {
             this.presentDialog = false
             this.getgivePlanList()
@@ -545,7 +524,6 @@ export default {
     },
     //搜素客户
     searchBtn() {
-      console.log('搜索')
     },
 
     editTitle() {

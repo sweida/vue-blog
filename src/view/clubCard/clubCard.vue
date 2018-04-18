@@ -134,7 +134,6 @@ export default {
         keyId: 1
       }
       editactDesc(param).then(res => {
-        console.log('修改活动说明', res)
         this.$message.success('活动说明保存成功')
       })
     },
@@ -151,7 +150,6 @@ export default {
     },
     getactDescList() {
       actDescInfo(1).then(res => {
-        console.log('获取活动说明', res)
         this.actDesc = res.data.data.actDesc
       })
     },
@@ -162,10 +160,8 @@ export default {
       } else if (!discount(this.vipinput.projectDiscount) || !discount(this.vipinput.productDiscount) || !discount(this.vipinput.packageDiscount)) {
         this.$message.error('折扣只能是0~1的数字')
       } else {
-        console.log(this.materials_data)
         this.vipinput.ccSelectedProjectVoList = this.ccPackageGiveList
         addvipCard(this.vipinput).then(res => {
-          console.log('添加会员卡', this.vipinput, this.vipCard, res)
           if (res.data.code == 200) {
             this.$refs.addGiveChild.checkGoodIds = []
             this.$refs.addGiveChild.materials_arr = []
@@ -182,13 +178,11 @@ export default {
     },
     // 删除会员卡等级
     deleteVip(index, row) {
-      console.log(row)
       this.$confirm('是否删除该会员卡等级?', '提示', {
         type: 'warning'
       }).then(() => {
         delvipCard(row.id).then(res => {
           if (res.data.code == 200) {
-            console.log(res)
             this.$message.success('删除成功!')
             this.getvipList()
           } else {
@@ -205,7 +199,6 @@ export default {
     editvipBtn(index, row) {
       this.change = false
       getCardDetail(row.id).then(res => {
-        console.log(res, res.data.data.ccSelectedProjectVoList)
         this.vipinput = res.data.data
         this.ccPackageGiveList = res.data.data.ccSelectedProjectVoList
       })
@@ -231,9 +224,7 @@ export default {
           enterpriseId: '001'
         }, this.vipinput)
         param.ccSelectedProjectVoList = this.ccPackageGiveList
-        console.log('bbbb', param)
         editvipCard(param).then(res => {
-          console.log('编辑会员卡', param, this.vipCard, res, '赠送', param.ccSelectedProjectVoList)
           if (res.data.code == 200) {
             this.getvipList()
             this.$message.success('修改成功!')

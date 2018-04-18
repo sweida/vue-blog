@@ -125,7 +125,7 @@
       <h4>设置</h4>
       <el-form ref="form" :model="form" label-width="120px" label-position='left'>
         <el-form-item label="额度（元）">
-          <el-input type="number" size="medium" v-model="form.coupQuota"></el-input>
+          <el-input type="number" size="medium" v-model="form.coupQuota" :readonly="form.coupId!=''"></el-input>
         </el-form-item>
         <el-form-item label="数量（张）">
           <el-input-number class="limitInput" size="medium" :max="100000" :min="0" v-model="form.coupNum" :controls="false"></el-input-number>
@@ -227,7 +227,6 @@ export default {
       vouMenu().then(res => {
         if (res.data.code == 200) {
           this.menuList = res.data.data[0]
-          console.log('获取优惠券菜单', res)
         }
       })
     },
@@ -244,7 +243,6 @@ export default {
             parentId: item.id
           }
           addMenu(param).then(res => {
-            console.log('添加菜单', res)
             if (res.data.code == 200) {
               this.getvouMenu()
               this.$message.success('新增菜单成功!')
@@ -258,12 +256,10 @@ export default {
     // 删除菜单
     minusNav(item) {
       event.stopPropagation()
-      console.log(item.id)
       this.$confirm('是否删除该类目?', '提示', {
         type: 'warning'
       }).then(() => {
         delMenu(item.id).then(res => {
-          console.log('删除菜单', res)
           if (res.data.code == 200) {
             this.getvouMenu()
             this.$message.success(res.data.msg)
@@ -275,7 +271,6 @@ export default {
     },
     // 修改菜单
     editNav(item, name) {
-      console.log(item, name)
       event.stopPropagation()
       this.$prompt('请输入修改的类目名称', '提示', {
         inputValue: name
@@ -284,7 +279,6 @@ export default {
           this.$message.error('不能为空')
         } else {
           editMenu(item.id, value).then(res => {
-            console.log('修改菜单', res)
             if (res.data.code == 200) {
               this.getvouMenu()
               this.$message.success('修改菜单成功!')
@@ -297,19 +291,15 @@ export default {
     },
     handleSelect(key, keyPath) {
       this.openindex = key
-      console.log('handleSelect', key, keyPath)
     },
     handleOpen(key, keyPath) {
       this.openindex = key
-      console.log('handleOpen', key, keyPath)
     },
     handleClose(key, keyPath) {
       this.openindex = ''
-      console.log('handleOpen', key, keyPath)
     },
     // 改变菜单时得到代金券数据
     changeMenu(child) {
-      console.log('changeMenu', child)
       this.MenuParam = {
         parentId: child.id
       }
@@ -321,7 +311,6 @@ export default {
         if (res.data.code == 200) {
           this.pageModel.sumCount = res.data.data.total
           this.tableData = res.data.data.rows
-          console.log('获取代金券列表', res.data.data)
         }
       })
     },
@@ -347,7 +336,6 @@ export default {
     },
     //搜素客户
     searchBtn() {
-      console.log('搜索')
       // this.getVoucherList()
     },
     // 获取项目、产品、套餐菜单
@@ -355,7 +343,6 @@ export default {
       ccCouponMenu().then(res => {
         if (res.data.code == 200) {
           this.delmenuList = res.data.data
-          console.log('获取项目、产品、套餐菜单', res)
         }
       })
     },
@@ -365,16 +352,13 @@ export default {
       this.selectGoods = ''
       this.form.arrId = val.join(',')
       this.form.parentId = val[val.length - 1]
-      console.log('点击第一行', val, val[val.length - 1], 'menuType', this.menuType, 'arrId', this.form.arrId)
     },
     // 点击项目时获取列表
     delhandleItemChange(val) {
       let parentId = val[0]
       let itemId = val[val.length - 1]
       this.form.arrTypeId = val.join(',')
-      console.log('点击第二行', val, val[val.length - 1], this.delselectedOptions, 'coupType', this.form.arrTypeId)
       getVouterDetail(parentId, itemId).then(res => {
-        console.log('获取项目', res)
         this.goodsList = res.data.data
         this.selectGoods = ''
       })
@@ -391,9 +375,7 @@ export default {
           targetId: this.selectGoods,
           organId: 1
         }, this.form)
-        // console.log('添加项目', param)
         addVoucher(param).then(res => {
-          console.log('新增代金券', res)
           if (res.data.code == 200) {
             this.$message.success('新增成功!')
             this.voucherDialog = false
@@ -406,13 +388,11 @@ export default {
     },
     // 删除项目
     deleteBtn(index, row) {
-      console.log(row)
       this.$confirm('是否删除该优惠券?', '提示', {
         type: 'warning'
       }).then(() => {
         delVoucher(row.id).then(res => {
           if (res.data.code == 200) {
-            console.log(res)
             this.tableData.splice(index, 1)
             this.$message.success(res.data.msg)
             this.getVoucherList()
@@ -440,7 +420,6 @@ export default {
         this.delselectedOptions = add.map((item) => {
           return +item
         })
-        console.log('获取代金券详情', res.data, 'menuType', this.menuType, 'del', this.delselectedOptions)
       })
     },
     // 保存编辑代金券
@@ -451,7 +430,6 @@ export default {
         this.$message.error('额度、数量、有效期不能为空,')
       } else {
         editVoucher(this.form).then(res => {
-          console.log('保存修改', res)
           if (res.data.code == 200) {
             this.getVoucherList()
             this.voucherDialog = false

@@ -125,14 +125,12 @@ export default {
     getmixMenu() {
       mixppMenu().then(res => {
         this.menuList = res.data.data
-        console.log('获取项目和产品菜单', res)
       })
     },
     // 新增菜单
     plusNav(item) {
       event.stopPropagation()
       this.$prompt('请输入新增的类目名称', '提示', {}).then(({ value }) => {
-        console.log(value)
         let param = {
           icon: '',
           name: value,
@@ -142,7 +140,6 @@ export default {
           this.$message.error('不能为空')
         } else {
           addMenu(param).then(res => {
-            console.log('添加菜单', res)
             if (res.data.code == 200) {
               this.getmixMenu()
               this.$message.success('新增菜单成功!')
@@ -156,12 +153,10 @@ export default {
     // 删除菜单
     minusNav(item) {
       event.stopPropagation()
-      console.log(item.id)
       this.$confirm('是否删除该类目?', '提示', {
         type: 'warning'
       }).then(() => {
         delMenu(item.id).then(res => {
-          console.log('删除菜单', res)
           if (res.data.code == 200) {
             this.getmixMenu()
             this.$message.success(res.data.msg)
@@ -173,7 +168,6 @@ export default {
     },
     // 修改菜单
     editNav(item, name) {
-      console.log(item, name)
       event.stopPropagation()
       this.$prompt('请输入修改的类目名称', '提示', {
         inputValue: name
@@ -182,7 +176,6 @@ export default {
           this.$message.error('不能为空')
         } else {
           editMenu(item.id, value).then(res => {
-            console.log('修改菜单', res)
             if (res.data.code == 200) {
               this.getmixMenu()
               this.$message.success('修改菜单成功!')
@@ -195,23 +188,18 @@ export default {
     },
     handleSelect(key, keyPath) {
       this.openindex = key
-      console.log('handleSelect', key, keyPath)
     },
     handleOpen(key, keyPath) {
       this.openindex = key
-      console.log('handleOpen', key, keyPath)
     },
     handleClose(key, keyPath) {
       this.openindex = ''
-      console.log('handleOpen', key, keyPath)
     },
     navtitle(index) {
       this.openindex = this.menuList[index].url
-      console.log(this.openindex)
     },
     // 改变菜单时得到列表数据
     changeMenu(child) {
-      console.log('changeMenu', child)
       this.MenuParam = {
         parentId: child.id
       }
@@ -220,27 +208,23 @@ export default {
     // 获取项目列表
     getprojectList() {
       getproject(this.pageModel, this.MenuParam).then(res => {
-        console.log('获取项目列表', res)
         this.pageModel.sumCount = res.data.data.total
         this.projectList = res.data.data.rows
       })
     },
     //搜素客户
     searchBtn() {
-      console.log('搜索')
     },
     addBtn() {
       this.$router.push('project/addProject')
     },
     // 删除项目
     deleteBtn(index, row) {
-      console.log(row)
       this.$confirm('是否删除该项目?', '提示', {
         type: 'warning'
       }).then(() => {
         delProject(row.id).then(res => {
           if (res.data.code == 200) {
-            console.log(res)
             this.projectList.splice(index, 1)
             this.$message.success(res.data.msg)
             this.getprojectList()
@@ -252,7 +236,6 @@ export default {
     },
     // 编辑项目
     editBtn(index, row) {
-      // console.log(row.id)
       this.$router.push('project/edit/' + row.id)
     },
     selectRoleList() {

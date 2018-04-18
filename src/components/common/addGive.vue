@@ -150,18 +150,14 @@ export default {
         if (res.data.code == 200) {
           this.loading = false
           row.ccSelectedProjectVos = res.data.data.ccSelectedProjectVos
-          console.log(this.materials_arr, res.data.data.ccSelectedProjectVos)
         }
       })
     },
     handleSelect(key, keyPath) {
-      console.log('handleSelect', key, keyPath)
     },
     handleOpen(key, keyPath) {
-      console.log('handleOpen', key, keyPath)
     },
     handleClose(key, keyPath) {
-      console.log('handleOpen', key, keyPath)
     },
     // 添加列表
     addtableList(val) {

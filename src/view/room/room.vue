@@ -102,7 +102,6 @@ export default {
       }
     },
     deleteBtn(index, row) {
-      console.log(row)
       this.$confirm('是否删除该房间?', '提示', {
         type: 'warning'
       }).then(() => {
@@ -131,7 +130,6 @@ export default {
   },
   created() {
     this.getRoomList()
-    console.log(this.$route)
   }
 
 }
