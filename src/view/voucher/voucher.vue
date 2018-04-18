@@ -40,8 +40,8 @@
     <div class="right_main">
       <div class="main-head">
         <div>
-          <input type="text" class="search" v-model="voucherParam.coupName" v-on:keyup.enter="searchBtn" placeholder="请输入代金券名称">
-          <i class="el-icon-search" @click="searchBtn"></i>
+          <!-- <input type="text" class="search" v-model="voucherParam.coupName" v-on:keyup.enter="searchBtn" placeholder="请输入代金券名称">
+          <i class="el-icon-search" @click="searchBtn"></i> -->
         </div>
         <el-button type="primary" size="small" @click="addBtn">新　增</el-button>
       </div>
