@@ -128,10 +128,16 @@
           <el-input type="number" size="medium" v-model="form.coupQuota"></el-input>
         </el-form-item>
         <el-form-item label="数量（张）">
-          <el-input type="number" size="medium" v-model="form.coupNum"></el-input>
+          <el-input-number class="limitInput" size="medium" :max="100000" :min="0" v-model="form.coupNum" :controls="false"></el-input-number>
         </el-form-item>
         <el-form-item label="有效期（天）">
           <el-input type="number" size="medium" v-model="form.coupValidfate"></el-input>
+        </el-form-item>
+        <el-form-item label="是否用于印刷">
+          <el-radio-group v-model="form.isPrint">
+            <el-radio :label="'1'">是</el-radio>
+            <el-radio :label="'0'">否</el-radio>
+          </el-radio-group>
         </el-form-item>
       </el-form>
     </div>
@@ -328,7 +334,8 @@ export default {
         coupNum: '', // 数量
         coupQuota: '',
         coupValidfate: '', // 有效天
-        parentId: 18
+        parentId: 18,
+        isPrint: '1'
       }
       this.menuType = 18
       this.selectedOptions = [18]
@@ -470,14 +477,22 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 .form_box .el-input.is-disabled .el-input__inner {
-  background-color: #f9f9f9;
+    background-color: #f9f9f9;
 }
 
 .form_box .el-cascader.is-disabled .el-cascader__label,
 .form_box .el-input.is-disabled .el-input__inner {
-  color: #606266;
+    color: #606266;
+}
+.form_box {
+    .limitInput {
+        width: 217px;
+    }
+    .el-input-number .el-input__inner {
+        text-align: left !important;
+    }
 }
 </style>
 

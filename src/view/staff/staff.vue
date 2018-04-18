@@ -12,6 +12,7 @@
           <el-button slot="append" icon="el-icon-search" @click="searchBtn"></el-button>
         </el-input>
       </div>
+      <!-- <el-button style='margin-bottom:20px;' type="primary" size="small" @click="handleDownload" :loading="isLoading">导出excel</el-button> -->
       <el-button type="primary" size="small" @click="added">新　增</el-button>
     </div>
     <div class="main_table">
@@ -88,6 +89,7 @@
 </div>
 </template>
 <script>
+import mixinExportTable from '@/utils/mixinExportTable'
 import {
   getJob,
   getSttaf,
@@ -98,6 +100,7 @@ import {
 import page from '@/components/common/page'
 export default {
   name: 'app',
+  mixins: [mixinExportTable],
   components: {
     page
   },
@@ -116,6 +119,8 @@ export default {
         sumCount: 0
       },
       jobList: [], // 员工职位
+      headerList: [],
+      filterList: ['userName', 'mobilePhoneNum'],
       tableData: [],
       newstaff: {
         ccRole: {
