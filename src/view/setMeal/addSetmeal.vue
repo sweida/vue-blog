@@ -71,7 +71,7 @@
             <el-radio :label="'1'">参与会员折扣</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="是否支持上面服务">
+        <el-form-item label="是否支持上门服务">
           <el-radio-group v-model="form.isDoorService">
             <el-radio :label="'0'">否</el-radio>
             <el-radio :label="'1'">是</el-radio>

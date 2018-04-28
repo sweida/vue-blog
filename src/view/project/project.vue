@@ -200,6 +200,7 @@ export default {
     },
     // 改变菜单时得到列表数据
     changeMenu(child) {
+      console.log(child);
       this.MenuParam = {
         parentId: child.id
       }
