@@ -6,41 +6,41 @@
       <p class="nav-title" @click="navtitle">
         <span>{{menuList.name}}</span>
         <em class="navicon" v-if="openindex==menuList.url">
-              <i class="el-icon-plus" @click="plusNav(menuList)"></i>
-            </em>
+          <i class="el-icon-plus" @click="plusNav(menuList)"></i>
+        </em>
       </p>
       <el-menu class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" @select="handleSelect">
         <template v-for="(item, index) in menuList.childMenu" :keys="index">
-              <el-menu-item :index="item.url" v-if="item.childMenu==null || item.childMenu.length==0" @click="changeMenu(item)">
-                <template slot="title">
-                  <span>{{item.name}}</span>
-                  <em class="navicon" v-if="item.url==openindex">
-                    <i class="el-icon-plus" @click="plusNav(item)"></i>
-                    <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
-                    <i class="el-icon-minus" @click="minusNav(item)" v-if="tableData==''"></i>
-                  </em>
-                </template>
-        </el-menu-item>
-        <el-submenu :index="item.url" v-else>
-          <template slot="title">
-                  <div @click="changeMenu(item)">
-                    <span >{{item.name}}</span>
-                    <em class="navicon" v-if="item.url==openindex">
-                      <i class="el-icon-plus" @click="plusNav(item)"></i>
-                      <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
-                    </em>
-                  </div>
-                </template>
-          <template v-for="(child, index1) in item.childMenu" :keys="index1">
-                  <el-menu-item :index="child.url" @click="changeMenu(child)">
-                    <span>{{child.name}}</span>
-                    <em class="navicon" v-if="child.url==openindex">
-                      <i class="el-icon-edit" @click="editNav(child, child.name)"></i>
-                      <i class="el-icon-minus" @click="minusNav(child)" v-if="tableData==''"></i>
-                    </em>
-                  </el-menu-item>
-                </template>
-        </el-submenu>
+          <el-menu-item :index="item.url" v-if="item.childMenu==null || item.childMenu.length==0" @click="changeMenu(item)">
+            <template slot="title">
+              <span>{{item.name}}</span>
+              <em class="navicon" v-if="item.url==openindex">
+                <i class="el-icon-plus" @click="plusNav(item)"></i>
+                <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
+                <i class="el-icon-minus" @click="minusNav(item)" v-if="tableData==''"></i>
+              </em>
+            </template>
+          </el-menu-item>
+          <el-submenu :index="item.url" v-else>
+            <template slot="title">
+              <div @click="changeMenu(item)">
+                <span >{{item.name}}</span>
+                <em class="navicon" v-if="item.url==openindex">
+                  <i class="el-icon-plus" @click="plusNav(item)"></i>
+                  <i class="el-icon-edit" @click="editNav(item, item.name)"></i>
+                </em>
+              </div>
+            </template>
+            <template v-for="(child, index1) in item.childMenu" :keys="index1">
+              <el-menu-item :index="child.url" @click="changeMenu(child)">
+                <span>{{child.name}}</span>
+                <em class="navicon" v-if="child.url==openindex">
+                  <i class="el-icon-edit" @click="editNav(child, child.name)"></i>
+                  <i class="el-icon-minus" @click="minusNav(child)" v-if="tableData==''"></i>
+                </em>
+              </el-menu-item>
+            </template>
+          </el-submenu>
         </template>
       </el-menu>
     </div>
@@ -58,23 +58,23 @@
           </el-table-column>
           <el-table-column prop="projectPrice" label="价格" width="120px">
             <template slot-scope="scope">
-                  ￥{{scope.row.projectPrice}}
-                </template>
+              ￥{{scope.row.projectPrice}}
+            </template>
           </el-table-column>
           <el-table-column label="会员价格" width="120px">
             <template slot-scope="scope">
-                  <span class="red">￥{{scope.row.discountPrice}}</span>
-                </template>
+              <span class="red">￥{{scope.row.discountPrice}}</span>
+            </template>
           </el-table-column>
           <el-table-column label="修改">
             <template slot-scope="scope">
-                  <i class="el-icon-edit" @click="editBtn(scope.$index, scope.row)"></i>
-                </template>
+              <i class="el-icon-edit" @click="editBtn(scope.$index, scope.row)"></i>
+            </template>
           </el-table-column>
           <el-table-column label="删除">
             <template slot-scope="scope">
-                  <i class="el-icon-delete" @click="deleteBtn(scope.$index, scope.row)"></i>
-                </template>
+              <i class="el-icon-delete" @click="deleteBtn(scope.$index, scope.row)"></i>
+            </template>
           </el-table-column>
         </el-table>
         <page :pageModel="pageModel" @selectList="selectRoleList" v-if="pageModel.sumCount>10"></page>

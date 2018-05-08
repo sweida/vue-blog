@@ -124,6 +124,20 @@ export function getprojectBurden(pageModel, data) {
     data
   })
 }
+// 获取部位
+export function position() {
+  return fetch({
+    url: '/apis/position',
+    method: 'get'
+  })
+}
+// 获取角度
+export function angle() {
+  return fetch({
+    url: '/apis/angle',
+    method: 'get'
+  })
+}
 // 添加赠送方案
 export function addgivePlan(data) {
   return fetch({

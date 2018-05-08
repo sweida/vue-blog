@@ -24,11 +24,14 @@
         <el-form-item label="有效天数">
           <el-input size="medium" type="number" v-model="form.effectiveDays"></el-input>
         </el-form-item>
-        <el-form-item label="耗时(分钟)">
+        <el-form-item label="耗时(分钟)" v-if="selectedOptions[0]!=2">
           <el-select v-model="form.consumeTime" size="medium" placeholder="请选择">
             <el-option v-for="item in 18" :key="item.value" :label="item*10" :value="item*10">
             </el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="容量" v-else>
+          <el-input size="medium" type="text" placeholder="暂时不填"></el-input>
         </el-form-item>
       </el-form>
       <div class="uploader_box">
@@ -111,6 +114,38 @@
     </div>
 
     <div class="form_box">
+      <h5>拍照绑定</h5>
+      <div class="photo_box">
+        <el-dropdown @command="selectDown">
+          <el-button type="primary" size="small">
+            添加部位
+          </el-button>
+
+          <el-dropdown-menu slot="dropdown">
+            <template v-for="item in photoType">
+              <el-dropdown-item :command="item" :disabled="item.disable">{{item.positionName}}</el-dropdown-item>
+            </template>
+            <!-- <el-dropdown-item command="a" :disable="">面　部</el-dropdown-item>
+            <el-dropdown-item command="b" :disable="">胸　部</el-dropdown-item>
+            <el-dropdown-item command="c" :disable="">手　部</el-dropdown-item>
+            <el-dropdown-item command="d" :disable="">腿　部</el-dropdown-item> -->
+          </el-dropdown-menu>
+        </el-dropdown>
+        <div class="meal_box" v-for="(item, index) in photoList" :key="index">
+          <div class="head_box">
+            <span>部位<em>{{item.positionName}}</em></span>
+            <i class="el-icon-close" @click="delPhotoList(item, index)"></i>
+          </div>
+          <el-checkbox-group v-model="item.checkList" @change="checkAngle(item.checkList, index)">
+            <el-checkbox v-for="angle in angleList" :label="angle.id" :key="angle.id">{{angle.angleName}}</el-checkbox>
+          </el-checkbox-group>          
+        </div>
+      </div>
+
+      <!-- <el-button type="primary" size="mini" @click="addGiveList">添加赠送</el-button> -->
+    </div>
+
+    <div class="form_box">
       <h5>配料</h5>
       <div class="li_box">
         <el-tag v-for="(Burden,index) in form.ccProjectMaterialList" :key="Burden.materialName" closable :disable-transitions="false" @close="CloseBurdenTags(index)">
@@ -183,7 +218,7 @@
             <el-radio :label="'1'">是</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="是否支持上面服务">
+        <el-form-item label="是否支持上门服务">
           <el-radio-group v-model="form.isDoorService">
             <el-radio :label="'0'">否</el-radio>
             <el-radio :label="'1'">是</el-radio>
@@ -302,7 +337,7 @@
 </template>
 
 <script>
-import { addproject, getproject, getTagli, addTag, delTag, getBurden, getprojectBurden, projectDetail, editproject } from '@/api/product'
+import { addproject, getproject, getTagli, addTag, delTag, getBurden, getprojectBurden, projectDetail, editproject, position, angle } from '@/api/product'
 import { mixppMenu, projectMenu } from '@/api/tree'
 import addGive from '@/components/common/addGive'
 import page from '@/components/common/page'
@@ -342,6 +377,9 @@ export default {
       textarea: '',
       selectedOptions: [],
       ccProjectGiveList: [], //已选赠送
+      photoList: [],
+      photoType: [],
+      angleList: [],
       form: {
         projectName: '',
         arrId: '',
@@ -365,7 +403,6 @@ export default {
         commissionPercentage: ''
       },
       materials_arr: [],
-
       hasget: [],
       pageModel: {
         page: 1,
@@ -383,6 +420,8 @@ export default {
     this.getTagskin()
     this.getTageffect()
     this.getBurdenlist()
+    this.geTangle()
+    this.getPosition()
     this.getmixMenu()
     if (this.$route.params.id != undefined) {
       this.getprojectDetail()
@@ -401,18 +440,32 @@ export default {
       this.form.arrId = val.join(',')
       this.form.parentId = val[val.length - 1]
       this.form.projectType = val[0]
+      console.log(this.selectedOptions);
     },
     // 获取项目详情
     getprojectDetail() {
       projectDetail(this.$route.params.id).then(res => {
+        console.log('详情', res)
         this.form = res.data.data
         this.checkSkin = res.data.data.fitSkin.split(',')
         this.checkEffect = res.data.data.effect.split(',')
         this.ccProjectGiveList = res.data.data.ccProjectGiveList
+        this.photoList = res.data.data.ccPhotoSelectVoList
         let arr = res.data.data.arrId.split(',')
         this.selectedOptions = arr.map((item) => {
           return +item
         })
+        this.photoList.forEach(item => {
+          item.checkList = item.angleId.split(',')
+          // 让已经存在的部位disable设置为true
+          function groupNameFun(name) {
+            return name.id == item.positionId
+          }
+          let listIndex = this.photoType.findIndex(groupNameFun)
+          this.photoType[listIndex].disable = true
+        })
+        this.$set(this.photoList)
+        
       })
     },
     // 保存
@@ -422,13 +475,17 @@ export default {
       } else if (this.form.arrId.length < 2) {
         this.$message.error('请选择一个分类')
       } else {
+        this.photoList.forEach(item => {
+          item.angleId = item.checkList.join(',')
+        })
         let param = Object.assign({
           enterpriseId: '001',
           fitSkin: this.checkSkin.join(','), // 肤质
           effect: this.checkEffect.join(','), // 功效
           ccProjectPushList: [], // 推送
           isGive: 0,
-          ccProjectGiveList: this.ccProjectGiveList
+          ccProjectGiveList: this.ccProjectGiveList,
+          ccPhotoSelectVoList: this.photoList
         }, this.form)
         addproject(param).then(res => {
           if (res.data.code == 200) {
@@ -447,9 +504,13 @@ export default {
       } else if (this.form.arrId.length < 2) {
         this.$message.error('请选择一个分类')
       } else {
+        this.photoList.forEach(item => {
+          item.angleId = item.checkList.join(',')
+        })
         this.form.fitSkin = this.checkSkin.join(',')
         this.form.effect = this.checkEffect.join(',')
-        this.form.ccProjectGiveList = this.ccProjectGiveList
+        this.form.ccProjectGiveList = this.ccProjectGiveList,
+        this.form.ccPhotoSelectVoList = this.photoList
         editproject(this.form).then(res => {
           if (res.data.code == 200) {
             this.$router.push('/project')
@@ -551,6 +612,45 @@ export default {
     },
     effectClose() {
       this.editEffect = true
+    },
+    // 获取拍照角度
+    getPosition() {
+      position().then(res => {
+        console.log('部位', res)
+        this.photoType = res.data.data
+      })
+    },
+    // 获取拍照角度
+    geTangle() {
+      angle().then(res => {
+        console.log('角度', res)
+        this.angleList = res.data.data
+        this.angleList.forEach(item => {
+          item.id = "" + item.id
+        })
+      })
+    },
+    // 拍照
+    selectDown(command) {
+      let index = this.photoType.indexOf(command)
+      this.photoType[index].disable = true
+      this.photoList.push({
+        positionName: this.photoType[index].positionName,
+        positionId: this.photoType[index].id,
+        checkList: [],
+      })
+    },
+    checkAngle(item, index) {
+      this.$set(this.photoList, index, this.photoList[index] )
+    },
+    // 删除拍照
+    delPhotoList(item, index) {
+      function groupNameFun(name) {
+        return name.positionName == item.positionName
+      }
+      let listIndex = this.photoType.findIndex(groupNameFun)
+      this.photoType[listIndex].disable = false
+      this.photoList.splice(index, 1)
     },
     // 配料弹框
     burdenBtn() {
@@ -660,7 +760,7 @@ export default {
   color: #5E6D82
 }
 
-.li_box .el-checkbox__label {
+.photo_box .el-checkbox__label, .li_box .el-checkbox__label {
   font-size: 16px;
 }
 
@@ -682,6 +782,54 @@ export default {
 </style>
 
 <style scoped lang="scss">
+.photo_box{
+  width:800px;
+  .el-checkbox-group {
+    padding: 5px 20px;
+    font-size: 16px;
+    .el-checkbox {
+      margin-left: 0;
+      width: 124px;
+      line-height: 40px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+.meal_box {
+    border: 1px solid #C0CCDA;
+    margin-top: 20px;
+    .head_box {
+        border-bottom: 1px solid #C0CCDA;
+        padding: 0 20px;
+        background: #F7F7F7;
+        line-height: 50px;
+        text-align: left;
+        color: #666;
+        span {
+            font-weight: bold;
+            color: #475669;
+            margin-right: 30px;
+        }
+        em {
+            margin-left: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #fff;
+            width: 80px;
+            line-height: 26px;
+            display: inline-block;
+            text-align: center;
+        }
+        i {
+            font-size: 20px;
+            float: right;
+            padding-top: 15px;
+            cursor: pointer;
+        }
+    }
+}
 .form_box {
     display: flex;
     position: relative;

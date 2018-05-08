@@ -233,10 +233,10 @@ export default {
             this.$refs.addGiveChild.materials_data = []
             this.ccPackageGiveList = []
             this.change = true
+            this.vipinput = clone(this.vipCard)
           } else {
-            this.$message.error('修改失败!')
+            this.$message.error(res.data.msg)
           }
-          this.vipinput = clone(this.vipCard)
         })
       }
     },
