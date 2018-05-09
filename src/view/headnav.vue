@@ -31,9 +31,10 @@
                     </span>
                   </template>
                   <el-menu-item index="/coustomer" @click="url('http://customer.wscq518.com')">客户</el-menu-item>
-                  <el-menu-item index="/message">后台</el-menu-item>
-                  <el-menu-item index="/password">推广</el-menu-item>
-                  <el-menu-item index="/message">账号信息</el-menu-item>
+                  <el-menu-item index="/storage"  @click="url('http://192.168.1.230:5000/')">仓库</el-menu-item>
+                  <el-menu-item index="/form"  @click="url('http://192.168.1.240:4000')">报表</el-menu-item>
+                  <!-- <el-menu-item index="/password">推广</el-menu-item>
+                  <el-menu-item index="/message">账号信息</el-menu-item> -->
                   <el-menu-item index="/password">修改密码</el-menu-item>
                   <el-menu-item index="" @click.native="logout">退出登录</el-menu-item>
               </el-submenu>

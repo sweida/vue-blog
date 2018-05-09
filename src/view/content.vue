@@ -30,23 +30,23 @@
               {{scope.row.organPhone}}
             </template>
           <template slot-scope="scope">
-              <span v-if="edit">{{scope.row.organPhone}}</span>
-              <el-input size="small" v-model="organinfo.organPhone" v-else></el-input>
+              <el-input size="small" v-model="organinfo.organPhone" v-if="editIndex==scope.$index"></el-input>
+              <span v-else>{{scope.row.organPhone}}</span>
             </template>
         </el-table-column>
         <el-table-column prop="address" label="地址" width="250px">
           <template slot-scope="scope">
-              <span v-if="edit">{{scope.row.address}}</span>
-              <el-input size="small" v-model="organinfo.address" v-else></el-input>
+              <el-input size="small" v-model="organinfo.address" v-if="editIndex==scope.$index"></el-input>
+              <span v-else>{{scope.row.address}}</span>
             </template>
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-              <i class="el-icon-edit" @click="editBtn(scope.$index)" v-if="edit"></i>
-              <template v-else>
+              <template v-if="editIndex==scope.$index">
                 <el-button size="small" type="primary" @click="sureEdit(scope.row)">确认</el-button>
-                <el-button size="small" @click="edit=true">取消</el-button>
+                <el-button size="small" @click="editIndex=-1">取消</el-button>
               </template>
+              <i class="el-icon-edit" @click="editBtn(scope.$index)" v-else></i>
           </template>
         </el-table-column>
       </el-table>
@@ -69,7 +69,7 @@ export default {
   data() {
     return {
       header: { 'Accept': '*/*' },
-      edit: true,
+      editIndex: -1,
       dialogVisible: false,
       banner: 'static/img/phone.png',
       tableData: [],
@@ -79,7 +79,7 @@ export default {
   },
   methods: {
     editBtn(index) {
-      this.edit = false
+      this.editIndex = index
       this.organinfo = clone(this.tableData[index])
     },
     sureEdit(item) {
@@ -88,7 +88,7 @@ export default {
       changeShop(item).then(res => {
         if (res.data.code == 200) {
           this.$message.success('修改分店信息成功！')
-          this.edit = true
+          this.editIndex = -1
         } else {
           this.$message.error('操作失败请稍后再试！')
         }
