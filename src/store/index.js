@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import app from './modules/app'
 import account from './modules/account'
-import permission from './modules/permission'
 import index from './modules/index'
 import getters from './getters'
 
@@ -11,8 +10,7 @@ export default new Vuex.Store({
   modules: {
     app,
     account,
-    index,
-    permission
+    index
   },
   getters,
   strict: process.env.NODE_ENV !== 'production'

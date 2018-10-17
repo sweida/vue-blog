@@ -20,19 +20,21 @@ body {
     bottom: 0;
     overflow: hidden;
     width: 100%;
-    padding:20px 40px;
+    padding:40px 0px;
     box-sizing: border-box;
-    background: #edeef1;
+    background: #edfaff url(../assets/bg.jpg);
     display: flex;
+
 }
 .main{
   position: relative;
-  width: calc(100% - 320px);
+  flex: 1;
   height: 100%;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  background: #fff;
+  padding: 0 40px 0 0;
+  // background: #fff;
   .header_title{
     padding: 0 20px;
     background: #f7f7f7;

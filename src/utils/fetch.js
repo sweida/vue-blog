@@ -33,52 +33,52 @@ service.interceptors.request.use(config => {
 service.interceptors.response.use(
   res => {
     if (res.status == 401) {
-      Message({
-        message: res.data.msg,
-        type: 'error',
-        duration: 2000,
-        onClose() {
-          removeToken()
-          router.push('/')
-        }
-      })
+      // Message({
+      //   message: res.data.msg,
+      //   type: 'error',
+      //   duration: 2000,
+      //   onClose() {
+      //     removeToken()
+      //     router.push('/')
+      //   }
+      // })
       return res
     } else if (res.status == 500) {
-      Message({
-        message: '服务器错误',
-        type: 'error',
-        duration: 2000,
-        onClose() {
-          removeToken()
-          router.push('/')
-        }
-      })
+      // Message({
+      //   message: '服务器错误',
+      //   type: 'error',
+      //   duration: 2000,
+      //   onClose() {
+      //     removeToken()
+      //     router.push('/')
+      //   }
+      // })
     } else {
       return res
     }
   },
   error => {
     if (error.response.status == 401) {
-      Message({
-        message: '登录信息过期，请重新登录！',
-        type: 'error',
-        duration: 800,
-        onClose() {
-          removeToken()
-          router.push('/login')
-        }
-      })
+      // Message({
+      //   message: '登录信息过期，请重新登录！',
+      //   type: 'error',
+      //   duration: 800,
+      //   onClose() {
+      //     removeToken()
+      //     router.push('/login')
+      //   }
+      // })
     }
     if (error.response.status == 504) {
-      Message({
-        message: '服务器异常！',
-        type: 'error',
-        duration: 800,
-        onClose() {
-          removeToken()
-          router.push('/login')
-        }
-      })
+      // Message({
+      //   message: '服务器异常！',
+      //   type: 'error',
+      //   duration: 800,
+      //   onClose() {
+      //     removeToken()
+      //     router.push('/login')
+      //   }
+      // })
     }
     // Message({
     //   message: error.response.data.message,

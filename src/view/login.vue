@@ -4,10 +4,12 @@
       <div class="logo"></div>
       <div class="formbox">
         <div>
-          <label for="name">账号</label><input v-model="param.username" type="text" id="name" placeholder="请输入账号" auto-complete="off">
+          <label for="name">账号</label>
+          <input v-model="param.username" type="text" id="name" placeholder="请输入账号" auto-complete="off">
         </div>
         <div>
-          <label for="password">密码</label><input v-model="param.password" :type="show ? 'password' : 'text'" id="password" placeholder="请输入密码" auto-complete="off"><i :class="show ?'seepassword' : 'el-icon-view'" @click="show=!show"></i>
+          <label for="password">密码</label>
+          <input v-model="param.password" :type="show ? 'password' : 'text'" id="password" placeholder="请输入密码" auto-complete="off"><i :class="show ?'seepassword' : 'el-icon-view'" @click="show=!show"></i>
         </div>
       </div>
       <el-checkbox v-model="checked" checked class="remember" >记住密码</el-checkbox>
@@ -17,25 +19,24 @@
 </template>
 
 <script>
-  import { toLogin } from '@/api/login'
-  import { setToken } from '@/utils/token'
+  import { Login } from '@/api/login'
+  // import { setToken } from '@/utils/token'
   export default {
     data() {
       return {
         show: true,
         checked: true,
         param: {
-          username: '13000000000',
-          password: '1234567'
+          username: '佟丽娅',
+          password: '123456'
         }
       }
     },
     methods: {
-      loginSubmit: function() {
-        this.$store.dispatch('LoginByUsername', this.param).then(res => {
-          if (res.status == 200) {
-            this.$router.push({ path: '/home' })
-          }
+      loginSubmit() {
+        Login(this.param).then(res => {
+          console.log(res)
+          this.$router.push({ path: '/home' })
         })
       }
     }

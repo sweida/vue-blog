@@ -14,20 +14,11 @@ const app = {
         '0': 'success',
         '1': 'danger',
         '2': 'primary'
-      },
-      menuLevelMap: {
-        '1': '一级菜单',
-        '2': '二级菜单',
-        '3': '三级菜单',
       }
-    },
+    }
   },
-  mutations: {
+  mutations: {},
+  actions: {}
+}
 
-  },
-  actions: {
-
-  }
-};
-
-export default app;
+export default app

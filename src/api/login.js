@@ -2,17 +2,21 @@ import fetch from '@/utils/fetch'
 import qs from 'qs'
 
 // 登录
-export function toLogin(data) {
+export function Login(data) {
   return fetch({
-    url: 'apis/authentication/form',
+    url: 'apis/login',
     method: 'post',
-    data: qs.stringify(data),
-    auth: {
-      username: 'article',
-      password: 'articleSecret'
-    }
+    data
   })
 }
+
+export function articleList () {
+  return fetch({
+    url: 'apis/article/read',
+    method: 'get'
+  })
+}
+
 export function logout() {
   return fetch({
     url: 'apis/authentication/out',

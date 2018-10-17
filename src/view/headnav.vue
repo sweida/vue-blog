@@ -83,7 +83,7 @@ export default {
 .header{
   display: flex;
   height: 60px;
-  background: #3a4354;
+  background: #0785fd;
   .nav{
     display: flex;
     justify-content: space-between;

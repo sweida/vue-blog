@@ -13,8 +13,8 @@ module.exports = {
     proxyTable: {},
 
     // Various Dev Server settings
-    host: '192.168.1.240', // can be overwritten by process.env.HOST
-    port: 8899, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    host: 'localhost', // can be overwritten by process.env.HOST
+    port: 9000, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: true,
     errorOverlay: true,
     notifyOnErrors: true,
@@ -29,7 +29,7 @@ module.exports = {
     showEslintErrorsInOverlay: false,
     proxyTable: {
       '/apis': {
-        target: 'http://192.168.1.203:9000/setup',
+        target: 'http://119.29.27.100.:8300/api',
         changeOrigin: true,
         pathRewrite: {
           '^/apis': '/'
